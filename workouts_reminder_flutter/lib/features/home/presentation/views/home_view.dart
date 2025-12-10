@@ -53,7 +53,7 @@ class _HomeViewState extends State<HomeView> {
         currentIndex: _currentIndex,
         items: _items,
         onTap: (index) {
-          setState(() => _currentIndex = index);
+          if (index == _currentIndex) return;
           _pageController.animateToPage(
             index,
             duration: const Duration(milliseconds: 250),
