@@ -40,7 +40,7 @@ final class ThemeProvider extends $NotifierProvider<Theme, ThemeMode> {
   }
 }
 
-String _$themeHash() => r'1c27e4e19f308606b46aaaa7331d0af42d7b6f6a';
+String _$themeHash() => r'07fe4f6c53942849138c50d2f08c023cd91395b2';
 
 abstract class _$Theme extends $Notifier<ThemeMode> {
   ThemeMode build();
