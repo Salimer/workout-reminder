@@ -45,8 +45,9 @@ class AppTheme {
   }
 
   static ThemeData _buildTheme(ColorScheme scheme) {
-    final Color scaffoldBackground =
-        scheme.brightness == Brightness.dark ? _green900 : const Color(0xFFF7F9F7);
+    final Color scaffoldBackground = scheme.brightness == Brightness.dark
+        ? _green900
+        : const Color(0xFFF7F9F7);
 
     return ThemeData(
       useMaterial3: true,
@@ -70,7 +71,7 @@ class AppTheme {
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
         unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
         type: BottomNavigationBarType.fixed,
-        showUnselectedLabels: true,
+        showUnselectedLabels: false,
       ),
       cardColor: scheme.surface,
       dividerColor: scheme.onSurface.withValues(alpha: 0.12),
