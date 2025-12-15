@@ -71,7 +71,7 @@ class AppTheme {
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
         unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
         type: BottomNavigationBarType.fixed,
-        showUnselectedLabels: false,
+        showUnselectedLabels: true,
       ),
       cardColor: scheme.surface,
       dividerColor: scheme.onSurface.withValues(alpha: 0.12),
