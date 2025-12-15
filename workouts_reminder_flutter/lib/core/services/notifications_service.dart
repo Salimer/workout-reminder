@@ -6,11 +6,12 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:workouts_reminder_flutter/features/notifications/data/models/notification_model.dart';
+
+import '../../features/notifications/data/models/notification_model.dart';
 
 part 'notifications_service.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 NotificationsService notificationsSvc(Ref ref) => NotificationsService();
 
 @pragma('vm:entry-point')
@@ -31,6 +32,9 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
 
 class NotificationsService {
   final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  /// Current time in the configured local timezone.
+  tz.TZDateTime get localNow => tz.TZDateTime.now(tz.local);
 
   Future<void> initialize() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
