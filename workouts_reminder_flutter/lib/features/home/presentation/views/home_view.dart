@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/experimental/mutation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:workouts_reminder_flutter/features/home/controllers/notifications_controller.dart';
-import 'package:workouts_reminder_flutter/features/notifications/data/models/notification_model.dart';
 
+import '../../../notifications/data/models/notification_model.dart';
 import '../../../progress/presentation/views/progress_view.dart';
 import '../../../schedule/presentation/views/schedule_view.dart';
 import '../../../settings/presentation/views/settings_view.dart';
+import '../../controllers/notifications_controller.dart';
 import 'main_view.dart';
 
 class HomeView extends StatefulWidget {
