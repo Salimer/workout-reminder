@@ -16,13 +16,38 @@ class NotificationModel {
   });
 
   factory NotificationModel.init() {
-    final scheduledDate = TZDateTime.now(local).add(const Duration(seconds: 10));
+    final scheduledDate = TZDateTime.now(
+      local,
+    ).add(const Duration(seconds: 10));
     return NotificationModel(
       id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
       title: 'Workout Reminder',
       body: 'Time for your scheduled workout!',
       scheduledDate: scheduledDate,
       payload: 'workout_reminder_payload',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'body': body,
+      'scheduledDate': scheduledDate.toString(),
+      'payload': payload,
+    };
+  }
+
+  factory NotificationModel.fromJson(Map<String, dynamic> json) {
+    return NotificationModel(
+      id: json['id'],
+      title: json['title'],
+      body: json['body'],
+      scheduledDate: TZDateTime.parse(
+        local,
+        json['scheduledDate'],
+      ),
+      payload: json['payload'],
     );
   }
 }
