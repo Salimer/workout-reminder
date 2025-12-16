@@ -38,7 +38,7 @@ class NotificationsService {
 
   Future<void> initialize() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('app_icon');
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
     final DarwinInitializationSettings initializationSettingsDarwin =
         DarwinInitializationSettings();
@@ -83,5 +83,31 @@ class NotificationsService {
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );
+  }
+
+  Future<void> askForPermission() async {
+    if (Platform.isAndroid) {
+      final androidImplementation = flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
+      final granted =
+          await androidImplementation?.requestExactAlarmsPermission() ??
+          false;
+      debugPrint('Android notification permission granted: $granted');
+    } else if (Platform.isIOS || Platform.isMacOS) {
+      final iosImplementation = flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin
+          >();
+      final granted =
+          await iosImplementation?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          ) ??
+          false;
+      debugPrint('iOS/macOS notification permission granted: $granted');
+    }
   }
 }

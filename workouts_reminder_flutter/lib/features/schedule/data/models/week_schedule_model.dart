@@ -1,15 +1,16 @@
-import 'package:workouts_reminder_flutter/features/schedule/data/models/day_schedule_model.dart';
-
 import '../../../../core/constants/enums.dart';
+import 'day_schedule_model.dart';
 
 class WeekScheduleModel {
   final List<DayScheduleModel> days;
+  final String note;
 
-  WeekScheduleModel({required this.days});
+  WeekScheduleModel({required this.days, required this.note});
 
   Map<String, dynamic> toJson() {
     return {
       'days': days.map((day) => day.toJson()).toList(),
+      'note': note,
     };
   }
 
@@ -20,6 +21,7 @@ class WeekScheduleModel {
           (item) => DayScheduleModel.fromJson(item),
         ),
       ),
+      note: json['note'],
     );
   }
 
@@ -28,6 +30,7 @@ class WeekScheduleModel {
       days: WeekdayEnum.values
           .map((day) => DayScheduleModel.init(day))
           .toList(),
+      note: 'week 1',
     );
   }
 }

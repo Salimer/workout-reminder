@@ -15,6 +15,7 @@ class NotificationsController {
   NotificationsController(this.ref);
 
   Future<void> scheduleNotification(NotificationModel notification) async {
+    await ref.read(notificationsSvcProvider).askForPermission();
     await ref.read(notificationsSvcProvider).scheduleNotification(notification);
     // await Future.delayed(const Duration(seconds: 5));
   }
