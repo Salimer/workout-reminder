@@ -3,13 +3,22 @@ import 'day_schedule_model.dart';
 
 class WeekScheduleModel {
   final List<DayScheduleModel> days;
+  final DateTime createdAt;
+  final DateTime deadline;
   final String note;
 
-  WeekScheduleModel({required this.days, required this.note});
+  WeekScheduleModel({
+    required this.days,
+    required this.createdAt,
+    required this.deadline,
+    required this.note,
+  });
 
   Map<String, dynamic> toJson() {
     return {
       'days': days.map((day) => day.toJson()).toList(),
+      'createdAt': createdAt.toIso8601String(),
+      'deadline': deadline.toIso8601String(),
       'note': note,
     };
   }
@@ -21,6 +30,8 @@ class WeekScheduleModel {
           (item) => DayScheduleModel.fromJson(item),
         ),
       ),
+      createdAt: DateTime.parse(json['createdAt']),
+      deadline: DateTime.parse(json['deadline']),
       note: json['note'],
     );
   }
@@ -31,6 +42,8 @@ class WeekScheduleModel {
           .map((day) => DayScheduleModel.init(day))
           .toList(),
       note: 'week 1',
+      createdAt: DateTime.now(),
+      deadline: DateTime.now().add(const Duration(days: 7)),
     );
   }
 }

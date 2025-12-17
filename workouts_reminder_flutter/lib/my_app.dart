@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'core/config/routes.dart';
 import 'core/providers/theme.dart';
 import 'core/theme/app_theme.dart';
-import 'features/home/presentation/views/home_view.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -12,14 +12,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        final themeMode = ref.watch(themeProvider);
-        debugPrint("MyApp rebuilt with themeMode: $themeMode");
-        return MaterialApp(
+        return MaterialApp.router(
           title: 'Serverpod Demo',
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
-          themeMode: themeMode.requireValue,
-          home: const HomeView(),
+          themeMode: ref.watch(themeProvider).requireValue,
+          routerConfig: ref.watch(routesProvider),
         );
       },
     );

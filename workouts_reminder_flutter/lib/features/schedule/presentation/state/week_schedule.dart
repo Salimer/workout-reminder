@@ -8,7 +8,7 @@ import '../../data/models/week_schedule_model.dart';
 
 part 'week_schedule.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class WeekSchedule extends _$WeekSchedule {
   @override
   FutureOr<WeekScheduleModel> build() async {
@@ -17,7 +17,7 @@ class WeekSchedule extends _$WeekSchedule {
       key: 'week_schedule',
       options: const StorageOptions(
         cacheTime: StorageCacheTime(Duration(days: 7)),
-        destroyKey: '1.0.0',
+        destroyKey: '1.0.1-add-created-deadline',
       ),
       encode: (state) => jsonEncode(state.toJson()),
       decode: (data) => WeekScheduleModel.fromJson(jsonDecode(data)),
