@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:workouts_reminder_flutter/core/providers/theme.dart';
 
 import 'core/observers/provider_logger_observer.dart';
 import 'core/services/notifications_service.dart';
@@ -14,6 +15,7 @@ Future<void> main() async {
     ],
   );
   await container.read(notificationsSvcProvider).initialize();
+  await container.read(themeProvider.future);
 
   runApp(
     UncontrolledProviderScope(

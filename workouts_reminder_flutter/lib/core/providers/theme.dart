@@ -1,20 +1,29 @@
 import 'package:flutter/material.dart' show ThemeMode;
+import 'package:flutter_riverpod/experimental/persist.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:workouts_reminder_flutter/core/providers/local_storage.dart';
 
 part 'theme.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class Theme extends _$Theme {
   @override
-  ThemeMode build() {
-    return ThemeMode.system;
+  FutureOr<ThemeMode> build() async {
+    await persist(
+      ref.watch(localStorageProvider.future),
+      key: 'theme_mode',
+      options: const StorageOptions(cacheTime: StorageCacheTime.unsafe_forever),
+      encode: (state) => state.index.toString(),
+      decode: (data) => ThemeMode.values[int.parse(data)],
+    ).future;
+    return state.value ?? ThemeMode.system;
   }
 
   void toggleTheme(bool isDark) {
-    state = isDark ? ThemeMode.dark : ThemeMode.light;
+    state = AsyncData(isDark ? ThemeMode.dark : ThemeMode.light);
   }
 
   void setThemeMode(ThemeMode mode) {
-    state = mode;
+    state = AsyncData(mode);
   }
 }

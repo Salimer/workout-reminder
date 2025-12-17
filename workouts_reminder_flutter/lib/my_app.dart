@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
           title: 'Serverpod Demo',
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
-          themeMode: themeMode,
+          themeMode: themeMode.requireValue,
           home: const HomeView(),
         );
       },
