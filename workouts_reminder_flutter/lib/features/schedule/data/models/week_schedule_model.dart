@@ -1,4 +1,7 @@
+import 'package:timezone/timezone.dart' as tz;
+
 import '../../../../core/constants/enums.dart';
+import '../../../notifications/data/models/notification_model.dart';
 import 'day_schedule_model.dart';
 
 class WeekScheduleModel {
@@ -6,12 +9,19 @@ class WeekScheduleModel {
   final DateTime createdAt;
   final DateTime deadline;
   final String note;
+  final bool isSet;
+
+  bool get isCompleted {
+    final now = DateTime.now();
+    return now.isAfter(deadline);
+  }
 
   WeekScheduleModel({
     required this.days,
     required this.createdAt,
     required this.deadline,
     required this.note,
+    required this.isSet,
   });
 
   Map<String, dynamic> toJson() {
@@ -20,6 +30,7 @@ class WeekScheduleModel {
       'createdAt': createdAt.toIso8601String(),
       'deadline': deadline.toIso8601String(),
       'note': note,
+      'isSet': isSet,
     };
   }
 
@@ -33,6 +44,7 @@ class WeekScheduleModel {
       createdAt: DateTime.parse(json['createdAt']),
       deadline: DateTime.parse(json['deadline']),
       note: json['note'],
+      isSet: json['isSet'] as bool,
     );
   }
 
@@ -44,6 +56,31 @@ class WeekScheduleModel {
       note: 'week 1',
       createdAt: DateTime.now(),
       deadline: DateTime.now().add(const Duration(days: 7)),
+      isSet: false,
+    );
+  }
+
+  factory WeekScheduleModel.forWorkoutDays({
+    required Set<WeekdayEnum> workoutDays,
+    DateTime? createdAt,
+    Duration duration = const Duration(days: 7),
+    String note = 'week 1',
+  }) {
+    final created = createdAt ?? DateTime.now();
+    final deadline = created.add(duration);
+
+    return WeekScheduleModel(
+      days: WeekdayEnum.values.map((day) {
+        final hasWorkout = workoutDays.contains(day);
+        return DayScheduleModel.forWorkoutDay(
+          day: day,
+          hasWorkout: hasWorkout,
+        );
+      }).toList(),
+      createdAt: created,
+      deadline: deadline,
+      note: note,
+      isSet: true,
     );
   }
 }

@@ -17,6 +17,7 @@ class _SplashViewState extends ConsumerState<SplashView> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final weekSchedule = await ref.read(weekScheduleProvider.future);
+
       // If the week schedule is outdated, you can handle it here
       // For example, navigate to the schedule setup view
       // If it's valid, navigate to the main view

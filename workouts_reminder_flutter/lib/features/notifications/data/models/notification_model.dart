@@ -18,7 +18,7 @@ class NotificationModel {
   factory NotificationModel.init() {
     final scheduledDate = TZDateTime.now(
       local,
-    ).add(const Duration(seconds: 10));
+    ).add(const Duration(seconds: 5));
     return NotificationModel(
       id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
       title: 'Workout Reminder',
@@ -48,6 +48,21 @@ class NotificationModel {
         json['scheduledDate'],
       ),
       payload: json['payload'],
+    );
+  }
+
+  factory NotificationModel.forWorkoutDay({
+    required TZDateTime scheduledDate,
+    required String title,
+    required String body,
+    required String payload,
+  }) {
+    return NotificationModel(
+      id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      title: title,
+      body: body,
+      scheduledDate: scheduledDate,
+      payload: payload,
     );
   }
 }
