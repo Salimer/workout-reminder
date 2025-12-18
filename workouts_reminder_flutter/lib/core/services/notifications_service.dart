@@ -85,6 +85,14 @@ class NotificationsService {
     );
   }
 
+  Future<void> scheduleMultipleNotifications(
+    List<NotificationModel> notifications,
+  ) async {
+    for (final notification in notifications) {
+      await scheduleNotification(notification);
+    }
+  }
+
   Future<void> askForPermission() async {
     if (Platform.isAndroid) {
       final androidImplementation = flutterLocalNotificationsPlugin
@@ -92,8 +100,7 @@ class NotificationsService {
             AndroidFlutterLocalNotificationsPlugin
           >();
       final granted =
-          await androidImplementation?.requestExactAlarmsPermission() ??
-          false;
+          await androidImplementation?.requestExactAlarmsPermission() ?? false;
       debugPrint('Android notification permission granted: $granted');
     } else if (Platform.isIOS || Platform.isMacOS) {
       final iosImplementation = flutterLocalNotificationsPlugin

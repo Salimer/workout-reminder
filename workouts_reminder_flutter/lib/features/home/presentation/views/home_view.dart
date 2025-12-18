@@ -6,7 +6,7 @@ import '../../../notifications/data/models/notification_model.dart';
 import '../../../progress/presentation/views/progress_view.dart';
 import '../../../schedule/presentation/views/schedule_view.dart';
 import '../../../settings/presentation/views/settings_view.dart';
-import '../../controllers/notifications_controller.dart';
+import '../../../schedule/controllers/notifications_controller.dart';
 import 'main_view.dart';
 
 class HomeView extends StatefulWidget {
