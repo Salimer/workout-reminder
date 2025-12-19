@@ -32,7 +32,7 @@ class NotificationsController {
       debugPrint("Scheduled notification details: ${notification.toJson()}");
       final now = ref.read(localTimeDateProvider);
       if (notification.scheduledDate.isBefore(now)) continue;
-      // await scheduleNotification(notification);
+      await scheduleNotification(notification);
     }
   }
 

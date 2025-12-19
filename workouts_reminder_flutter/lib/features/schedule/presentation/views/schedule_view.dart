@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../progress/presentation/widgets/workout_days_picker.dart';
 import '../../controllers/notifications_controller.dart';
 import '../../data/models/week_schedule_model.dart';
 import '../state/week_schedule.dart';
+import '../widgets/week_schedule_summary.dart';
+import '../widgets/workout_days_picker.dart';
 
 class ScheduleView extends StatelessWidget {
   const ScheduleView({super.key});
@@ -30,6 +31,8 @@ class ScheduleView extends StatelessWidget {
                       );
                       await controller.scheduleWeekNotifications(schedule);
 
+                      tsx.get(weekScheduleProvider.notifier).set(schedule);
+                      
                       if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -37,12 +40,11 @@ class ScheduleView extends StatelessWidget {
                         ),
                       );
                     });
-                    // ref.read(weekScheduleProvider.notifier).set(schedule);
                   },
                 );
               }
 
-              return const _ProgressPlaceholder();
+              return WeekScheduleSummary(schedule: data);
             },
             loading: () => const CircularProgressIndicator(),
             error: (err, stack) => Text('Error: $err'),
@@ -50,18 +52,6 @@ class ScheduleView extends StatelessWidget {
           // return Text('Welcome to the Progress View!');
         },
       ),
-    );
-  }
-}
-
-class _ProgressPlaceholder extends StatelessWidget {
-  const _ProgressPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.all(16),
-      child: Text('Progress view placeholder (schedule already set).'),
     );
   }
 }

@@ -28,4 +28,8 @@ class WeekSchedule extends _$WeekSchedule {
   void set(WeekScheduleModel data) {
     state = AsyncValue.data(data);
   }
+
+  void clear() {
+    state = AsyncValue.data(WeekScheduleModel.init());
+  }
 }
