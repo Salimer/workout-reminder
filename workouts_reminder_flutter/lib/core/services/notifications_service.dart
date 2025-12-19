@@ -117,4 +117,24 @@ class NotificationsService {
       debugPrint('iOS/macOS notification permission granted: $granted');
     }
   }
+
+  Future<void> cancelAllNotifications() async {
+    await flutterLocalNotificationsPlugin.cancelAll();
+  }
+
+  Future<void> cancelNotification(int id) async {
+    await flutterLocalNotificationsPlugin.cancel(id);
+  }
+
+  Future<List<PendingNotificationRequest>>
+  getPendingNotificationRequests() async {
+    return flutterLocalNotificationsPlugin.pendingNotificationRequests();
+  }
+
+  Future<void> cancelPendingNotifications() async {
+    final pendingNotifications = await getPendingNotificationRequests();
+    for (final notification in pendingNotifications) {
+      await cancelNotification(notification.id);
+    }
+  }
 }

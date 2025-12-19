@@ -17,7 +17,7 @@ class WeekSchedule extends _$WeekSchedule {
       key: 'week_schedule',
       options: const StorageOptions(
         cacheTime: StorageCacheTime(Duration(days: 7)),
-        destroyKey: '1.0.1-add-created-deadline',
+        destroyKey: '1.0.2-add-created-deadline',
       ),
       encode: (state) => jsonEncode(state.toJson()),
       decode: (data) => WeekScheduleModel.fromJson(jsonDecode(data)),

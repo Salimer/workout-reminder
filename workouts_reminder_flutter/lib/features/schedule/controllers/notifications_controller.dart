@@ -47,6 +47,13 @@ class NotificationsController {
       await scheduleDayNotifications(day);
     }
   }
+
+  Future<void> cancelAllNotifications() async {
+    await ref.read(notificationsSvcProvider).cancelAllNotifications();
+  }
 }
 
-final notificationMutation = Mutation<void>(label: 'schedule_notification');
+final scheduleNotification = Mutation<void>(label: 'schedule_notification');
+final scheduleWeekNotifications = Mutation<void>(
+  label: 'schedule_week_notifications',
+);

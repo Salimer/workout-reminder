@@ -52,7 +52,7 @@ class _HomeViewState extends State<HomeView> {
       ),
       body: Consumer(
         builder: (context, ref, _) {
-          final mutation = notificationMutation;
+          final mutation = scheduleNotification;
           final state = ref.watch(mutation);
 
           switch (state) {

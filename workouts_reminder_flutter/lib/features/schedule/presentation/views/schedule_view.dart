@@ -16,7 +16,7 @@ class ScheduleView extends StatelessWidget {
       child: Consumer(
         builder: (context, ref, _) {
           final week = ref.watch(weekScheduleProvider);
-          final mutation = notificationMutation;
+          final mutation = scheduleWeekNotifications;
           return week.when(
             data: (data) {
               if (data.isSet == false || data.isCompleted) {
@@ -26,13 +26,14 @@ class ScheduleView extends StatelessWidget {
                       workoutDays: selectedDays,
                     );
                     mutation.run(ref, (tsx) async {
-                      final controller = tsx.get(
-                        notificationsControllerProvider,
-                      );
-                      await controller.scheduleWeekNotifications(schedule);
+                      await tsx
+                          .get(
+                            notificationsControllerProvider,
+                          )
+                          .scheduleWeekNotifications(schedule);
 
                       tsx.get(weekScheduleProvider.notifier).set(schedule);
-                      
+
                       if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
