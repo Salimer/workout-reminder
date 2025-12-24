@@ -5,7 +5,8 @@ enum WeekdayEnum {
   thursday('Thursday'),
   friday('Friday'),
   saturday('Saturday'),
-  sunday('Sunday');
+  sunday('Sunday')
+  ;
 
   final String day;
   const WeekdayEnum(this.day);
@@ -25,8 +26,8 @@ enum DayWorkoutStatusEnum {
   pending('Pending'),
   performed('Performed'),
   skipped('Skipped'),
-  notScheduled('Not Scheduled');
-
+  notScheduled('Not Scheduled')
+  ;
 
   final String status;
   const DayWorkoutStatusEnum(this.status);

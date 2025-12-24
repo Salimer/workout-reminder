@@ -7,6 +7,7 @@ class WeekScheduleModel {
   final DateTime deadline;
   final String note;
   final bool isSet;
+  
 
   bool get isCompleted {
     final now = DateTime.now();

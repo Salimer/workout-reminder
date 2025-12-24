@@ -9,6 +9,39 @@ class ProgressModel {
     required this.weeks,
   });
 
+  WeekScheduleModel? get activeWeek {
+    if (weeks.isEmpty) return null;
+    return weeks.reduce(
+      (current, next) =>
+          next.createdAt.isAfter(current.createdAt) ? next : current,
+    );
+  }
+
+  int get totalDays => activeWeek == null ? 0 : WeekdayEnum.values.length;
+
+  int get scheduledDays {
+    final week = activeWeek;
+    if (week == null) return 0;
+    return week.days
+        .where((day) => day.status != DayWorkoutStatusEnum.notScheduled)
+        .length;
+  }
+
+  int get completedDays {
+    final week = activeWeek;
+    if (week == null) return 0;
+    return week.days
+        .where((day) => day.status == DayWorkoutStatusEnum.performed)
+        .length;
+  }
+
+  int get restDays => totalDays - scheduledDays;
+
+  int get plannedWeeks => activeWeek == null ? 0 : 1;
+
+  double get coverage =>
+      scheduledDays == 0 ? 0 : completedDays / scheduledDays;
+
   factory ProgressModel.init() {
     return ProgressModel(weeks: exampleWeeks);
   }

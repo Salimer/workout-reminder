@@ -1,7 +1,5 @@
 import 'package:flutter/foundation.dart' show debugPrint;
-import 'package:flutter_riverpod/experimental/mutation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:workouts_reminder_flutter/features/schedule/presentation/state/week_schedule.dart';
 
 import '../../../core/providers/local_time_date.dart';
 import '../../../core/services/notifications_service.dart';
@@ -9,15 +7,14 @@ import '../../notifications/data/models/notification_model.dart';
 import '../data/models/day_schedule_model.dart';
 import '../data/models/week_schedule_model.dart';
 
-part 'notifications_controller.g.dart';
+part 'notifications_use_case.g.dart';
 
-@riverpod
-NotificationsController notificationsController(Ref ref) =>
-    NotificationsController(ref);
+@Riverpod(keepAlive: true)
+NotificationsUseCase notificationsUseCase(Ref ref) => NotificationsUseCase(ref);
 
-class NotificationsController {
+class NotificationsUseCase {
   final Ref ref;
-  NotificationsController(this.ref);
+  NotificationsUseCase(this.ref);
 
   Future<void> scheduleNotification(NotificationModel notification) async {
     await ref.read(notificationsSvcProvider).askForPermission();
@@ -51,14 +48,5 @@ class NotificationsController {
 
   Future<void> clearWeekNotifications() async {
     await ref.read(notificationsSvcProvider).cancelAllNotifications();
-    ref.read(weekScheduleProvider.notifier).clear();
   }
 }
-
-final scheduleNotification = Mutation<void>(label: 'schedule_notification');
-final scheduleWeekNotifications = Mutation<void>(
-  label: 'schedule_week_notifications',
-);
-final clearWeekNotifications = Mutation<void>(
-  label: 'clear_week_notifications',
-);

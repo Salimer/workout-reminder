@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/enums.dart';
+import '../../use_cases/schedule_use_case.dart';
 
 class WorkoutDaysPicker extends StatefulWidget {
   final Set<WeekdayEnum> initialSelectedDays;
-  final Future<void> Function(Set<WeekdayEnum> selectedDays) onSave;
 
   const WorkoutDaysPicker({
     super.key,
-    required this.onSave,
     this.initialSelectedDays = const {},
   });
 
@@ -18,12 +18,10 @@ class WorkoutDaysPicker extends StatefulWidget {
 
 class _WorkoutDaysPickerState extends State<WorkoutDaysPicker> {
   late final Set<WeekdayEnum> _selectedDays = {...widget.initialSelectedDays};
-  bool _isSaving = false;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final canSave = _selectedDays.isNotEmpty && !_isSaving;
 
     return Center(
       child: ConstrainedBox(
@@ -70,24 +68,39 @@ class _WorkoutDaysPickerState extends State<WorkoutDaysPicker> {
                   const SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity,
-                    child: FilledButton(
-                      onPressed: canSave
-                          ? () async {
-                              setState(() => _isSaving = true);
-                              try {
-                                await widget.onSave({..._selectedDays});
-                              } finally {
-                                if (mounted) setState(() => _isSaving = false);
-                              }
-                            }
-                          : null,
-                      child: _isSaving
-                          ? const SizedBox(
-                              height: 18,
-                              width: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Text('Create schedule'),
+                    child: Consumer(
+                      builder: (context, ref, _) {
+                        final mutation = scheduleWeekPlanMutation;
+                        final state = ref.watch(mutation);
+                        return FilledButton(
+                          onPressed:
+                              _selectedDays.isNotEmpty && !state.isPending
+                              ? () async {
+                                  await scheduleWeekPlanMutation.run(ref, (
+                                    tsx,
+                                  ) async {
+                                    await Future.delayed(
+                                      const Duration(seconds: 3),
+                                    ); //
+                                    await tsx
+                                        .get(
+                                          scheduleUseCaseProvider,
+                                        )
+                                        .createWeekSchedule(_selectedDays);
+                                  });
+                                }
+                              : null,
+                          child: state.isPending
+                              ? const SizedBox(
+                                  height: 18,
+                                  width: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Text('Create schedule'),
+                        );
+                      },
                     ),
                   ),
                   if (_selectedDays.isEmpty) ...[
@@ -108,4 +121,3 @@ class _WorkoutDaysPickerState extends State<WorkoutDaysPicker> {
     );
   }
 }
-

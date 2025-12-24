@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/experimental/mutation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../notifications/data/models/notification_model.dart';
 import '../../../progress/presentation/views/progress_view.dart';
 import '../../../schedule/presentation/views/schedule_view.dart';
 import '../../../settings/presentation/views/settings_view.dart';
-import '../../../schedule/controllers/notifications_controller.dart';
 import 'main_view.dart';
 
 class HomeView extends StatefulWidget {
@@ -47,19 +44,21 @@ class _HomeViewState extends State<HomeView> {
     });
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_items[_currentIndex].label ?? 'Home'),
-      ),
-      body: Consumer(
-        builder: (context, ref, _) {
-          return PageView(
-            controller: _pageController,
-            onPageChanged: (index) {
-              setState(() => _currentIndex = index);
-            },
-            children: _pages,
-          );
-        },
+      // appBar: AppBar(
+      //   title: Text(_items[_currentIndex].label ?? 'Home'),
+      // ),
+      body: SafeArea(
+        child: Consumer(
+          builder: (context, ref, _) {
+            return PageView(
+              controller: _pageController,
+              onPageChanged: (index) {
+                setState(() => _currentIndex = index);
+              },
+              children: _pages,
+            );
+          },
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,

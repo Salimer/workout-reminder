@@ -3,9 +3,8 @@ import 'package:flutter_riverpod/experimental/mutation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../controllers/notifications_controller.dart';
+import '../../use_cases/schedule_use_case.dart';
 import '../../data/models/week_schedule_model.dart';
-import '../state/week_schedule.dart';
 import '../../../notifications/data/models/notification_model.dart';
 
 class WeekScheduleSummary extends StatelessWidget {
@@ -22,148 +21,139 @@ class WeekScheduleSummary extends StatelessWidget {
     final dateRange =
         '${DateFormat.MMMd().format(schedule.createdAt)} · ${DateFormat.MMMd().format(schedule.deadline)}';
 
-    return ListView(
-      children: [
-        ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 720),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'This week\'s schedule',
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  schedule.note,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  dateRange,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                OutlinedButton.icon(
-                  onPressed: () {
-                    showDialog<void>(
-                      context: context,
-                      builder: (dialogContext) => AlertDialog(
-                        title: const Text('Clear current plan?'),
-                        content: const Text(
-                          'This will remove this week\'s schedule and notifications.',
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(dialogContext).pop(),
-                            child: const Text('Cancel'),
-                          ),
-                          Consumer(
-                            builder: (context, ref, _) {
-                              ref.listen(clearWeekNotifications, (_, state) {
-                                if (state.isSuccess) {
-                                  if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          'Schedule cleared.',
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                } else if (state.hasError) {
-                                  if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          'Error clearing schedule: ${(state as MutationError).error}',
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                }
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 720),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'This week\'s schedule',
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              schedule.note,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              dateRange,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: () {
+                showDialog<void>(
+                  context: context,
+                  builder: (dialogContext) => AlertDialog(
+                    title: const Text('Clear current plan?'),
+                    content: const Text(
+                      'This will remove this week\'s schedule and notifications.',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(),
+                        child: const Text('Cancel'),
+                      ),
+                      Consumer(
+                        builder: (context, ref, _) {
+                          ref.listen(clearWeekPlan, (_, state) {
+                            if (state.isSuccess) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Schedule cleared.',
+                                    ),
+                                  ),
+                                );
+                              }
+                            } else if (state.hasError) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Error clearing schedule: ${(state as MutationError).error}',
+                                    ),
+                                  ),
+                                );
+                              }
+                            }
+                          });
+                          return FilledButton(
+                            onPressed: () {
+                              Navigator.of(dialogContext).pop();
+                              final mutation = clearWeekPlan;
+                              mutation.run(ref, (tsx) async {
+                                await Future.delayed(
+                                  const Duration(
+                                    seconds: 4,
+                                  ),
+                                ); // Allow UI to update before starting mutation
+                                await tsx
+                                    .get(scheduleUseCaseProvider)
+                                    .clearWeekPlan();
                               });
-                              return FilledButton(
-                                onPressed: () {
-                                  Navigator.of(dialogContext).pop();
-                                  final mutation = clearWeekNotifications;
-                                  mutation.run(ref, (tsx) async {
-                                    await Future.delayed(
-                                      const Duration(
-                                        seconds: 4,
-                                      ),
-                                    ); // Allow UI to update before starting mutation
-                                    await tsx
-                                        .get(notificationsControllerProvider)
-                                        .clearWeekNotifications();
-
-                                    tsx
-                                        .get(weekScheduleProvider.notifier)
-                                        .clear();
-                                  });
-                                },
-                                child: const Text('Clear plan'),
-                              );
                             },
-                          ),
-                        ],
+                            child: const Text('Clear plan'),
+                          );
+                        },
                       ),
+                    ],
+                  ),
+                );
+              },
+              icon: Consumer(
+                builder: (context, ref, _) {
+                  final mutation = clearWeekPlan;
+                  final state = ref.watch(mutation);
+                  return AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 250),
+                    child: state.isPending
+                        ? const SizedBox.shrink()
+                        : const Icon(Icons.delete_outline),
+                  );
+                },
+              ),
+              label: Consumer(
+                builder: (context, ref, _) {
+                  final mutation = clearWeekPlan;
+                  final state = ref.watch(mutation);
+                  if (state.isPending) {
+                    return const SizedBox(
+                      height: 18,
+                      width: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
                     );
-                  },
-                  icon: Consumer(
-                    builder: (context, ref, _) {
-                      final mutation = clearWeekNotifications;
-                      final state = ref.watch(mutation);
-                      return AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 250),
-                        child: state.isPending
-                            ? const SizedBox.shrink()
-                            : const Icon(Icons.delete_outline),
-                      );
-                    },
+                  }
+                  return const Text('Clear plan');
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: [
+                for (final day in schedule.days)
+                  _DayCard(
+                    dayLabel: day.day.day,
+                    hasWorkout: day.hasWorkout,
+                    notifications: day.notifications ?? const [],
                   ),
-
-                  label: Consumer(
-                    builder: (context, ref, _) {
-                      final mutation = clearWeekNotifications;
-                      final state = ref.watch(mutation);
-                      if (state.isPending) {
-                        return const SizedBox(
-                          height: 18,
-                          width: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        );
-                      }
-                      return const Text('Clear plan');
-                    },
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: [
-                    for (final day in schedule.days)
-                      _DayCard(
-                        dayLabel: day.day.day,
-                        hasWorkout: day.hasWorkout,
-                        notifications: day.notifications ?? const [],
-                      ),
-                  ],
-                ),
               ],
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

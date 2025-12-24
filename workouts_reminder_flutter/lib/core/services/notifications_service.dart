@@ -85,14 +85,6 @@ class NotificationsService {
     );
   }
 
-  Future<void> scheduleMultipleNotifications(
-    List<NotificationModel> notifications,
-  ) async {
-    for (final notification in notifications) {
-      await scheduleNotification(notification);
-    }
-  }
-
   Future<void> askForPermission() async {
     if (Platform.isAndroid) {
       final androidImplementation = flutterLocalNotificationsPlugin
