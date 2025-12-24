@@ -15,7 +15,7 @@ class ProgressView extends StatelessWidget {
           return schedule.when(
             data: (data) {
               //
-              return Text('Week Schedule Note: ${data?.note}');
+              return Text('Week Schedule Note: ${data.note}');
             },
             error: (e, st) {
               return Text('Error: $e');
