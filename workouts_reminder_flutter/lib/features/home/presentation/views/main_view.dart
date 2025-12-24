@@ -93,17 +93,16 @@ class _HeroCard extends StatelessWidget {
               children: [
                 Text(
                   'Hey legend 👋',
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleLarge
-                      ?.copyWith(color: scheme.onSurface),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(color: scheme.onSurface),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'Today is a workout day. Tap start and I’ll hype you with personalised nudges.',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: scheme.onSurface.withValues(alpha: 0.8),
-                      ),
+                    color: scheme.onSurface.withValues(alpha: 0.8),
+                  ),
                 ),
                 const SizedBox(height: 12),
                 ElevatedButton(
@@ -141,7 +140,7 @@ class _HeroCard extends StatelessWidget {
                   color: scheme.primary.withValues(alpha: 0.15),
                   blurRadius: 24,
                   offset: const Offset(0, 12),
-                )
+                ),
               ],
             ),
             child: const Center(
@@ -198,8 +197,7 @@ class _StreakCard extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: 0.7,
                     minHeight: 8,
-                    backgroundColor:
-                        scheme.onSurface.withValues(alpha: 0.08),
+                    backgroundColor: scheme.onSurface.withValues(alpha: 0.08),
                     valueColor: AlwaysStoppedAnimation(scheme.primary),
                   ),
                 ),
@@ -232,6 +230,7 @@ class _NextWorkoutCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme scheme = Theme.of(context).colorScheme;
+    const bool isNotificationsScheduled = true;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -242,16 +241,30 @@ class _NextWorkoutCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Next workout', style: Theme.of(context).textTheme.titleMedium),
-              const Spacer(),
-              TextButton.icon(
-                onPressed: () {
-                  // TODO: Navigate to schedule view.
-                },
-                icon: const Icon(Icons.calendar_today_outlined, size: 18),
-                label: const Text('View schedule'),
+              Text(
+                'Next workout',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  _NotificationStatusIndicator(
+                    isScheduled: isNotificationsScheduled,
+                  ),
+                  TextButton.icon(
+                    onPressed: () {
+                      // TODO: Navigate to schedule view.
+                    },
+                    icon: const Icon(Icons.calendar_today_outlined, size: 18),
+                    label: const Text('View schedule'),
+                  ),
+                ],
               ),
             ],
           ),
@@ -287,6 +300,55 @@ class _NextWorkoutCard extends StatelessWidget {
   }
 }
 
+class _NotificationStatusIndicator extends StatelessWidget {
+  const _NotificationStatusIndicator({required this.isScheduled});
+
+  final bool isScheduled;
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorScheme scheme = Theme.of(context).colorScheme;
+    final Color statusColor = isScheduled ? Colors.green : Colors.red;
+    final String label = isScheduled ? 'Notifications on' : 'Notifications off';
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: statusColor.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: statusColor.withValues(alpha: 0.35)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: statusColor,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: statusColor.withValues(alpha: 0.4),
+                  blurRadius: 6,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              color: scheme.onSurface,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _MotivationCard extends StatelessWidget {
   const _MotivationCard();
 
@@ -303,7 +365,7 @@ class _MotivationCard extends StatelessWidget {
             color: scheme.primary.withValues(alpha: 0.06),
             blurRadius: 18,
             offset: const Offset(0, 10),
-          )
+          ),
         ],
       ),
       child: Column(
@@ -434,7 +496,9 @@ class _Pill extends StatelessWidget {
       child: Text(
         label,
         style: TextStyle(
-          color: active ? scheme.primary : scheme.onSurface.withValues(alpha: 0.7),
+          color: active
+              ? scheme.primary
+              : scheme.onSurface.withValues(alpha: 0.7),
           fontWeight: FontWeight.w600,
         ),
       ),

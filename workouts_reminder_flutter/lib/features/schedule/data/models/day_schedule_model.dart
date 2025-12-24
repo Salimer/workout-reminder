@@ -5,19 +5,21 @@ import '../../../notifications/data/models/notification_model.dart';
 
 class DayScheduleModel {
   final WeekdayEnum day;
-  final bool hasWorkout;
   final List<NotificationModel>? notifications;
+  final DayWorkoutStatusEnum status;
+
+  bool get hasWorkout => status != DayWorkoutStatusEnum.notScheduled;
 
   DayScheduleModel({
     required this.day,
-    required this.hasWorkout,
     this.notifications,
+    required this.status,
   });
 
   Map<String, dynamic> toJson() {
     return {
       'day': day.toString(),
-      'hasWorkout': hasWorkout,
+      'status': status.toString(),
       'notifications': notifications
           ?.map((notification) => notification.toJson())
           .toList(),
@@ -29,7 +31,7 @@ class DayScheduleModel {
       day: WeekdayEnum.values.firstWhere(
         (e) => e.toString() == json['day'],
       ),
-      hasWorkout: json['hasWorkout'],
+      status: DayWorkoutStatusEnum.fromString(json['status']),
       notifications: json['notifications'] != null
           ? List<NotificationModel>.from(
               (json['notifications'] as List).map(
@@ -43,19 +45,19 @@ class DayScheduleModel {
   factory DayScheduleModel.init(WeekdayEnum day) {
     return DayScheduleModel(
       day: day,
-      hasWorkout: false,
       notifications: [],
+      status: DayWorkoutStatusEnum.notScheduled,
     );
   }
 
   factory DayScheduleModel.forWorkoutDay({
     required WeekdayEnum day,
-    required bool hasWorkout,
+    required DayWorkoutStatusEnum status,
   }) {
     return DayScheduleModel(
       day: day,
-      hasWorkout: hasWorkout,
-      notifications: hasWorkout
+      status: status,
+      notifications: status != DayWorkoutStatusEnum.notScheduled
           ? _buildDayNotifications(
               day: day,
               start: tz.TZDateTime.now(tz.local),

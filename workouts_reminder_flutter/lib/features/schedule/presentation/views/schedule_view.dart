@@ -17,38 +17,46 @@ class ScheduleView extends StatelessWidget {
         builder: (context, ref, _) {
           final week = ref.watch(weekScheduleProvider);
           final mutation = scheduleWeekNotifications;
-          return week.when(
-            data: (data) {
-              if (data.isSet == false || data.isCompleted) {
-                return WorkoutDaysPicker(
-                  onSave: (selectedDays) async {
-                    final schedule = WeekScheduleModel.forWorkoutDays(
-                      workoutDays: selectedDays,
-                    );
-                    mutation.run(ref, (tsx) async {
-                      await tsx
-                          .get(
-                            notificationsControllerProvider,
-                          )
-                          .scheduleWeekNotifications(schedule);
-
-                      tsx.get(weekScheduleProvider.notifier).set(schedule);
-
-                      if (!context.mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Workout schedule created.'),
+          return AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: week.when(
+              data: (data) {
+                if (data.isSet == false || data.isCompleted) {
+                  return WorkoutDaysPicker(
+                    onSave: (selectedDays) async {
+                      await Future.delayed(
+                        const Duration(
+                          seconds: 3,
                         ),
+                      ); // Allow UI to update before starting mutation
+                      final schedule = WeekScheduleModel.forWorkoutDays(
+                        workoutDays: selectedDays,
                       );
-                    });
-                  },
-                );
-              }
+                      await mutation.run(ref, (tsx) async {
+                        await tsx
+                            .get(
+                              notificationsControllerProvider,
+                            )
+                            .scheduleWeekNotifications(schedule);
 
-              return WeekScheduleSummary(schedule: data);
-            },
-            loading: () => const CircularProgressIndicator(),
-            error: (err, stack) => Text('Error: $err'),
+                        tsx.get(weekScheduleProvider.notifier).set(schedule);
+
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Workout schedule created.'),
+                          ),
+                        );
+                      });
+                    },
+                  );
+                }
+
+                return WeekScheduleSummary(schedule: data);
+              },
+              loading: () => const CircularProgressIndicator(),
+              error: (err, stack) => Text('Error: $err'),
+            ),
           );
           // return Text('Welcome to the Progress View!');
         },

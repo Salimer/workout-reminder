@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_riverpod/experimental/mutation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:workouts_reminder_flutter/features/schedule/presentation/state/week_schedule.dart';
 
 import '../../../core/providers/local_time_date.dart';
 import '../../../core/services/notifications_service.dart';
@@ -48,12 +49,16 @@ class NotificationsController {
     }
   }
 
-  Future<void> cancelAllNotifications() async {
+  Future<void> clearWeekNotifications() async {
     await ref.read(notificationsSvcProvider).cancelAllNotifications();
+    ref.read(weekScheduleProvider.notifier).clear();
   }
 }
 
 final scheduleNotification = Mutation<void>(label: 'schedule_notification');
 final scheduleWeekNotifications = Mutation<void>(
   label: 'schedule_week_notifications',
+);
+final clearWeekNotifications = Mutation<void>(
+  label: 'clear_week_notifications',
 );

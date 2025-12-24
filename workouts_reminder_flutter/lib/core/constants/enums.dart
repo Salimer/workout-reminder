@@ -21,9 +21,23 @@ enum WeekdayEnum {
   String toString() => day;
 }
 
-enum WorkoutsStatusEnum {
-  pending,
-  started,
-  completed,
-  skipped,
+enum DayWorkoutStatusEnum {
+  pending('Pending'),
+  performed('Performed'),
+  skipped('Skipped'),
+  notScheduled('Not Scheduled');
+
+
+  final String status;
+  const DayWorkoutStatusEnum(this.status);
+
+  @override
+  String toString() => status;
+
+  static DayWorkoutStatusEnum fromString(String status) {
+    return DayWorkoutStatusEnum.values.firstWhere(
+      (e) => e.status.toLowerCase() == status.toLowerCase(),
+      orElse: () => throw ArgumentError('Invalid status string: $status'),
+    );
+  }
 }

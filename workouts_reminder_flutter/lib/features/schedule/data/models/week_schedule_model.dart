@@ -1,7 +1,4 @@
-import 'package:timezone/timezone.dart' as tz;
-
 import '../../../../core/constants/enums.dart';
-import '../../../notifications/data/models/notification_model.dart';
 import 'day_schedule_model.dart';
 
 class WeekScheduleModel {
@@ -71,10 +68,11 @@ class WeekScheduleModel {
 
     return WeekScheduleModel(
       days: WeekdayEnum.values.map((day) {
-        final hasWorkout = workoutDays.contains(day);
         return DayScheduleModel.forWorkoutDay(
           day: day,
-          hasWorkout: hasWorkout,
+          status: workoutDays.contains(day)
+              ? DayWorkoutStatusEnum.pending
+              : DayWorkoutStatusEnum.notScheduled,
         );
       }).toList(),
       createdAt: created,

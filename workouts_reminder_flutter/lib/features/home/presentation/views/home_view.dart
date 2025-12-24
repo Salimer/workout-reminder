@@ -52,35 +52,13 @@ class _HomeViewState extends State<HomeView> {
       ),
       body: Consumer(
         builder: (context, ref, _) {
-          final mutation = scheduleNotification;
-          final state = ref.watch(mutation);
-
-          switch (state) {
-            case MutationIdle():
-              return ElevatedButton(
-                onPressed: () async {
-                  mutation.run(ref, (tsx) async {
-                    final notifier = tsx.get(notificationsControllerProvider);
-                    await notifier.scheduleNotification(
-                      NotificationModel.init(),
-                    );
-                  });
-                },
-                child: const Text('Schedule Notification'),
-              );
-            case MutationPending():
-              return const Center(child: CircularProgressIndicator());
-            case MutationError():
-              return Center(child: Text('Error: ${state.error}'));
-            case MutationSuccess():
-              return PageView(
-                controller: _pageController,
-                onPageChanged: (index) {
-                  setState(() => _currentIndex = index);
-                },
-                children: _pages,
-              );
-          }
+          return PageView(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() => _currentIndex = index);
+            },
+            children: _pages,
+          );
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
