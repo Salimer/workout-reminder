@@ -46,6 +46,22 @@ class WeekScheduleModel {
     );
   }
 
+  WeekScheduleModel copyWith({
+    List<DayScheduleModel>? days,
+    DateTime? createdAt,
+    DateTime? deadline,
+    String? note,
+    bool? isSet,
+  }) {
+    return WeekScheduleModel(
+      days: days ?? this.days,
+      createdAt: createdAt ?? this.createdAt,
+      deadline: deadline ?? this.deadline,
+      note: note ?? this.note,
+      isSet: isSet ?? this.isSet,
+    );
+  }
+
   factory WeekScheduleModel.init() {
     return WeekScheduleModel(
       days: WeekdayEnum.values

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/widgets/widgets.dart';
+import '../../../../core/widgets/animated_section.dart';
 import '../widgets/actions_row.dart';
 import '../widgets/hero_card.dart';
 import '../widgets/motivation_card.dart';

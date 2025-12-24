@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/widgets/widgets.dart';
+import '../../../../core/widgets/app_card.dart';
 
 class MotivationCard extends StatelessWidget {
   const MotivationCard({super.key});

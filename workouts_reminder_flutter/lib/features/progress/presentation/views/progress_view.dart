@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/enums.dart';
-import '../../../../core/widgets/widgets.dart';
+import '../../../../core/widgets/animated_section.dart';
+import '../../../../core/widgets/app_card.dart';
 import '../../../schedule/data/models/day_schedule_model.dart';
 import '../../../schedule/data/models/week_schedule_model.dart';
 import '../../data/models/progress_model.dart';
@@ -38,14 +39,14 @@ class ProgressView extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             ...progress.weeks.asMap().entries.map(
-                  (entry) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: AppAnimatedSection(
-                      index: 3 + entry.key,
-                      child: _WeekScheduleCard(week: entry.value, scheme: scheme),
-                    ),
-                  ),
+              (entry) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: AppAnimatedSection(
+                  index: 3 + entry.key,
+                  child: _WeekScheduleCard(week: entry.value, scheme: scheme),
                 ),
+              ),
+            ),
             const SizedBox(height: 8),
             AppAnimatedSection(
               index: 3 + progress.weeks.length,

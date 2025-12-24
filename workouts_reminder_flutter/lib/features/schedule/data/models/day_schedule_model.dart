@@ -42,6 +42,18 @@ class DayScheduleModel {
     );
   }
 
+  DayScheduleModel copyWith({
+    WeekdayEnum? day,
+    List<NotificationModel>? notifications,
+    DayWorkoutStatusEnum? status,
+  }) {
+    return DayScheduleModel(
+      day: day ?? this.day,
+      notifications: notifications ?? this.notifications,
+      status: status ?? this.status,
+    );
+  }
+
   factory DayScheduleModel.init(WeekdayEnum day) {
     return DayScheduleModel(
       day: day,

@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:flutter_riverpod/experimental/persist.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/local_storage.dart';
+import '../../../../core/providers/local_time_date.dart';
 import '../../data/models/week_schedule_model.dart';
 
 part 'week_schedule.g.dart';
@@ -32,5 +34,17 @@ class WeekSchedule extends _$WeekSchedule {
 
   void clear() {
     state = AsyncValue.data(WeekScheduleModel.init());
+  }
+
+  void setDayStatus(DayWorkoutStatusEnum status) {
+    final today = ref.read(localTimeDateProvider).weekday;
+    final currentState = state.requireValue;
+    final updatedDays = List.of(currentState.days);
+    updatedDays[today] = updatedDays[today].copyWith(
+      status: status,
+    );
+    set(
+      currentState.copyWith(days: updatedDays),
+    );
   }
 }
