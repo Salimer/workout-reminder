@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/experimental/mutation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/enums.dart';
@@ -72,22 +73,37 @@ class _WorkoutDaysPickerState extends State<WorkoutDaysPicker> {
                       builder: (context, ref, _) {
                         final mutation = scheduleWeekPlanMutation;
                         final state = ref.watch(mutation);
+                        ref.listen(mutation, (_, next) {
+                          if (next.hasError) {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Error scheduling workouts: ${(next as MutationError).error}',
+                                  ),
+                                ),
+                              );
+                            }
+                          }
+                        });
                         return FilledButton(
                           onPressed:
                               _selectedDays.isNotEmpty && !state.isPending
                               ? () async {
-                                  await scheduleWeekPlanMutation.run(ref, (
-                                    tsx,
-                                  ) async {
-                                    await Future.delayed(
-                                      const Duration(seconds: 3),
-                                    ); //
-                                    await tsx
-                                        .get(
-                                          scheduleUseCaseProvider,
-                                        )
-                                        .createWeekSchedule(_selectedDays);
-                                  });
+                                  await scheduleWeekPlanMutation
+                                      .run(ref, (
+                                        tsx,
+                                      ) async {
+                                        await Future.delayed(
+                                          const Duration(seconds: 3),
+                                        );
+                                        await tsx
+                                            .get(
+                                              scheduleUseCaseProvider,
+                                            )
+                                            .createWeekSchedule(_selectedDays);
+                                      })
+                                      .catchError((_) {});
                                 }
                               : null,
                           child: state.isPending

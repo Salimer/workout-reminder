@@ -8,6 +8,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../features/notifications/data/models/notification_model.dart';
+import '../constants/enums.dart';
 
 part 'notifications_service.g.dart';
 
@@ -40,8 +41,13 @@ class NotificationsService {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
+    // Avoid prompting on iOS/macOS at app launch; request later explicitly.
     final DarwinInitializationSettings initializationSettingsDarwin =
-        DarwinInitializationSettings();
+        DarwinInitializationSettings(
+          requestAlertPermission: false,
+          requestBadgePermission: false,
+          requestSoundPermission: false,
+        );
 
     final InitializationSettings initializationSettings =
         InitializationSettings(
@@ -81,32 +87,32 @@ class NotificationsService {
           channelDescription: 'your channel description',
         ),
       ),
+      payload: notification.payload,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );
   }
 
-  Future<void> askForPermission() async {
+  Future<bool> askForPermission() async {
     if (Platform.isAndroid) {
       final androidImplementation = flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin
           >();
-      final granted =
-          await androidImplementation?.requestExactAlarmsPermission() ?? false;
-      debugPrint('Android notification permission granted: $granted');
+      return await androidImplementation?.requestExactAlarmsPermission() ??
+          false;
     } else if (Platform.isIOS || Platform.isMacOS) {
       final iosImplementation = flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
             IOSFlutterLocalNotificationsPlugin
           >();
-      final granted =
-          await iosImplementation?.requestPermissions(
+      return await iosImplementation?.requestPermissions(
             alert: true,
             badge: true,
             sound: true,
           ) ??
           false;
-      debugPrint('iOS/macOS notification permission granted: $granted');
+    } else {
+      return false;
     }
   }
 
@@ -121,12 +127,5 @@ class NotificationsService {
   Future<List<PendingNotificationRequest>>
   getPendingNotificationRequests() async {
     return flutterLocalNotificationsPlugin.pendingNotificationRequests();
-  }
-
-  Future<void> cancelPendingNotifications() async {
-    final pendingNotifications = await getPendingNotificationRequests();
-    for (final notification in pendingNotifications) {
-      await cancelNotification(notification.id);
-    }
   }
 }

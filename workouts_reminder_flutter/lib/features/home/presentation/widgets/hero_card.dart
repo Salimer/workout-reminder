@@ -64,12 +64,16 @@ class HeroCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Text(
-                          hero.kicker,
-                          style: Theme.of(context).textTheme.labelLarge
-                              ?.copyWith(
-                                color: scheme.onSurface.withValues(alpha: 0.7),
-                              ),
+                        Flexible(
+                          child: Text(
+                            hero.kicker,
+                            style: Theme.of(context).textTheme.labelLarge
+                                ?.copyWith(
+                                  color: scheme.onSurface.withValues(
+                                    alpha: 0.7,
+                                  ),
+                                ),
+                          ),
                         ),
                       ],
                     ),

@@ -103,24 +103,32 @@ class DayScheduleModel {
 
     return [
       NotificationModel.forWorkoutDay(
+        id: _notificationId(morning, 0),
         title: 'Workout Reminder (Morning)',
         body: '${day.day}: time for your morning workout.',
         scheduledDate: morning,
         payload: 'workout:${day.day}:morning',
       ),
       NotificationModel.forWorkoutDay(
+        id: _notificationId(afternoon, 1),
         title: 'Workout Reminder (Afternoon)',
         body: '${day.day}: time for your afternoon workout.',
         scheduledDate: afternoon,
         payload: 'workout:${day.day}:afternoon',
       ),
       NotificationModel.forWorkoutDay(
+        id: _notificationId(evening, 2),
         title: 'Workout Reminder (Evening)',
         body: '${day.day}: time for your evening workout.',
         scheduledDate: evening,
         payload: 'workout:${day.day}:evening',
       ),
     ];
+  }
+
+  static int _notificationId(tz.TZDateTime date, int slot) {
+    final yyyymmdd = date.year * 10000 + date.month * 100 + date.day;
+    return (yyyymmdd * 10) + slot;
   }
 
   static int _asDateTimeWeekday(WeekdayEnum day) {

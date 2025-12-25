@@ -20,7 +20,7 @@ class NotificationModel {
       local,
     ).add(const Duration(seconds: 5));
     return NotificationModel(
-      id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      id: DateTime.now().millisecondsSinceEpoch % 100000,
       title: 'Workout Reminder',
       body: 'Time for your scheduled workout!',
       scheduledDate: scheduledDate,
@@ -52,17 +52,18 @@ class NotificationModel {
   }
 
   factory NotificationModel.forWorkoutDay({
+    required int id,
     required TZDateTime scheduledDate,
     required String title,
     required String body,
     required String payload,
   }) {
     return NotificationModel(
-      id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      id: id,
       title: title,
       body: body,
       scheduledDate: scheduledDate,
-      payload: payload,
+      payload: scheduledDate.toString(),
     );
   }
 }

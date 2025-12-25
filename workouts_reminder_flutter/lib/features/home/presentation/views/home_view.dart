@@ -39,14 +39,7 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      debugPrint("HomeView rebuilt with currentIndex: $_currentIndex");
-    });
-
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(_items[_currentIndex].label ?? 'Home'),
-      // ),
       body: SafeArea(
         child: Consumer(
           builder: (context, ref, _) {

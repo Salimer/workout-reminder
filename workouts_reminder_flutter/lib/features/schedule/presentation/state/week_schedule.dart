@@ -47,4 +47,16 @@ class WeekSchedule extends _$WeekSchedule {
       currentState.copyWith(days: updatedDays),
     );
   }
+
+  List<int> getDayNotificationIds(WeekdayEnum day) {
+    final currentState = state.requireValue;
+    final daySchedule = currentState.days[day.index];
+    if (daySchedule.notifications == null) return [];
+    return daySchedule.notifications!.map((e) => e.id).toList();
+  }
+
+  WeekdayEnum get todayEnum {
+    final today = ref.read(localTimeDateProvider).weekday;
+    return WeekdayEnum.values[today - 1];
+  }
 }

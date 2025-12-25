@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:workouts_reminder_flutter/features/schedule/presentation/state/week_schedule.dart';
 
+import '../../../core/constants/enums.dart';
 import '../../../core/providers/local_time_date.dart';
 import '../../../core/services/notifications_service.dart';
 import '../../notifications/data/models/notification_model.dart';
@@ -17,9 +19,13 @@ class NotificationsUseCase {
   NotificationsUseCase(this.ref);
 
   Future<void> scheduleNotification(NotificationModel notification) async {
-    await ref.read(notificationsSvcProvider).askForPermission();
-    await ref.read(notificationsSvcProvider).scheduleNotification(notification);
-    // await Future.delayed(const Duration(seconds: 5));
+    if (await ref.read(notificationsSvcProvider).askForPermission()) {
+      await ref
+          .read(notificationsSvcProvider)
+          .scheduleNotification(notification);
+    } else {
+      throw Exception('Notification permission not granted');
+    }
   }
 
   Future<void> scheduleMultipleNotifications(
@@ -47,6 +53,27 @@ class NotificationsUseCase {
   }
 
   Future<void> clearWeekNotifications() async {
-    await ref.read(notificationsSvcProvider).cancelAllNotifications();
+    final pendingNotifications = await ref
+        .read(notificationsSvcProvider)
+        .getPendingNotificationRequests();
+    for (final notification in pendingNotifications) {
+      await ref
+          .read(notificationsSvcProvider)
+          .cancelNotification(notification.id);
+    }
+  }
+
+  Future<void> _clearDayNotifications(WeekdayEnum day) async {
+    final List<int> ids = ref
+        .read(weekScheduleProvider.notifier)
+        .getDayNotificationIds(day);
+    for (final id in ids) {
+      await ref.read(notificationsSvcProvider).cancelNotification(id);
+    }
+  }
+
+  Future<void> clearTodayNotifications() async {
+    final today = ref.read(weekScheduleProvider.notifier).todayEnum;
+    await _clearDayNotifications(today);
   }
 }

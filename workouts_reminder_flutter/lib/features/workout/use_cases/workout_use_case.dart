@@ -1,7 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:workouts_reminder_flutter/features/schedule/presentation/state/week_schedule.dart';
 
 import '../../../core/constants/enums.dart';
+import '../../schedule/presentation/state/week_schedule.dart';
 
 part 'workout_use_case.g.dart';
 

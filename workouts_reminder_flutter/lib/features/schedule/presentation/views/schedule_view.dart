@@ -88,6 +88,9 @@ class ScheduleView extends StatelessWidget {
                 child: Consumer(
                   builder: (context, ref, _) {
                     final week = ref.watch(weekScheduleProvider);
+                    if (week.value != null) {
+                      debugPrint('Week schedule: ${week.value!.toJson()}');
+                    }
                     return AnimatedSwitcher(
                       duration: const Duration(milliseconds: 300),
                       child: week.when(
