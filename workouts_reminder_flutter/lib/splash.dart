@@ -21,7 +21,14 @@ class _SplashViewState extends ConsumerState<SplashView> {
       // If the week schedule is outdated, you can handle it here
       // For example, navigate to the schedule setup view
       // If it's valid, navigate to the main view
-      ref.read(routesProvider).goNamed(AppRoutes.home);
+      ref
+          .read(routesProvider)
+          .goNamed(
+            AppRoutes.home,
+            queryParameters: {
+              'initialIndex': weekSchedule.isSet ? '2' : '0',
+            },
+          );
     });
   }
 

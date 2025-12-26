@@ -7,15 +7,17 @@ import '../../../settings/presentation/views/settings_view.dart';
 import 'main_view.dart';
 
 class HomeView extends StatefulWidget {
-  const HomeView({super.key});
+  const HomeView({super.key, this.initialIndex = 0});
+
+  final int initialIndex;
 
   @override
   State<HomeView> createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> {
-  final PageController _pageController = PageController();
-  int _currentIndex = 0;
+  late final PageController _pageController;
+  late int _currentIndex;
 
   static const _items = [
     BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
@@ -30,6 +32,13 @@ class _HomeViewState extends State<HomeView> {
     ScheduleView(),
     SettingsView(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+    _pageController = PageController(initialPage: _currentIndex);
+  }
 
   @override
   void dispose() {

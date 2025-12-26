@@ -23,9 +23,16 @@ GoRouter routes(Ref ref) {
       GoRoute(
         name: AppRoutes.home,
         path: '/home',
-        pageBuilder: (context, state) =>
-            _adaptivePageBuilder(state, const HomeView()),
-      )
+        pageBuilder: (context, state) {
+          final initialIndex = state.uri.queryParameters['initialIndex'] != null
+              ? int.tryParse(state.uri.queryParameters['initialIndex']!) ?? 0
+              : 0;
+          return _adaptivePageBuilder(
+            state,
+            HomeView(initialIndex: initialIndex),
+          );
+        },
+      ),
     ],
 
     // redirect: (context, state) {

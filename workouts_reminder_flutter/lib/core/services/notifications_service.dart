@@ -8,7 +8,6 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../features/notifications/data/models/notification_model.dart';
-import '../constants/enums.dart';
 
 part 'notifications_service.g.dart';
 

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart' show ThemeMode;
 import 'package:flutter_riverpod/experimental/persist.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:workouts_reminder_flutter/core/providers/local_storage.dart';
+
+import 'local_storage.dart';
 
 part 'theme.g.dart';
 
@@ -17,10 +18,6 @@ class Theme extends _$Theme {
       decode: (data) => ThemeMode.values[int.parse(data)],
     ).future;
     return state.value ?? ThemeMode.system;
-  }
-
-  void toggleTheme(bool isDark) {
-    state = AsyncData(isDark ? ThemeMode.dark : ThemeMode.light);
   }
 
   void setThemeMode(ThemeMode mode) {

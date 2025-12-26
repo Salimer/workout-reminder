@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/widgets/animated_section.dart';
@@ -14,49 +15,184 @@ class ProgressView extends StatelessWidget {
   Widget build(BuildContext context) {
     final progress = ProgressModel.init();
     final scheme = Theme.of(context).colorScheme;
+    final monthGroups = _groupWeeksByMonth(progress.weeks);
+    final items = _buildProgressItems(monthGroups);
 
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: ListView(
-          children: [
-            AppAnimatedSection(
-              index: 0,
-              child: _ProgressHero(scheme: scheme, progress: progress),
-            ),
-            const SizedBox(height: 16),
-            AppAnimatedSection(
-              index: 1,
-              child: _ProgressHighlights(progress: progress),
-            ),
-            const SizedBox(height: 24),
-            AppAnimatedSection(
-              index: 2,
-              child: Text(
-                'Training calendar',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-            ),
-            const SizedBox(height: 12),
-            ...progress.weeks.asMap().entries.map(
-              (entry) => Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: AppAnimatedSection(
-                  index: 3 + entry.key,
-                  child: _WeekScheduleCard(week: entry.value, scheme: scheme),
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            AppAnimatedSection(
-              index: 3 + progress.weeks.length,
-              child: const _CalendarLegend(),
-            ),
-          ],
+        child: ListView.builder(
+          itemCount: items.length,
+          itemBuilder: (context, index) {
+            final item = items[index];
+            Widget child;
+            switch (item.type) {
+              case _ProgressItemType.hero:
+                child = _ProgressHero(scheme: scheme, progress: progress);
+                break;
+              case _ProgressItemType.highlights:
+                child = _ProgressHighlights(progress: progress);
+                break;
+              case _ProgressItemType.title:
+                child = Text(
+                  'Training calendar',
+                  style: Theme.of(context).textTheme.titleLarge,
+                );
+                break;
+              case _ProgressItemType.monthHeader:
+                child = Text(
+                  DateFormat('MMMM yyyy').format(item.month!),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                );
+                break;
+              case _ProgressItemType.weekCard:
+                child = _WeekScheduleCard(
+                  week: item.week!,
+                  scheme: scheme,
+                );
+                break;
+              case _ProgressItemType.legend:
+                child = const _CalendarLegend();
+                break;
+              case _ProgressItemType.spacer:
+                return SizedBox(height: item.spacing);
+            }
+
+            if (item.animationIndex == null) {
+              return child;
+            }
+
+            return AppAnimatedSection(
+              index: item.animationIndex!,
+              child: child,
+            );
+          },
         ),
       ),
     );
   }
+}
+
+List<_MonthGroup> _groupWeeksByMonth(List<WeekScheduleModel> weeks) {
+  final groups = <_MonthGroup>[];
+  for (final week in weeks) {
+    final monthKey = DateTime(week.createdAt.year, week.createdAt.month);
+    if (groups.isEmpty || groups.last.month != monthKey) {
+      groups.add(_MonthGroup(month: monthKey, weeks: [week]));
+    } else {
+      groups.last.weeks.add(week);
+    }
+  }
+  return groups;
+}
+
+class _MonthGroup {
+  final DateTime month;
+  final List<WeekScheduleModel> weeks;
+
+  const _MonthGroup({
+    required this.month,
+    required this.weeks,
+  });
+}
+
+List<_ProgressListItem> _buildProgressItems(List<_MonthGroup> groups) {
+  final items = <_ProgressListItem>[];
+  var animationIndex = 0;
+
+  items.add(_ProgressListItem.hero(animationIndex++));
+  items.add(const _ProgressListItem.spacer(16));
+  items.add(_ProgressListItem.highlights(animationIndex++));
+  items.add(const _ProgressListItem.spacer(24));
+  items.add(_ProgressListItem.title(animationIndex++));
+  items.add(const _ProgressListItem.spacer(12));
+
+  for (final group in groups) {
+    items.add(_ProgressListItem.monthHeader(group.month, animationIndex++));
+    items.add(const _ProgressListItem.spacer(8));
+    for (final week in group.weeks) {
+      items.add(_ProgressListItem.weekCard(week, animationIndex++));
+      items.add(const _ProgressListItem.spacer(12));
+    }
+  }
+
+  items.add(const _ProgressListItem.spacer(8));
+  items.add(_ProgressListItem.legend(animationIndex++));
+
+  return items;
+}
+
+enum _ProgressItemType {
+  hero,
+  highlights,
+  title,
+  monthHeader,
+  weekCard,
+  legend,
+  spacer,
+}
+
+class _ProgressListItem {
+  final _ProgressItemType type;
+  final int? animationIndex;
+  final DateTime? month;
+  final WeekScheduleModel? week;
+  final double? spacing;
+
+  const _ProgressListItem._({
+    required this.type,
+    this.animationIndex,
+    this.month,
+    this.week,
+    this.spacing,
+  });
+
+  factory _ProgressListItem.hero(int animationIndex) => _ProgressListItem._(
+    type: _ProgressItemType.hero,
+    animationIndex: animationIndex,
+  );
+
+  factory _ProgressListItem.highlights(int animationIndex) =>
+      _ProgressListItem._(
+        type: _ProgressItemType.highlights,
+        animationIndex: animationIndex,
+      );
+
+  factory _ProgressListItem.title(int animationIndex) => _ProgressListItem._(
+    type: _ProgressItemType.title,
+    animationIndex: animationIndex,
+  );
+
+  factory _ProgressListItem.monthHeader(
+    DateTime month,
+    int animationIndex,
+  ) => _ProgressListItem._(
+    type: _ProgressItemType.monthHeader,
+    animationIndex: animationIndex,
+    month: month,
+  );
+
+  factory _ProgressListItem.weekCard(
+    WeekScheduleModel week,
+    int animationIndex,
+  ) => _ProgressListItem._(
+    type: _ProgressItemType.weekCard,
+    animationIndex: animationIndex,
+    week: week,
+  );
+
+  factory _ProgressListItem.legend(int animationIndex) => _ProgressListItem._(
+    type: _ProgressItemType.legend,
+    animationIndex: animationIndex,
+  );
+
+  const _ProgressListItem.spacer(double spacing)
+    : this._(
+        type: _ProgressItemType.spacer,
+        spacing: spacing,
+      );
 }
 
 class _ProgressHero extends StatelessWidget {

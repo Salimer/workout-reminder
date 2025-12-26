@@ -80,35 +80,32 @@ class ScheduleView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            AppAnimatedSection(
-              index: 1,
-              child: AppCard(
-                padding: const EdgeInsets.all(16),
-                borderRadius: BorderRadius.circular(16),
-                child: Consumer(
-                  builder: (context, ref, _) {
-                    final week = ref.watch(weekScheduleProvider);
-                    if (week.value != null) {
-                      debugPrint('Week schedule: ${week.value!.toJson()}');
-                    }
-                    return AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 300),
-                      child: week.when(
-                        data: (data) {
-                          if (data.isSet == false || data.isCompleted) {
-                            return WorkoutDaysPicker();
-                          }
+            AppCard(
+              padding: const EdgeInsets.all(16),
+              borderRadius: BorderRadius.circular(16),
+              child: Consumer(
+                builder: (context, ref, _) {
+                  final week = ref.watch(weekScheduleProvider);
+                  if (week.value != null) {
+                    debugPrint('Week schedule: ${week.value!.toJson()}');
+                  }
+                  return AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    child: week.when(
+                      data: (data) {
+                        if (data.isSet == false || data.isCompleted) {
+                          return WorkoutDaysPicker();
+                        }
 
-                          return WeekScheduleSummary(schedule: data);
-                        },
-                        loading: () => const Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                        error: (err, stack) => Text('Error: $err'),
+                        return WeekScheduleSummary(schedule: data);
+                      },
+                      loading: () => const Center(
+                        child: CircularProgressIndicator(),
                       ),
-                    );
-                  },
-                ),
+                      error: (err, stack) => Text('Error: $err'),
+                    ),
+                  );
+                },
               ),
             ),
           ],
