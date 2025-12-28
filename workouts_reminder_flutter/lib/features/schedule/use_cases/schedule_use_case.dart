@@ -3,7 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/constants/enums.dart';
 import '../data/models/week_schedule_model.dart';
-import '../presentation/state/week_schedule.dart';
+import '../presentation/state/progress.dart';
 import 'notifications_use_case.dart';
 
 part 'schedule_use_case.g.dart';
@@ -28,13 +28,13 @@ class ScheduleUseCase {
         )
         .scheduleWeekNotifications(schedule);
 
-    ref.read(weekScheduleProvider.notifier).set(schedule);
+    ref.read(progressProvider.notifier).createWeekSchedule(schedule);
   }
 
   Future<void> clearWeekPlan() async {
     await ref.read(notificationsUseCaseProvider).clearWeekNotifications();
 
-    ref.read(weekScheduleProvider.notifier).clear();
+    ref.read(progressProvider.notifier).clearCurrentWeekPlan();
   }
 }
 

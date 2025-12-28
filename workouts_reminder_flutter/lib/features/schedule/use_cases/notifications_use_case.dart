@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:workouts_reminder_flutter/features/schedule/presentation/state/week_schedule.dart';
 
 import '../../../core/constants/enums.dart';
 import '../../../core/providers/local_time_date.dart';
@@ -8,6 +7,7 @@ import '../../../core/services/notifications_service.dart';
 import '../../notifications/data/models/notification_model.dart';
 import '../data/models/day_schedule_model.dart';
 import '../data/models/week_schedule_model.dart';
+import '../presentation/state/progress.dart';
 
 part 'notifications_use_case.g.dart';
 
@@ -65,15 +65,18 @@ class NotificationsUseCase {
 
   Future<void> _clearDayNotifications(WeekdayEnum day) async {
     final List<int> ids = ref
-        .read(weekScheduleProvider.notifier)
-        .getDayNotificationIds(day);
+        .read(progressProvider)
+        .requireValue
+        .activeWeek!
+        .notificationIdsForDay(day);
+
     for (final id in ids) {
       await ref.read(notificationsSvcProvider).cancelNotification(id);
     }
   }
 
   Future<void> clearTodayNotifications() async {
-    final today = ref.read(weekScheduleProvider.notifier).todayEnum;
+    final today = ref.read(progressProvider).requireValue.activeWeek!.todayEnum;
     await _clearDayNotifications(today);
   }
 }

@@ -7,11 +7,42 @@ class WeekScheduleModel {
   final DateTime deadline;
   final String note;
   final bool isSet;
-  
 
   bool get isCompleted {
     final now = DateTime.now();
     return now.isAfter(deadline);
+  }
+
+  List<int> get todayNotificationIds {
+    final today = DateTime.now().weekday;
+    return notificationIdsForDay(WeekdayEnum.values[today - 1]);
+  }
+
+  List<int> notificationIdsForDay(WeekdayEnum day) {
+    final daySchedule = days[day.index];
+    if (daySchedule.notifications == null) return [];
+    return daySchedule.notifications!.map((e) => e.id).toList();
+  }
+
+  WeekdayEnum get todayEnum {
+    final today = DateTime.now().weekday;
+    return WeekdayEnum.values[today - 1];
+  }
+
+  WeekScheduleModel setTodayStatusEnum(DayWorkoutStatusEnum status) {
+    final today = DateTime.now().weekday;
+    return setDayStatus(WeekdayEnum.values[today - 1], status);
+  }
+
+  WeekScheduleModel setDayStatus(WeekdayEnum day, DayWorkoutStatusEnum status) {
+    days[day.index] = days[day.index].copyWith(status: status);
+    return copyWith(days: days);
+    // return this;
+  }
+
+  DayWorkoutStatusEnum getTodayStatusEnum() {
+    final today = DateTime.now().weekday;
+    return days[today - 1].status;
   }
 
   WeekScheduleModel({

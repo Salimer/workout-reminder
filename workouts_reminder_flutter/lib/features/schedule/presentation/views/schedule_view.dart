@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/widgets/animated_section.dart';
 import '../../../../core/widgets/app_card.dart';
-import '../state/week_schedule.dart';
+import '../state/progress.dart';
 import '../widgets/week_schedule_summary.dart';
 import '../widgets/workout_days_picker.dart';
 
@@ -85,25 +85,17 @@ class ScheduleView extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
               child: Consumer(
                 builder: (context, ref, _) {
-                  final week = ref.watch(weekScheduleProvider);
-                  if (week.value != null) {
-                    debugPrint('Week schedule: ${week.value!.toJson()}');
-                  }
+                  final week = ref.watch(
+                    progressProvider.select(
+                      (value) => value.requireValue.activeWeek,
+                    ),
+                  );
+
                   return AnimatedSwitcher(
                     duration: const Duration(milliseconds: 300),
-                    child: week.when(
-                      data: (data) {
-                        if (data.isSet == false || data.isCompleted) {
-                          return WorkoutDaysPicker();
-                        }
-
-                        return WeekScheduleSummary(schedule: data);
-                      },
-                      loading: () => const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                      error: (err, stack) => Text('Error: $err'),
-                    ),
+                    child: week == null
+                        ? WorkoutDaysPicker()
+                        : WeekScheduleSummary(schedule: week),
                   );
                 },
               ),

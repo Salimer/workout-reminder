@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:workouts_reminder_flutter/features/home/presentation/state/bottom_navigation.dart';
 
 import '../../../progress/presentation/views/progress_view.dart';
 import '../../../schedule/presentation/views/schedule_view.dart';
 import '../../../settings/presentation/views/settings_view.dart';
 import 'main_view.dart';
 
-class HomeView extends StatefulWidget {
-  const HomeView({super.key, this.initialIndex = 0});
-
-  final int initialIndex;
+// ***************
+class HomeView extends ConsumerStatefulWidget {
+  const HomeView({super.key});
 
   @override
-  State<HomeView> createState() => _HomeViewState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _HomeViewState extends ConsumerState<HomeView> {
   late final PageController _pageController;
-  late int _currentIndex;
 
   static const _items = [
     BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
@@ -36,8 +35,9 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
-    _currentIndex = widget.initialIndex;
-    _pageController = PageController(initialPage: _currentIndex);
+    _pageController = PageController(
+      initialPage: ref.read(bottomNavigationProvider).currentIndex,
+    );
   }
 
   @override
@@ -48,6 +48,17 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(bottomNavigationProvider, (previous, next) {
+      if (next.shouldAnimate && previous != next) {
+        debugPrint("Animating to page: ${next.currentIndex}");
+        _pageController.animateToPage(
+          next.currentIndex,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+
     return Scaffold(
       body: SafeArea(
         child: Consumer(
@@ -55,22 +66,27 @@ class _HomeViewState extends State<HomeView> {
             return PageView(
               controller: _pageController,
               onPageChanged: (index) {
-                setState(() => _currentIndex = index);
+                ref
+                    .read(bottomNavigationProvider.notifier)
+                    .set(index: index, shouldAnimate: false);
               },
               children: _pages,
             );
           },
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        items: _items,
-        onTap: (index) {
-          if (index == _currentIndex) return;
-          _pageController.animateToPage(
-            index,
-            duration: const Duration(milliseconds: 250),
-            curve: Curves.easeInOut,
+      bottomNavigationBar: Consumer(
+        builder: (context, ref, _) {
+          return BottomNavigationBar(
+            currentIndex: ref.watch(
+              bottomNavigationProvider.select((value) => value.currentIndex),
+            ),
+            items: _items,
+            onTap: (index) {
+              ref
+                  .read(bottomNavigationProvider.notifier)
+                  .set(index: index, shouldAnimate: true);
+            },
           );
         },
       ),

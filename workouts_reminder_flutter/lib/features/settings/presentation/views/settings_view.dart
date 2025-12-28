@@ -101,12 +101,12 @@ class SettingsView extends StatelessWidget {
                         .read(notificationsSvcProvider)
                         .getPendingNotificationRequests();
 
-                    debugPrint('Pending notifications (${pending.length}):');
-                    for (final n in pending) {
-                      debugPrint(
-                        '- ID: ${n.id}, Title: ${n.title}, Body: ${n.body}, Payload: ${n.payload}',
-                      );
-                    }
+                    // debugPrint('Pending notifications (${pending.length}):');
+                    // for (final n in pending) {
+                    //   debugPrint(
+                    //     '- ID: ${n.id}, Title: ${n.title}, Body: ${n.body}, Payload: ${n.payload}',
+                    //   );
+                    // }
 
                     // debugPrint(pending.map((n) => n.toString()).join('\n'));
                   });

@@ -1,7 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/constants/enums.dart';
-import '../../schedule/presentation/state/week_schedule.dart';
+import '../../schedule/presentation/state/progress.dart';
 
 part 'workout_use_case.g.dart';
 
@@ -14,25 +14,25 @@ class WorkoutUseCase {
 
   void performWorkoutAction() {
     ref
-        .read(weekScheduleProvider.notifier)
+        .read(progressProvider.notifier)
         .setDayStatus(DayWorkoutStatusEnum.performed);
   }
 
   void skipDayWorkout() {
     ref
-        .read(weekScheduleProvider.notifier)
+        .read(progressProvider.notifier)
         .setDayStatus(DayWorkoutStatusEnum.skipped);
   }
 
   void resetDayWorkout() {
     ref
-        .read(weekScheduleProvider.notifier)
+        .read(progressProvider.notifier)
         .setDayStatus(DayWorkoutStatusEnum.pending);
   }
 
   void unScheduleDayWorkout() {
     ref
-        .read(weekScheduleProvider.notifier)
+        .read(progressProvider.notifier)
         .setDayStatus(DayWorkoutStatusEnum.notScheduled);
   }
 }

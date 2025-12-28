@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:workouts_reminder_flutter/core/providers/local_time_date.dart';
-import 'package:workouts_reminder_flutter/features/workout/use_cases/workout_use_case.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/widgets/app_card.dart';
-import '../../../schedule/presentation/state/week_schedule.dart';
+import '../../../schedule/presentation/state/progress.dart';
+import '../../../workout/use_cases/workout_use_case.dart';
+import '../../use_cases/bottom_navigation_use_case.dart';
 
 class HeroCard extends StatelessWidget {
   const HeroCard({super.key, required this.scheme});
@@ -27,12 +27,22 @@ class HeroCard extends StatelessWidget {
       ),
       child: Consumer(
         builder: (context, ref, _) {
-          final today = ref.read(localTimeDateProvider).weekday;
-          final DayWorkoutStatusEnum dayStatus = ref.watch(
-            weekScheduleProvider.select(
-              (value) => value.requireValue.days[today].status,
+          DayWorkoutStatusEnum dayStatus;
+          final activeWeek = ref.watch(
+            progressProvider.select(
+              (value) => value.requireValue.activeWeek,
             ),
           );
+          if (activeWeek != null) {
+            dayStatus = ref.watch(
+              progressProvider.select(
+                (value) => value.requireValue.activeWeek!.getTodayStatusEnum(),
+              ),
+            );
+          } else {
+            dayStatus = DayWorkoutStatusEnum.notScheduled;
+          }
+
           final hero = _HeroContent.fromStatus(dayStatus, scheme);
           return Row(
             children: [
@@ -237,7 +247,7 @@ class _HeroContent {
           accent: scheme.tertiary,
           showCta: true,
           onPressed: (ref) {
-            ref.read(workoutUseCaseProvider).skipDayWorkout();
+            ref.read(bottomNavigationUseCaseProvider).goToProgressView();
           },
         );
     }

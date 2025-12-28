@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/constants/enums.dart';
@@ -6,6 +7,7 @@ import '../../../../core/widgets/animated_section.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../../../schedule/data/models/day_schedule_model.dart';
 import '../../../schedule/data/models/week_schedule_model.dart';
+import '../../../schedule/presentation/state/progress.dart';
 import '../../data/models/progress_model.dart';
 
 class ProgressView extends StatelessWidget {
@@ -13,64 +15,68 @@ class ProgressView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = ProgressModel.init();
     final scheme = Theme.of(context).colorScheme;
-    final monthGroups = _groupWeeksByMonth(progress.weeks);
-    final items = _buildProgressItems(monthGroups);
 
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ListView.builder(
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            final item = items[index];
-            Widget child;
-            switch (item.type) {
-              case _ProgressItemType.hero:
-                child = _ProgressHero(scheme: scheme, progress: progress);
-                break;
-              case _ProgressItemType.highlights:
-                child = _ProgressHighlights(progress: progress);
-                break;
-              case _ProgressItemType.title:
-                child = Text(
-                  'Training calendar',
-                  style: Theme.of(context).textTheme.titleLarge,
-                );
-                break;
-              case _ProgressItemType.monthHeader:
-                child = Text(
-                  DateFormat('MMMM yyyy').format(item.month!),
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                );
-                break;
-              case _ProgressItemType.weekCard:
-                child = _WeekScheduleCard(
-                  week: item.week!,
-                  scheme: scheme,
-                );
-                break;
-              case _ProgressItemType.legend:
-                child = const _CalendarLegend();
-                break;
-              case _ProgressItemType.spacer:
-                return SizedBox(height: item.spacing);
-            }
+    return Consumer(
+      builder: (context, ref, _) {
+        // final progress = ProgressModel.init()
+        final progress = ref.watch(progressProvider).requireValue;
+        final monthGroups = _groupWeeksByMonth(progress.weeks);
+        final items = _buildProgressItems(monthGroups);
 
-            if (item.animationIndex == null) {
-              return child;
-            }
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                final item = items[index];
+                Widget child;
+                switch (item.type) {
+                  case _ProgressItemType.hero:
+                    child = _ProgressHero(scheme: scheme, progress: progress);
+                    break;
+                  case _ProgressItemType.highlights:
+                    child = _ProgressHighlights(progress: progress);
+                    break;
+                  case _ProgressItemType.title:
+                    child = Text(
+                      'Training calendar',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    );
+                    break;
+                  case _ProgressItemType.monthHeader:
+                    child = Text(
+                      DateFormat('MMMM yyyy').format(item.month!),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    );
+                    break;
+                  case _ProgressItemType.monthCard:
+                    child = _MonthScheduleCard(
+                      month: item.month!,
+                      weeks: item.weeks!,
+                      scheme: scheme,
+                    );
+                    break;
+                  case _ProgressItemType.spacer:
+                    return SizedBox(height: item.spacing);
+                }
 
-            return AppAnimatedSection(
-              index: item.animationIndex!,
-              child: child,
-            );
-          },
-        ),
-      ),
+                if (item.animationIndex == null) {
+                  return child;
+                }
+
+                return AppAnimatedSection(
+                  index: item.animationIndex!,
+                  child: child,
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -112,14 +118,11 @@ List<_ProgressListItem> _buildProgressItems(List<_MonthGroup> groups) {
   for (final group in groups) {
     items.add(_ProgressListItem.monthHeader(group.month, animationIndex++));
     items.add(const _ProgressListItem.spacer(8));
-    for (final week in group.weeks) {
-      items.add(_ProgressListItem.weekCard(week, animationIndex++));
-      items.add(const _ProgressListItem.spacer(12));
-    }
+    items.add(
+      _ProgressListItem.monthCard(group.month, group.weeks, animationIndex++),
+    );
+    items.add(const _ProgressListItem.spacer(16));
   }
-
-  items.add(const _ProgressListItem.spacer(8));
-  items.add(_ProgressListItem.legend(animationIndex++));
 
   return items;
 }
@@ -129,8 +132,7 @@ enum _ProgressItemType {
   highlights,
   title,
   monthHeader,
-  weekCard,
-  legend,
+  monthCard,
   spacer,
 }
 
@@ -138,14 +140,14 @@ class _ProgressListItem {
   final _ProgressItemType type;
   final int? animationIndex;
   final DateTime? month;
-  final WeekScheduleModel? week;
+  final List<WeekScheduleModel>? weeks;
   final double? spacing;
 
   const _ProgressListItem._({
     required this.type,
     this.animationIndex,
     this.month,
-    this.week,
+    this.weeks,
     this.spacing,
   });
 
@@ -174,18 +176,15 @@ class _ProgressListItem {
     month: month,
   );
 
-  factory _ProgressListItem.weekCard(
-    WeekScheduleModel week,
+  factory _ProgressListItem.monthCard(
+    DateTime month,
+    List<WeekScheduleModel> weeks,
     int animationIndex,
   ) => _ProgressListItem._(
-    type: _ProgressItemType.weekCard,
+    type: _ProgressItemType.monthCard,
     animationIndex: animationIndex,
-    week: week,
-  );
-
-  factory _ProgressListItem.legend(int animationIndex) => _ProgressListItem._(
-    type: _ProgressItemType.legend,
-    animationIndex: animationIndex,
+    month: month,
+    weeks: weeks,
   );
 
   const _ProgressListItem.spacer(double spacing)
@@ -399,15 +398,25 @@ class _StatTile extends StatelessWidget {
   }
 }
 
-class _WeekScheduleCard extends StatelessWidget {
-  const _WeekScheduleCard({required this.week, required this.scheme});
+class _MonthScheduleCard extends StatelessWidget {
+  const _MonthScheduleCard({
+    required this.month,
+    required this.weeks,
+    required this.scheme,
+  });
 
-  final WeekScheduleModel week;
+  final DateTime month;
+  final List<WeekScheduleModel> weeks;
   final ColorScheme scheme;
 
   @override
   Widget build(BuildContext context) {
-    final rangeText = _formatRange(week.createdAt, week.deadline);
+    final scheduledWeeks = weeks.where((week) => week.isSet).toList();
+    final inactiveWeeks = weeks.where((week) => !week.isSet).toList();
+    final orderedWeeks = [...scheduledWeeks, ...inactiveWeeks];
+    final scheduledCount = scheduledWeeks.length;
+    final totalCount = weeks.length;
+
     return AppCard(
       padding: const EdgeInsets.all(16),
       borderRadius: BorderRadius.circular(18),
@@ -428,14 +437,14 @@ class _WeekScheduleCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      week.note,
+                      DateFormat('MMMM').format(month),
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      rangeText,
+                      '$scheduledCount of $totalCount weeks scheduled',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: scheme.onSurface.withValues(alpha: 0.65),
                       ),
@@ -443,35 +452,23 @@ class _WeekScheduleCard extends StatelessWidget {
                   ],
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: week.isCompleted
-                      ? Colors.green.withValues(alpha: 0.15)
-                      : scheme.primary.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: Text(
-                  week.isCompleted ? 'Completed' : 'Active',
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: week.isCompleted ? Colors.green : scheme.primary,
-                  ),
-                ),
+              _MonthStatusPill(
+                scheduledCount: scheduledCount,
+                totalCount: totalCount,
+                scheme: scheme,
               ),
             ],
           ),
           const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: week.days
+          const _InlineLegend(),
+          const SizedBox(height: 12),
+          Column(
+            children: orderedWeeks
                 .map(
-                  (day) => _DayChip(
-                    day: day,
+                  (week) => _WeekMiniRow(
+                    week: week,
                     scheme: scheme,
+                    isFaded: !week.isSet,
                   ),
                 )
                 .toList(),
@@ -482,8 +479,109 @@ class _WeekScheduleCard extends StatelessWidget {
   }
 }
 
-class _DayChip extends StatelessWidget {
-  const _DayChip({required this.day, required this.scheme});
+class _MonthStatusPill extends StatelessWidget {
+  const _MonthStatusPill({
+    required this.scheduledCount,
+    required this.totalCount,
+    required this.scheme,
+  });
+
+  final int scheduledCount;
+  final int totalCount;
+  final ColorScheme scheme;
+
+  @override
+  Widget build(BuildContext context) {
+    final isFullyScheduled = scheduledCount == totalCount && totalCount > 0;
+    final color = isFullyScheduled ? Colors.green : scheme.primary;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        isFullyScheduled ? 'Locked in' : 'In progress',
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+          color: color,
+        ),
+      ),
+    );
+  }
+}
+
+class _WeekMiniRow extends StatelessWidget {
+  const _WeekMiniRow({
+    required this.week,
+    required this.scheme,
+    required this.isFaded,
+  });
+
+  final WeekScheduleModel week;
+  final ColorScheme scheme;
+  final bool isFaded;
+
+  @override
+  Widget build(BuildContext context) {
+    final rangeText = _formatRange(week.createdAt, week.deadline);
+    final opacity = isFaded ? 0.45 : 1.0;
+    final scheduledDays = week.days
+        .where((day) => day.status != DayWorkoutStatusEnum.notScheduled)
+        .length;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Opacity(
+        opacity: opacity,
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    week.note,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    rangeText,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: scheme.onSurface.withValues(alpha: 0.6),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: scheme.surfaceContainerHighest.withValues(alpha: 0.6),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                '$scheduledDays/7',
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Row(
+              children: week.days
+                  .map((day) => _DayDot(day: day, scheme: scheme))
+                  .toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DayDot extends StatelessWidget {
+  const _DayDot({required this.day, required this.scheme});
 
   final DayScheduleModel day;
   final ColorScheme scheme;
@@ -492,41 +590,35 @@ class _DayChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final style = _DayStyle.fromStatus(day.status, scheme);
     final bool isCompleted = day.status == DayWorkoutStatusEnum.performed;
-    return Container(
-      width: 46,
-      height: 58,
-      decoration: BoxDecoration(
-        color: style.background,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: style.border),
-      ),
+    return Padding(
+      padding: const EdgeInsets.only(left: 4),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            day.day.day.substring(0, 3).toUpperCase(),
+            day.day.day.substring(0, 1).toUpperCase(),
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              fontWeight: FontWeight.w700,
-              color: style.text,
+              fontSize: 9,
+              fontWeight: FontWeight.w600,
+              color: scheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           Container(
-            height: 16,
-            width: 16,
+            width: 14,
+            height: 14,
             decoration: BoxDecoration(
-              color: isCompleted ? style.accent : Colors.transparent,
+              color: isCompleted ? style.accent : style.background,
               shape: BoxShape.circle,
               border: Border.all(
-                color: style.accent,
-                width: isCompleted ? 0 : 2,
+                color: isCompleted ? style.accent : style.border,
               ),
             ),
             child: isCompleted
-                ? Icon(
+                ? const Icon(
                     Icons.check,
                     size: 10,
-                    color: scheme.onPrimary,
+                    color: Colors.white,
                   )
                 : null,
           ),
@@ -556,10 +648,10 @@ class _DayStyle {
     switch (status) {
       case DayWorkoutStatusEnum.performed:
         return _DayStyle(
-          background: Colors.green.withValues(alpha: 0.15),
-          border: Colors.green.withValues(alpha: 0.3),
-          text: Colors.green.shade800,
-          accent: Colors.green,
+          background: const Color(0xFF12B76A).withValues(alpha: 0.2),
+          border: const Color(0xFF12B76A).withValues(alpha: 0.45),
+          text: const Color(0xFF0B7A4B),
+          accent: const Color(0xFF12B76A),
         );
       case DayWorkoutStatusEnum.skipped:
         return _DayStyle(
@@ -570,10 +662,10 @@ class _DayStyle {
         );
       case DayWorkoutStatusEnum.pending:
         return _DayStyle(
-          background: scheme.primary.withValues(alpha: 0.12),
-          border: scheme.primary.withValues(alpha: 0.3),
-          text: scheme.primary,
-          accent: scheme.primary,
+          background: const Color(0xFF3B82F6).withValues(alpha: 0.16),
+          border: const Color(0xFF3B82F6).withValues(alpha: 0.45),
+          text: const Color(0xFF1D4ED8),
+          accent: const Color(0xFF3B82F6),
         );
       case DayWorkoutStatusEnum.notScheduled:
         return _DayStyle(
@@ -586,31 +678,31 @@ class _DayStyle {
   }
 }
 
-class _CalendarLegend extends StatelessWidget {
-  const _CalendarLegend();
+class _InlineLegend extends StatelessWidget {
+  const _InlineLegend();
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Wrap(
-      spacing: 12,
+      spacing: 10,
       runSpacing: 8,
       children: [
         _LegendItem(
-          label: 'Scheduled (ring)',
-          color: scheme.primary,
-        ),
-        _LegendItem(
-          label: 'Rest',
-          color: scheme.onSurface.withValues(alpha: 0.45),
+          label: 'Scheduled',
+          color: const Color(0xFF3B82F6),
         ),
         const _LegendItem(
-          label: 'Completed (check)',
-          color: Colors.green,
+          label: 'Completed',
+          color: Color(0xFF12B76A),
         ),
         const _LegendItem(
           label: 'Skipped',
           color: Colors.red,
+        ),
+        _LegendItem(
+          label: 'Rest',
+          color: scheme.onSurface.withValues(alpha: 0.45),
         ),
       ],
     );
