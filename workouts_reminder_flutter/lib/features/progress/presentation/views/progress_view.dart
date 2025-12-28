@@ -524,6 +524,10 @@ class _WeekMiniRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final isActiveWeek =
+        !now.isBefore(week.createdAt) && !now.isAfter(week.deadline);
+    final todayEnum = WeekdayEnum.values[now.weekday - 1];
     final rangeText = _formatRange(week.createdAt, week.deadline);
     final opacity = isFaded ? 0.45 : 1.0;
     final scheduledDays = week.days
@@ -570,7 +574,13 @@ class _WeekMiniRow extends StatelessWidget {
             const SizedBox(width: 8),
             Row(
               children: week.days
-                  .map((day) => _DayDot(day: day, scheme: scheme))
+                  .map(
+                    (day) => _DayDot(
+                      day: day,
+                      scheme: scheme,
+                      isToday: isActiveWeek && day.day == todayEnum,
+                    ),
+                  )
                   .toList(),
             ),
           ],
@@ -581,15 +591,22 @@ class _WeekMiniRow extends StatelessWidget {
 }
 
 class _DayDot extends StatelessWidget {
-  const _DayDot({required this.day, required this.scheme});
+  const _DayDot({
+    required this.day,
+    required this.scheme,
+    required this.isToday,
+  });
 
   final DayScheduleModel day;
   final ColorScheme scheme;
+  final bool isToday;
 
   @override
   Widget build(BuildContext context) {
     final style = _DayStyle.fromStatus(day.status, scheme);
     final bool isCompleted = day.status == DayWorkoutStatusEnum.performed;
+    final ringColor =
+        isToday ? const Color(0xFF7C3AED) : Colors.transparent;
     return Padding(
       padding: const EdgeInsets.only(left: 4),
       child: Column(
@@ -611,7 +628,12 @@ class _DayDot extends StatelessWidget {
               color: isCompleted ? style.accent : style.background,
               shape: BoxShape.circle,
               border: Border.all(
-                color: isCompleted ? style.accent : style.border,
+                color: isToday
+                    ? ringColor
+                    : isCompleted
+                        ? style.accent
+                        : style.border,
+                width: isToday ? 2 : 1,
               ),
             ),
             child: isCompleted

@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart' show debugPrint;
 import 'package:flutter_riverpod/experimental/persist.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:workouts_reminder_flutter/features/schedule/data/models/week_schedule_model.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/local_storage.dart';
 import '../../../progress/data/models/progress_model.dart';
+import '../../data/models/week_schedule_model.dart';
 
 part 'progress.g.dart';
 
@@ -44,7 +44,7 @@ class Progress extends _$Progress {
     return true;
   }
 
-  void setDayStatus(DayWorkoutStatusEnum status) {
+  void setTodayStatus(DayWorkoutStatusEnum status) {
     debugPrint('Setting today status to: $status');
     final currentState = state.requireValue;
     final updatedState = currentState.setTodayStatusOfActiveWeek(

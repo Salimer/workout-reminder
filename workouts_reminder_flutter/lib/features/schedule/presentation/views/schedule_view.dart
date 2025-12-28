@@ -94,7 +94,7 @@ class ScheduleView extends StatelessWidget {
                   return AnimatedSwitcher(
                     duration: const Duration(milliseconds: 300),
                     child: week == null
-                        ? WorkoutDaysPicker()
+                        ? const WorkoutDaysPicker()
                         : WeekScheduleSummary(schedule: week),
                   );
                 },

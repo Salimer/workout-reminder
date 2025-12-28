@@ -12,27 +12,27 @@ class WorkoutUseCase {
   final Ref ref;
   WorkoutUseCase(this.ref);
 
-  void performWorkoutAction() {
+  void performTodayWorkout() {
     ref
         .read(progressProvider.notifier)
-        .setDayStatus(DayWorkoutStatusEnum.performed);
+        .setTodayStatus(DayWorkoutStatusEnum.performed);
   }
 
-  void skipDayWorkout() {
+  void skipTodayWorkout() {
     ref
         .read(progressProvider.notifier)
-        .setDayStatus(DayWorkoutStatusEnum.skipped);
+        .setTodayStatus(DayWorkoutStatusEnum.skipped);
   }
 
-  void resetDayWorkout() {
+  void resetTodayWorkout() {
     ref
         .read(progressProvider.notifier)
-        .setDayStatus(DayWorkoutStatusEnum.pending);
+        .setTodayStatus(DayWorkoutStatusEnum.pending);
   }
 
-  void unScheduleDayWorkout() {
+  void unScheduleTodayWorkout() {
     ref
         .read(progressProvider.notifier)
-        .setDayStatus(DayWorkoutStatusEnum.notScheduled);
+        .setTodayStatus(DayWorkoutStatusEnum.notScheduled);
   }
 }

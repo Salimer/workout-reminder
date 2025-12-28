@@ -15,12 +15,18 @@ class BottomNavigationUseCase {
   void goToProgressView() {
     ref
         .read(bottomNavigationProvider.notifier)
-        .set(index: 2, shouldAnimate: true);
+        .set(index: 1, shouldAnimate: true);
   }
 
   void goToScheduleView() {
     ref
         .read(bottomNavigationProvider.notifier)
-        .set(index: 1, shouldAnimate: true);
+        .set(index: 2, shouldAnimate: true);
+  }
+
+  void goToMainView() {
+    ref
+        .read(bottomNavigationProvider.notifier)
+        .set(index: 0, shouldAnimate: true);
   }
 }

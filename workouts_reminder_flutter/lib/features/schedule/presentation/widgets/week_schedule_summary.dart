@@ -108,7 +108,7 @@ class WeekScheduleSummary extends StatelessWidget {
                           ),
                           Consumer(
                             builder: (context, ref, _) {
-                              ref.listen(clearWeekPlan, (_, state) {
+                              ref.listen(clearWeekPlanMutation, (_, state) {
                                 if (state.isSuccess) {
                                   if (context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -134,13 +134,8 @@ class WeekScheduleSummary extends StatelessWidget {
                               return FilledButton(
                                 onPressed: () {
                                   Navigator.of(dialogContext).pop();
-                                  final mutation = clearWeekPlan;
+                                  final mutation = clearWeekPlanMutation;
                                   mutation.run(ref, (tsx) async {
-                                    await Future.delayed(
-                                      const Duration(
-                                        seconds: 4,
-                                      ),
-                                    ); // Allow UI to update before starting mutation
                                     await tsx
                                         .get(scheduleUseCaseProvider)
                                         .clearWeekPlan();
@@ -156,7 +151,7 @@ class WeekScheduleSummary extends StatelessWidget {
                   },
                   icon: Consumer(
                     builder: (context, ref, _) {
-                      final mutation = clearWeekPlan;
+                      final mutation = clearWeekPlanMutation;
                       final state = ref.watch(mutation);
                       return AnimatedSwitcher(
                         duration: const Duration(milliseconds: 250),
@@ -168,7 +163,7 @@ class WeekScheduleSummary extends StatelessWidget {
                   ),
                   label: Consumer(
                     builder: (context, ref, _) {
-                      final mutation = clearWeekPlan;
+                      final mutation = clearWeekPlanMutation;
                       final state = ref.watch(mutation);
                       if (state.isPending) {
                         return const SizedBox(

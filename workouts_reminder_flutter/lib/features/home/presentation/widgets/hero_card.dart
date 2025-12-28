@@ -202,7 +202,7 @@ class _HeroContent {
           accent: Colors.green,
           showCta: true,
           onPressed: (ref) {
-            ref.read(workoutUseCaseProvider).unScheduleDayWorkout();
+            ref.read(bottomNavigationUseCaseProvider).goToProgressView();
           },
         );
       case DayWorkoutStatusEnum.skipped:
@@ -217,7 +217,7 @@ class _HeroContent {
           accent: Colors.orange,
           showCta: true,
           onPressed: (ref) {
-            ref.read(workoutUseCaseProvider).resetDayWorkout();
+            ref.read(workoutUseCaseProvider).resetTodayWorkout();
           },
         );
       case DayWorkoutStatusEnum.pending:
@@ -232,7 +232,7 @@ class _HeroContent {
           accent: scheme.primary,
           showCta: true,
           onPressed: (ref) {
-            ref.read(workoutUseCaseProvider).performWorkoutAction();
+            ref.read(workoutUseCaseProvider).performTodayWorkout();
           },
         );
       case DayWorkoutStatusEnum.notScheduled:
@@ -242,13 +242,11 @@ class _HeroContent {
           title: 'Recharge and refuel',
           subtitle: 'Today is open. Use the energy for a reset or mobility.',
           emoji: '🧘‍♂️',
-          ctaLabel: 'Plan the week',
-          ctaIcon: Icons.event_available_outlined,
           accent: scheme.tertiary,
-          showCta: true,
-          onPressed: (ref) {
-            ref.read(bottomNavigationUseCaseProvider).goToProgressView();
-          },
+          showCta: false,
+          ctaLabel: '',
+          ctaIcon: Icons.event_available_outlined,
+          onPressed: null,
         );
     }
   }

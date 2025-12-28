@@ -20,13 +20,13 @@ class _SplashViewState extends ConsumerState<SplashView> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final progress = await ref.read(progressProvider.future);
 
-      await Future.delayed(const Duration(seconds: 5));
+      await Future.delayed(const Duration(seconds: 2));
 
       // If the week schedule is outdated, you can handle it here
       // For example, navigate to the schedule setup view
       // If it's valid, navigate to the main view
       if (progress.activeWeek == null) {
-        ref.read(bottomNavigationUseCaseProvider).goToProgressView();
+        ref.read(bottomNavigationUseCaseProvider).goToScheduleView();
       }
       ref
           .read(routesProvider)

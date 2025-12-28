@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/experimental/mutation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:workouts_reminder_flutter/features/home/presentation/state/bottom_navigation.dart';
+import 'package:workouts_reminder_flutter/features/home/use_cases/bottom_navigation_use_case.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/widgets/animated_section.dart';
@@ -94,25 +96,25 @@ class _WorkoutDaysPickerState extends State<WorkoutDaysPicker> {
                       }
                     });
                     return FilledButton(
-                      onPressed:
-                          _selectedDays.isNotEmpty && !state.isPending
-                              ? () async {
-                                  await scheduleWeekPlanMutation
-                                      .run(ref, (
-                                        tsx,
-                                      ) async {
-                                        await Future.delayed(
-                                          const Duration(seconds: 3),
-                                        );
-                                        await tsx
-                                            .get(
-                                              scheduleUseCaseProvider,
-                                            )
-                                            .createWeekSchedule(_selectedDays);
-                                      })
-                                      .catchError((_) {});
-                                }
-                              : null,
+                      onPressed: _selectedDays.isNotEmpty && !state.isPending
+                          ? () async {
+                              await scheduleWeekPlanMutation
+                                  .run(ref, (
+                                    tsx,
+                                  ) async {
+                                    await tsx
+                                        .get(
+                                          scheduleUseCaseProvider,
+                                        )
+                                        .createWeekSchedule(_selectedDays);
+
+                                    ref
+                                        .read(bottomNavigationUseCaseProvider)
+                                        .goToMainView();
+                                  })
+                                  .catchError((_) {});
+                            }
+                          : null,
                       child: state.isPending
                           ? const SizedBox(
                               height: 18,
