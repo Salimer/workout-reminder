@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/config/routes.dart';
-import '../../../schedule/use_cases/schedule_use_case.dart';
+import '../../../../core/use_cases/app_use_case.dart';
 import 'start_workout_slider.dart';
 
 class ActionsRow extends StatelessWidget {
@@ -22,7 +22,7 @@ class ActionsRow extends StatelessWidget {
             final mutation = changeDayWorkoutStatusMutation;
             mutation
                 .run(ref, (tsx) async {
-                  await ref.read(scheduleUseCaseProvider).performTodayWorkout();
+                  await ref.read(appUseCaseProvider).performTodayWorkout();
                 })
                 .catchError((_) {});
           },
@@ -52,7 +52,7 @@ class ActionsRow extends StatelessWidget {
                               mutation
                                   .run(ref, (tsx) async {
                                     await ref
-                                        .read(scheduleUseCaseProvider)
+                                        .read(appUseCaseProvider)
                                         .skipTodayWorkout();
                                   })
                                   .catchError((_) {});

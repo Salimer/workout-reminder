@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/widgets/animated_section.dart';
-import '../../use_cases/schedule_use_case.dart';
+import '../../../../core/use_cases/app_use_case.dart';
 import '../../data/models/week_schedule_model.dart';
 import '../../../notifications/data/models/notification_model.dart';
 
@@ -137,7 +137,7 @@ class WeekScheduleSummary extends StatelessWidget {
                                   final mutation = clearWeekPlanMutation;
                                   mutation.run(ref, (tsx) async {
                                     await tsx
-                                        .get(scheduleUseCaseProvider)
+                                        .get(appUseCaseProvider)
                                         .clearWeekPlan();
                                   });
                                 },

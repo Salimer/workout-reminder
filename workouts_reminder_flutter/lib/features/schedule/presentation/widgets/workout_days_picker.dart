@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/experimental/mutation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:workouts_reminder_flutter/features/home/presentation/state/bottom_navigation.dart';
+
 import 'package:workouts_reminder_flutter/features/home/use_cases/bottom_navigation_use_case.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/widgets/animated_section.dart';
-import '../../use_cases/schedule_use_case.dart';
+import '../../../../core/use_cases/app_use_case.dart';
 
 class WorkoutDaysPicker extends StatefulWidget {
   final Set<WeekdayEnum> initialSelectedDays;
@@ -104,7 +104,7 @@ class _WorkoutDaysPickerState extends State<WorkoutDaysPicker> {
                                   ) async {
                                     await tsx
                                         .get(
-                                          scheduleUseCaseProvider,
+                                          appUseCaseProvider,
                                         )
                                         .createWeekSchedule(_selectedDays);
 

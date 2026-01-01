@@ -1,20 +1,20 @@
 import 'package:flutter_riverpod/experimental/mutation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:workouts_reminder_flutter/features/workout/use_cases/workout_use_case.dart';
 
-import '../../../core/constants/enums.dart';
-import '../data/models/week_schedule_model.dart';
-import '../presentation/state/progress.dart';
-import 'notifications_use_case.dart';
+import '../../features/schedule/data/models/week_schedule_model.dart';
+import '../../features/schedule/presentation/state/progress.dart';
+import '../../features/schedule/use_cases/notifications_use_case.dart';
+import '../../features/workout/use_cases/workout_use_case.dart';
+import '../constants/enums.dart';
 
-part 'schedule_use_case.g.dart';
+part 'app_use_case.g.dart';
 
 @Riverpod(keepAlive: true)
-ScheduleUseCase scheduleUseCase(Ref ref) => ScheduleUseCase(ref);
+AppUseCase appUseCase(Ref ref) => AppUseCase(ref);
 
-class ScheduleUseCase {
+class AppUseCase {
   final Ref ref;
-  ScheduleUseCase(this.ref);
+  AppUseCase(this.ref);
 
   Future<void> createWeekSchedule(
     Set<WeekdayEnum> selectedDays,
