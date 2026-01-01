@@ -47,6 +47,16 @@ class ProgressModel {
 
   double get coverage => scheduledDays == 0 ? 0 : completedDays / scheduledDays;
 
+  // TODO: Implement real streak logic (consecutive days/weeks)
+  int get streak => weeks.fold(
+    0,
+    (sum, week) =>
+        sum +
+        week.days
+            .where((day) => day.status == DayWorkoutStatusEnum.performed)
+            .length,
+  );
+
   ProgressModel? setTodayStatusOfActiveWeek(DayWorkoutStatusEnum status) {
     final week = activeWeek;
     if (week == null) return null;

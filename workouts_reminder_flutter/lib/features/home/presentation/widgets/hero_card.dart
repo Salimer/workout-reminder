@@ -127,6 +127,19 @@ class HeroCard extends StatelessWidget {
                         ),
                       ),
                     ],
+                    if (hero.secondaryAction != null) ...[
+                      const SizedBox(height: 8),
+                      TextButton(
+                        onPressed: () => hero.secondaryAction!(ref, context),
+                        style: TextButton.styleFrom(
+                          foregroundColor: scheme.error,
+                        ),
+                        child: Text(
+                          hero.secondaryActionLabel ?? '',
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -171,6 +184,8 @@ class _HeroContent {
   final Color accent;
   final bool showCta;
   final void Function(WidgetRef ref)? onPressed;
+  final String? secondaryActionLabel;
+  final void Function(WidgetRef ref, BuildContext context)? secondaryAction;
 
   const _HeroContent({
     required this.pillLabel,
@@ -183,6 +198,8 @@ class _HeroContent {
     required this.accent,
     required this.showCta,
     required this.onPressed,
+    this.secondaryActionLabel,
+    this.secondaryAction,
   });
 
   factory _HeroContent.fromStatus(
@@ -233,6 +250,29 @@ class _HeroContent {
           showCta: true,
           onPressed: (ref) {
             ref.read(workoutUseCaseProvider).performTodayWorkout();
+          },
+          secondaryActionLabel: 'Skip today',
+          secondaryAction: (ref, context) {
+            showDialog<void>(
+              context: context,
+              builder: (_) => AlertDialog(
+                title: const Text('Hey chill buddy!!!'),
+                content: const Text('Why are we skipping today?'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Back'),
+                  ),
+                  FilledButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      ref.read(workoutUseCaseProvider).skipTodayWorkout();
+                    },
+                    child: const Text('Skip today'),
+                  ),
+                ],
+              ),
+            );
           },
         );
       case DayWorkoutStatusEnum.notScheduled:

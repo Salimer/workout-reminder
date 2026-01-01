@@ -1,18 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../../core/widgets/animated_section.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../../use_cases/profile_use_case.dart';
 import '../state/profile_state.dart';
 
-class ProfileView extends ConsumerWidget {
+class ProfileView extends ConsumerStatefulWidget {
   const ProfileView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ProfileView> createState() => _ProfileViewState();
+}
+
+class _ProfileViewState extends ConsumerState<ProfileView> {
+  late TextEditingController _motivationController;
+  late TextEditingController _goalController;
+  bool _isInit = true;
+
+  final List<String> _suggestedGoals = [
+    'Lose fat',
+    'Build muscle',
+    'Better energy',
+    'Stay consistent',
+    'Improve health',
+    'Increase flexibility',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _motivationController = TextEditingController();
+    _goalController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _motivationController.dispose();
+    _goalController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final profileAsync = ref.watch(profileStateProvider);
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+
+    // Initialize controller text once when data is first loaded
+    if (_isInit && profileAsync.hasValue) {
+      _motivationController.text = profileAsync.value?.motivation ?? '';
+      _isInit = false;
+    }
 
     return Scaffold(
       body: SafeArea(
@@ -65,7 +104,9 @@ class ProfileView extends ConsumerWidget {
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: scheme.primary.withValues(alpha: 0.15),
+                                color: scheme.primary.withValues(
+                                  alpha: 0.15,
+                                ),
                                 blurRadius: 20,
                                 offset: const Offset(0, 10),
                               ),
@@ -101,27 +142,47 @@ class ProfileView extends ConsumerWidget {
                         ),
                         const SizedBox(height: 12),
                         TextField(
-                          controller: TextEditingController(
-                            text: profile.motivation,
-                          ),
+                          controller: _motivationController,
+                          maxLines: null,
+                          minLines: 3,
+                          keyboardType: TextInputType.multiline,
                           decoration: InputDecoration(
                             hintText: 'e.g., "To keep up with my kids"',
                             filled: true,
                             fillColor: scheme.surfaceContainerHighest
-                                .withValues(
-                                  alpha: 0.3,
-                                ),
+                                .withValues(alpha: 0.3),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide.none,
                             ),
-                            prefixIcon: const Icon(Icons.psychology_outlined),
+                            alignLabelWithHint: true,
+                            prefixIcon: Padding(
+                              padding: const EdgeInsets.only(bottom: 48),
+                              child: const Icon(Icons.psychology_outlined),
+                            ),
                           ),
-                          onSubmitted: (value) {
-                            ref
-                                .read(profileUseCaseProvider.notifier)
-                                .updateMotivation(value);
-                          },
+                        ),
+                        const SizedBox(height: 12),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: FilledButton.icon(
+                            onPressed: () {
+                              ref
+                                  .read(profileUseCaseProvider.notifier)
+                                  .updateMotivation(
+                                    _motivationController.text.trim(),
+                                  );
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Motivation saved!'),
+                                  behavior: SnackBarBehavior.floating,
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.check, size: 18),
+                            label: const Text('Save'),
+                          ),
                         ),
                       ],
                     ),
@@ -137,7 +198,7 @@ class ProfileView extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Goals',
+                          'Experience Level',
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -147,45 +208,153 @@ class ProfileView extends ConsumerWidget {
                           spacing: 8,
                           runSpacing: 8,
                           children: [
-                            _GoalChip(
-                              label: 'Lose fat',
-                              isSelected: profile.goals.contains('Lose fat'),
-                              onToggle: (selected) =>
-                                  _toggleGoal(ref, profile.goals, 'Lose fat'),
+                            for (final level in [
+                              'Beginner',
+                              'Intermediate',
+                              'Advanced',
+                            ])
+                              _SelectableChip(
+                                label: level,
+                                isSelected: profile.fitnessLevel == level,
+                                onToggle: (_) => ref
+                                    .read(
+                                      profileUseCaseProvider.notifier,
+                                    )
+                                    .updateFitnessLevel(level),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                AppAnimatedSection(
+                  index: 3,
+                  child: AppCard(
+                    padding: const EdgeInsets.all(16),
+                    borderRadius: BorderRadius.circular(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Coach Persona',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'How should the AI talk to you?',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: scheme.onSurface.withValues(alpha: 0.6),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            for (final tone in [
+                              'Friendly',
+                              'Tough',
+                              'Funny',
+                            ])
+                              _SelectableChip(
+                                label: tone,
+                                isSelected: profile.notificationTone == tone,
+                                onToggle: (_) => ref
+                                    .read(
+                                      profileUseCaseProvider.notifier,
+                                    )
+                                    .updateNotificationTone(tone),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                AppAnimatedSection(
+                  index: 4,
+                  child: AppCard(
+                    padding: const EdgeInsets.all(16),
+                    borderRadius: BorderRadius.circular(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Goals',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        // Add Custom Goal Input
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: _goalController,
+                                decoration: InputDecoration(
+                                  hintText: 'Add custom goal...',
+                                  filled: true,
+                                  fillColor: scheme.surfaceContainerHighest
+                                      .withValues(alpha: 0.3),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  isDense: true,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                ),
+                                onSubmitted: (_) =>
+                                    _addCustomGoal(profile.goals),
+                              ),
                             ),
-                            _GoalChip(
-                              label: 'Build muscle',
-                              isSelected: profile.goals.contains(
-                                'Build muscle',
-                              ),
-                              onToggle: (selected) => _toggleGoal(
-                                ref,
-                                profile.goals,
-                                'Build muscle',
-                              ),
+                            const SizedBox(width: 8),
+                            IconButton.filled(
+                              onPressed: () => _addCustomGoal(profile.goals),
+                              icon: const Icon(Icons.add),
                             ),
-                            _GoalChip(
-                              label: 'Better energy',
-                              isSelected: profile.goals.contains(
-                                'Better energy',
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        // Display Current Goals
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            // Suggested goals (if not already in profile.goals, they are just togglable)
+                            for (final suggested in _suggestedGoals)
+                              _SelectableChip(
+                                label: suggested,
+                                isSelected: profile.goals.contains(suggested),
+                                onToggle: (_) => _toggleGoal(
+                                  ref,
+                                  profile.goals,
+                                  suggested,
+                                ),
                               ),
-                              onToggle: (selected) => _toggleGoal(
-                                ref,
-                                profile.goals,
-                                'Better energy',
+                            // Custom goals (anything in profile.goals that isn't suggested)
+                            for (final custom in profile.goals.where(
+                              (g) => !_suggestedGoals.contains(g),
+                            ))
+                              _SelectableChip(
+                                label: custom,
+                                isSelected: true,
+                                onRemove: () =>
+                                    _removeGoal(ref, profile.goals, custom),
+                                onToggle: (_) => _toggleGoal(
+                                  ref,
+                                  profile.goals,
+                                  custom,
+                                ),
                               ),
-                            ),
-                            _GoalChip(
-                              label: 'Stay consistent',
-                              isSelected: profile.goals.contains(
-                                'Stay consistent',
-                              ),
-                              onToggle: (selected) => _toggleGoal(
-                                ref,
-                                profile.goals,
-                                'Stay consistent',
-                              ),
-                            ),
                           ],
                         ),
                       ],
@@ -202,6 +371,20 @@ class ProfileView extends ConsumerWidget {
     );
   }
 
+  void _addCustomGoal(List<String> currentGoals) {
+    final goal = _goalController.text.trim();
+    if (goal.isNotEmpty && !currentGoals.contains(goal)) {
+      final newGoals = [...currentGoals, goal];
+      ref.read(profileUseCaseProvider.notifier).updateGoals(newGoals);
+      _goalController.clear();
+    }
+  }
+
+  void _removeGoal(WidgetRef ref, List<String> currentGoals, String goal) {
+    final newGoals = currentGoals.where((g) => g != goal).toList();
+    ref.read(profileUseCaseProvider.notifier).updateGoals(newGoals);
+  }
+
   void _toggleGoal(WidgetRef ref, List<String> currentGoals, String goal) {
     final newGoals = List<String>.from(currentGoals);
     if (newGoals.contains(goal)) {
@@ -213,15 +396,17 @@ class ProfileView extends ConsumerWidget {
   }
 }
 
-class _GoalChip extends StatelessWidget {
+class _SelectableChip extends StatelessWidget {
   final String label;
   final bool isSelected;
   final ValueChanged<bool> onToggle;
+  final VoidCallback? onRemove;
 
-  const _GoalChip({
+  const _SelectableChip({
     required this.label,
     required this.isSelected,
     required this.onToggle,
+    this.onRemove,
   });
 
   @override
@@ -231,7 +416,7 @@ class _GoalChip extends StatelessWidget {
       onTap: () => onToggle(!isSelected),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
           color: isSelected
               ? scheme.primary.withValues(alpha: 0.15)
@@ -244,12 +429,33 @@ class _GoalChip extends StatelessWidget {
             width: 1.5,
           ),
         ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? scheme.primary : scheme.onSurface,
-            fontWeight: FontWeight.w600,
-          ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? scheme.primary : scheme.onSurface,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            if (onRemove != null) ...[
+              const SizedBox(width: 6),
+              GestureDetector(
+                onTap: () {
+                  // Prevent chip toggle when clicking X
+                  onRemove!();
+                },
+                child: Icon(
+                  Icons.close,
+                  size: 16,
+                  color: isSelected
+                      ? scheme.primary
+                      : scheme.onSurface.withValues(alpha: 0.5),
+                ),
+              ),
+            ],
+          ],
         ),
       ),
     );

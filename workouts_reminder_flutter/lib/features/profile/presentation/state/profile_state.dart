@@ -39,4 +39,16 @@ class ProfileState extends _$ProfileState {
     final updated = current.copyWith(characterName: name);
     state = AsyncValue.data(updated);
   }
+
+  void updateFitnessLevel(String level) {
+    final current = state.requireValue;
+    final updated = current.copyWith(fitnessLevel: level);
+    state = AsyncValue.data(updated);
+  }
+
+  void updateNotificationTone(String tone) {
+    final current = state.requireValue;
+    final updated = current.copyWith(notificationTone: tone);
+    state = AsyncValue.data(updated);
+  }
 }

@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../presentation/state/profile_state.dart';
@@ -20,5 +19,13 @@ class ProfileUseCase extends _$ProfileUseCase {
 
   void updateCharacterName(String name) {
     ref.read(profileStateProvider.notifier).updateCharacterName(name);
+  }
+
+  void updateFitnessLevel(String level) {
+    ref.read(profileStateProvider.notifier).updateFitnessLevel(level);
+  }
+
+  void updateNotificationTone(String tone) {
+    ref.read(profileStateProvider.notifier).updateNotificationTone(tone);
   }
 }
