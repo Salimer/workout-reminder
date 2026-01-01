@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../features/home/presentation/views/home_view.dart';
+import '../../features/profile/presentation/views/profile_view.dart';
 import '../../splash.dart';
 
 part 'routes.g.dart';
@@ -29,6 +30,18 @@ GoRouter routes(Ref ref) {
             const HomeView(),
           );
         },
+        routes: [
+          GoRoute(
+            name: AppRoutes.profile,
+            path: 'profile',
+            pageBuilder: (context, state) {
+              return _adaptivePageBuilder(
+                state,
+                const ProfileView(),
+              );
+            },
+          ),
+        ],
       ),
     ],
 
@@ -53,4 +66,5 @@ Page<void> _adaptivePageBuilder(GoRouterState state, Widget child) {
 class AppRoutes {
   static const String splash = 'splash';
   static const String home = 'home';
+  static const String profile = 'profile';
 }

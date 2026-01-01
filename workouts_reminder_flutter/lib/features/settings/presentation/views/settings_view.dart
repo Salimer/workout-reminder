@@ -5,6 +5,8 @@ import 'package:workouts_reminder_flutter/core/services/notifications_service.da
 
 import '../../../../core/providers/theme.dart' show themeProvider;
 import '../../../../core/widgets/animated_section.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../core/config/routes.dart';
 import '../../../../core/widgets/app_card.dart';
 
 class SettingsView extends StatelessWidget {
@@ -84,6 +86,34 @@ class SettingsView extends StatelessWidget {
             const SizedBox(height: 16),
             AppAnimatedSection(
               index: 1,
+              child: AppCard(
+                padding: EdgeInsets.zero,
+                borderRadius: BorderRadius.circular(16),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: scheme.primary.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.person, color: scheme.primary),
+                  ),
+                  title: const Text('My Profile'),
+                  subtitle: const Text('Goals & Motivation'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    context.goNamed(AppRoutes.profile);
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            AppAnimatedSection(
+              index: 3,
               child: Text(
                 'Appearance',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -93,7 +123,7 @@ class SettingsView extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             AppAnimatedSection(
-              index: 2,
+              index: 4,
               child: Consumer(
                 builder: (context, ref, _) {
                   WidgetsBinding.instance.addPostFrameCallback((_) async {
