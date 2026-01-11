@@ -5,11 +5,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/providers/local_storage.dart';
 import '../../data/models/user_profile_model.dart';
-import '../../use_cases/profile_use_case.dart';
 
 part 'profile_state.g.dart';
 
-@Riverpod(keepAlive: true)
+@Riverpod(keepAlive: false)
 class ProfileState extends _$ProfileState {
   @override
   FutureOr<UserProfileModel> build() async {

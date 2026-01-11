@@ -5,6 +5,7 @@ import '../../../../core/widgets/animated_section.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../../use_cases/profile_use_case.dart';
 import '../state/profile_state.dart';
+import '../widgets/selectable_chip.dart';
 
 class ProfileView extends ConsumerStatefulWidget {
   const ProfileView({super.key});
@@ -213,7 +214,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                               'Intermediate',
                               'Advanced',
                             ])
-                              _SelectableChip(
+                              SelectableChip(
                                 label: level,
                                 isSelected: profile.fitnessLevel == level,
                                 onToggle: (_) => ref
@@ -260,7 +261,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                               'Tough',
                               'Funny',
                             ])
-                              _SelectableChip(
+                              SelectableChip(
                                 label: tone,
                                 isSelected: profile.notificationTone == tone,
                                 onToggle: (_) => ref
@@ -331,7 +332,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                           children: [
                             // Suggested goals (if not already in profile.goals, they are just togglable)
                             for (final suggested in _suggestedGoals)
-                              _SelectableChip(
+                              SelectableChip(
                                 label: suggested,
                                 isSelected: profile.goals.contains(suggested),
                                 onToggle: (_) => _toggleGoal(
@@ -344,7 +345,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                             for (final custom in profile.goals.where(
                               (g) => !_suggestedGoals.contains(g),
                             ))
-                              _SelectableChip(
+                              SelectableChip(
                                 label: custom,
                                 isSelected: true,
                                 onRemove: () =>
@@ -393,71 +394,5 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
       newGoals.add(goal);
     }
     ref.read(profileUseCaseProvider.notifier).updateGoals(newGoals);
-  }
-}
-
-class _SelectableChip extends StatelessWidget {
-  final String label;
-  final bool isSelected;
-  final ValueChanged<bool> onToggle;
-  final VoidCallback? onRemove;
-
-  const _SelectableChip({
-    required this.label,
-    required this.isSelected,
-    required this.onToggle,
-    this.onRemove,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return GestureDetector(
-      onTap: () => onToggle(!isSelected),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? scheme.primary.withValues(alpha: 0.15)
-              : scheme.surfaceContainerHighest.withValues(alpha: 0.5),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected
-                ? scheme.primary.withValues(alpha: 0.5)
-                : Colors.transparent,
-            width: 1.5,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                color: isSelected ? scheme.primary : scheme.onSurface,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            if (onRemove != null) ...[
-              const SizedBox(width: 6),
-              GestureDetector(
-                onTap: () {
-                  // Prevent chip toggle when clicking X
-                  onRemove!();
-                },
-                child: Icon(
-                  Icons.close,
-                  size: 16,
-                  color: isSelected
-                      ? scheme.primary
-                      : scheme.onSurface.withValues(alpha: 0.5),
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
   }
 }

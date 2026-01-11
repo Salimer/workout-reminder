@@ -47,10 +47,6 @@ class HomeHeader extends ConsumerWidget {
             decoration: BoxDecoration(
               color: scheme.primaryContainer,
               shape: BoxShape.circle,
-              image: const DecorationImage(
-                image: AssetImage('assets/images/user_avatar_placeholder.png'),
-                fit: BoxFit.cover,
-              ),
             ),
             child: const Icon(Icons.person), // Fallback
           ),
