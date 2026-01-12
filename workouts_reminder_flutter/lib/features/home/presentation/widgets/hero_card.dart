@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:workouts_reminder_flutter/core/config/routes.dart';
 
 import '../../../../core/constants/enums.dart';
+import '../../../../core/use_cases/app_use_case.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../../../schedule/presentation/state/progress.dart';
-import '../../../workout/use_cases/workout_use_case.dart';
 import '../../use_cases/bottom_navigation_use_case.dart';
 
 class HeroCard extends StatelessWidget {
@@ -221,6 +222,31 @@ class _HeroContent {
           onPressed: (ref) {
             ref.read(bottomNavigationUseCaseProvider).goToProgressView();
           },
+          secondaryActionLabel: 'Reset workout',
+          secondaryAction: (ref, context) {
+            showDialog<void>(
+              context: context,
+              builder: (_) => AlertDialog(
+                title: const Text('Reset workout?'),
+                content: const Text(
+                  'Are you sure you want to reset today\'s workout?',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Cancel'),
+                  ),
+                  FilledButton(
+                    onPressed: () {
+                      ref.read(routesProvider).pop();
+                      ref.read(appUseCaseProvider).resetTodayWorkout();
+                    },
+                    child: const Text('Reset'),
+                  ),
+                ],
+              ),
+            );
+          },
         );
       case DayWorkoutStatusEnum.skipped:
         return _HeroContent(
@@ -234,7 +260,7 @@ class _HeroContent {
           accent: Colors.orange,
           showCta: true,
           onPressed: (ref) {
-            ref.read(workoutUseCaseProvider).resetTodayWorkout();
+            ref.read(appUseCaseProvider).resetTodayWorkout();
           },
         );
       case DayWorkoutStatusEnum.pending:
@@ -249,7 +275,7 @@ class _HeroContent {
           accent: scheme.primary,
           showCta: true,
           onPressed: (ref) {
-            ref.read(workoutUseCaseProvider).performTodayWorkout();
+            ref.read(appUseCaseProvider).performTodayWorkout();
           },
           secondaryActionLabel: 'Skip today',
           secondaryAction: (ref, context) {
@@ -265,8 +291,8 @@ class _HeroContent {
                   ),
                   FilledButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
-                      ref.read(workoutUseCaseProvider).skipTodayWorkout();
+                      ref.read(routesProvider).pop();
+                      ref.read(appUseCaseProvider).skipTodayWorkout();
                     },
                     child: const Text('Skip today'),
                   ),

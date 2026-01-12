@@ -21,7 +21,7 @@ class WeekMiniRow extends StatelessWidget {
     final now = DateTime.now();
     final isActiveWeek =
         !now.isBefore(week.createdAt) && !now.isAfter(week.deadline);
-    final todayEnum = WeekdayEnum.values[now.weekday - 1];
+    final todayEnum = WeekdayEnum.fromDateTimeWeekday(now.weekday);
     final rangeText = _formatRange(week.createdAt, week.deadline);
     final opacity = isFaded ? 0.45 : 1.0;
     final scheduledDays = week.days

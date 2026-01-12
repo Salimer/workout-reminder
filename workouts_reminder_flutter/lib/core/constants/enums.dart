@@ -18,6 +18,10 @@ enum WeekdayEnum {
     );
   }
 
+  static WeekdayEnum fromDateTimeWeekday(int weekday) {
+    return WeekdayEnum.values[weekday - 1];
+  }
+
   @override
   String toString() => day;
 }

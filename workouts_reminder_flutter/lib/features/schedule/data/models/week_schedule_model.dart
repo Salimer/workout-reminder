@@ -15,7 +15,7 @@ class WeekScheduleModel {
 
   List<int> get todayNotificationIds {
     final today = DateTime.now().weekday;
-    return notificationIdsForDay(WeekdayEnum.values[today - 1]);
+    return notificationIdsForDay(WeekdayEnum.fromDateTimeWeekday(today));
   }
 
   List<int> notificationIdsForDay(WeekdayEnum day) {
@@ -26,12 +26,12 @@ class WeekScheduleModel {
 
   WeekdayEnum get todayEnum {
     final today = DateTime.now().weekday;
-    return WeekdayEnum.values[today - 1];
+    return WeekdayEnum.fromDateTimeWeekday(today);
   }
 
   WeekScheduleModel setTodayStatusEnum(DayWorkoutStatusEnum status) {
     final today = DateTime.now().weekday;
-    return setDayStatus(WeekdayEnum.values[today - 1], status);
+    return setDayStatus(WeekdayEnum.fromDateTimeWeekday(today), status);
   }
 
   WeekScheduleModel setDayStatus(WeekdayEnum day, DayWorkoutStatusEnum status) {

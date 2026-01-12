@@ -47,6 +47,11 @@ class AppUseCase {
     ref.read(workoutUseCaseProvider).performTodayWorkout();
     await ref.read(notificationsUseCaseProvider).clearTodayNotifications();
   }
+
+  Future<void> resetTodayWorkout() async {
+    ref.read(workoutUseCaseProvider).resetTodayWorkout();
+    await ref.read(notificationsUseCaseProvider).enableTodayNotifications();
+  }
 }
 
 final scheduleWeekPlanMutation = Mutation<void>(

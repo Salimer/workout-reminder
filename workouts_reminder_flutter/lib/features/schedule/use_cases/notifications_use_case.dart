@@ -63,6 +63,18 @@ class NotificationsUseCase {
     }
   }
 
+  Future<void> clearTodayNotifications() async {
+    final weekday = ref.read(localTimeDateProvider).weekday;
+    final todayEnum = WeekdayEnum.fromDateTimeWeekday(weekday);
+    await _clearDayNotifications(todayEnum);
+  }
+
+  Future<void> enableTodayNotifications() async {
+    final weekday = ref.read(localTimeDateProvider).weekday;
+    final todayEnum = WeekdayEnum.fromDateTimeWeekday(weekday);
+    await _enableDayNotifications(todayEnum);
+  }
+
   Future<void> _clearDayNotifications(WeekdayEnum day) async {
     final List<int> ids = ref
         .read(progressProvider)
@@ -75,8 +87,9 @@ class NotificationsUseCase {
     }
   }
 
-  Future<void> clearTodayNotifications() async {
-    final today = ref.read(progressProvider).requireValue.activeWeek!.todayEnum;
-    await _clearDayNotifications(today);
+  Future<void> _enableDayNotifications(WeekdayEnum day) async {
+    final weekSchedule = ref.read(progressProvider).requireValue.activeWeek!;
+    final daySchedule = weekSchedule.days[day.index];
+    await scheduleDayNotifications(daySchedule);
   }
 }
