@@ -1,11 +1,11 @@
-class UserProfileModel {
+class ProfileModel {
   final List<String> goals;
   final String motivation;
   final String characterName;
   final String fitnessLevel; // 'Beginner', 'Intermediate', 'Advanced'
   final String notificationTone; // 'Friendly', 'Tough', 'Funny'
 
-  const UserProfileModel({
+  const ProfileModel({
     required this.goals,
     required this.motivation,
     required this.characterName,
@@ -23,8 +23,8 @@ class UserProfileModel {
     };
   }
 
-  factory UserProfileModel.fromJson(Map<String, dynamic> json) {
-    return UserProfileModel(
+  factory ProfileModel.fromJson(Map<String, dynamic> json) {
+    return ProfileModel(
       goals: List<String>.from(json['goals'] ?? []),
       motivation: json['motivation'] as String? ?? '',
       characterName: json['characterName'] as String? ?? '',
@@ -33,8 +33,8 @@ class UserProfileModel {
     );
   }
 
-  factory UserProfileModel.empty() {
-    return const UserProfileModel(
+  factory ProfileModel.empty() {
+    return const ProfileModel(
       goals: [],
       motivation: '',
       characterName: '',
@@ -43,14 +43,14 @@ class UserProfileModel {
     );
   }
 
-  UserProfileModel copyWith({
+  ProfileModel copyWith({
     List<String>? goals,
     String? motivation,
     String? characterName,
     String? fitnessLevel,
     String? notificationTone,
   }) {
-    return UserProfileModel(
+    return ProfileModel(
       goals: goals ?? this.goals,
       motivation: motivation ?? this.motivation,
       characterName: characterName ?? this.characterName,

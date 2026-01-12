@@ -4,7 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../profile/presentation/state/profile_state.dart';
 
-part 'coach_provider.g.dart';
+part 'coach_message.g.dart';
 
 @Riverpod(keepAlive: true)
 String coachMessage(Ref ref) {

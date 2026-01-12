@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/widgets/app_card.dart';
-import '../state/home_view_model.dart';
+import '../state/home_view_state.dart';
 import '../../../schedule/data/models/day_schedule_model.dart';
 
 class StreakCard extends ConsumerWidget {
@@ -11,7 +11,7 @@ class StreakCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(homeViewModelProvider);
+    final state = ref.watch(homeViewStateProvider);
     final streak = state.streakDays;
     final weekDays = state.currentWeekDays;
 

@@ -42,3 +42,12 @@ enum DayWorkoutStatusEnum {
     );
   }
 }
+
+enum ProgressItemType {
+  hero,
+  highlights,
+  title,
+  monthHeader,
+  monthCard,
+  spacer,
+}

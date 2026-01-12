@@ -4,14 +4,14 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/config/routes.dart';
 import '../../../../core/widgets/app_card.dart';
-import '../state/home_view_model.dart';
+import '../state/home_view_state.dart';
 
 class MotivationCard extends ConsumerWidget {
   const MotivationCard({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(homeViewModelProvider);
+    final state = ref.watch(homeViewStateProvider);
     final goals = state.goals;
     final ColorScheme scheme = Theme.of(context).colorScheme;
 

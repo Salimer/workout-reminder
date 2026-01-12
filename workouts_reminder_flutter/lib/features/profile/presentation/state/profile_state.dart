@@ -4,50 +4,53 @@ import 'package:flutter_riverpod/experimental/persist.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/providers/local_storage.dart';
-import '../../data/models/user_profile_model.dart';
+import '../../data/models/profile_model.dart';
 
 part 'profile_state.g.dart';
 
 @Riverpod(keepAlive: false)
 class ProfileState extends _$ProfileState {
   @override
-  FutureOr<UserProfileModel> build() async {
+  FutureOr<ProfileModel> build() async {
     await persist(
       ref.watch(localStorageProvider.future),
       key: 'user_profile',
       encode: (state) => jsonEncode(state.toJson()),
-      decode: (data) => UserProfileModel.fromJson(jsonDecode(data)),
+      decode: (data) => ProfileModel.fromJson(jsonDecode(data)),
     ).future;
-    return state.value ?? UserProfileModel.empty();
+    return state.value ?? ProfileModel.empty();
+  }
+
+  void set(ProfileModel data) {
+    state = AsyncValue.data(data);
+  }
+
+  ProfileModel currentState() {
+    return state.requireValue;
   }
 
   void updateGoals(List<String> goals) {
-    final current = state.requireValue;
-    final updated = current.copyWith(goals: goals);
-    state = AsyncValue.data(updated);
+    final updated = currentState().copyWith(goals: goals);
+    set(updated);
   }
 
   void updateMotivation(String motivation) {
-    final current = state.requireValue;
-    final updated = current.copyWith(motivation: motivation);
-    state = AsyncValue.data(updated);
+    final updated = currentState().copyWith(motivation: motivation);
+    set(updated);
   }
 
   void updateCharacterName(String name) {
-    final current = state.requireValue;
-    final updated = current.copyWith(characterName: name);
-    state = AsyncValue.data(updated);
+    final updated = currentState().copyWith(characterName: name);
+    set(updated);
   }
 
   void updateFitnessLevel(String level) {
-    final current = state.requireValue;
-    final updated = current.copyWith(fitnessLevel: level);
-    state = AsyncValue.data(updated);
+    final updated = currentState().copyWith(fitnessLevel: level);
+    set(updated);
   }
 
   void updateNotificationTone(String tone) {
-    final current = state.requireValue;
-    final updated = current.copyWith(notificationTone: tone);
-    state = AsyncValue.data(updated);
+    final updated = currentState().copyWith(notificationTone: tone);
+    set(updated);
   }
 }

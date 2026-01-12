@@ -1,36 +1,16 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../schedule/data/models/day_schedule_model.dart';
+import '../../data/models/home_view_model.dart';
 import '../../../profile/presentation/state/profile_state.dart';
 import '../../../schedule/presentation/state/progress.dart';
 import '../../../../core/constants/enums.dart';
 
-part 'home_view_model.g.dart';
-
-class HomeState {
-  final String greeting;
-  final String userName;
-  final int streakDays; // Keeping total completed days
-  final WeekdayEnum? nextWorkoutDay;
-  final bool isNotificationsEnabled;
-  final List<DayScheduleModel> currentWeekDays;
-  final List<String> goals;
-
-  const HomeState({
-    required this.greeting,
-    required this.userName,
-    required this.streakDays,
-    this.nextWorkoutDay,
-    this.isNotificationsEnabled = true,
-    required this.currentWeekDays,
-    required this.goals,
-  });
-}
+part 'home_view_state.g.dart';
 
 @riverpod
-class HomeViewModel extends _$HomeViewModel {
+class HomeViewState extends _$HomeViewState {
   @override
-  HomeState build() {
+  HomeViewModel build() {
     final profile = ref.watch(profileStateProvider).value;
     final progress = ref.watch(progressProvider).value;
 
@@ -71,7 +51,7 @@ class HomeViewModel extends _$HomeViewModel {
       }
     }
 
-    return HomeState(
+    return HomeViewModel(
       greeting: greeting,
       userName: userName,
       streakDays: streak,

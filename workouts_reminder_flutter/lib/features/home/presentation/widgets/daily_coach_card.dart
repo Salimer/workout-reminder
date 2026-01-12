@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/widgets/app_card.dart';
-import '../state/coach_provider.dart';
+import '../state/coach_message.dart';
 
 class DailyCoachCard extends ConsumerWidget {
   const DailyCoachCard({super.key});

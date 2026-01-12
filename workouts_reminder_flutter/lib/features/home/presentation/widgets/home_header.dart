@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../state/home_view_model.dart';
+import '../state/home_view_state.dart';
 
 class HomeHeader extends ConsumerWidget {
   final VoidCallback onAvatarTap;
@@ -13,7 +13,7 @@ class HomeHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(homeViewModelProvider);
+    final state = ref.watch(homeViewStateProvider);
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 

@@ -1,7 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:timezone/timezone.dart' as tz;
-import 'package:workouts_reminder_flutter/core/services/notifications_service.dart';
 
+import '../../../../core/providers/local_time_date.dart';
 import '../../data/models/today_model.dart';
 
 part 'today_workout_status.g.dart';
@@ -10,8 +10,7 @@ part 'today_workout_status.g.dart';
 class TodayWorkoutStatus extends _$TodayWorkoutStatus {
   @override
   FutureOr<TodayWorkoutStatusModel> build() async {
-    final notificationsSvc = ref.read(notificationsSvcProvider);
-    final now = notificationsSvc.localNow;
+    final now = ref.read(localTimeDateProvider);
 
     // Simulate some asynchronous operation to determine today's workout status
     await Future.delayed(const Duration(seconds: 1));

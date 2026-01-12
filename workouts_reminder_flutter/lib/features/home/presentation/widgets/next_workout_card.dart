@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/widgets/app_card.dart';
-import '../state/home_view_model.dart';
+import '../state/home_view_state.dart';
 
 class NextWorkoutCard extends ConsumerWidget {
   const NextWorkoutCard({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(homeViewModelProvider);
+    final state = ref.watch(homeViewStateProvider);
     final nextDay = state.nextWorkoutDay;
     final isScheduled = state.isNotificationsEnabled;
     final theme = Theme.of(context);
