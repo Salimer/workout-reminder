@@ -1,0 +1,8 @@
+class: WeekSchedule
+table: week_schedule
+fields:
+  days: List<DaySchedule>
+  deadline: DateTime
+  note: String?
+  createdAt: DateTime, default=now
+  updatedAt: DateTime, default=now

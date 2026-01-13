@@ -1,0 +1,11 @@
+enum: WeekdayEnum
+serialized: byName
+default: monday
+values:
+  - monday
+  - tuesday
+  - wednesday
+  - thursday
+  - friday
+  - saturday
+  - sunday

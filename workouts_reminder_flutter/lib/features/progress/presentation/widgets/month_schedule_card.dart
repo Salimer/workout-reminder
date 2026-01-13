@@ -21,10 +21,8 @@ class MonthScheduleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheduledWeeks = weeks.where((week) => week.isSet).toList();
-    final inactiveWeeks = weeks.where((week) => !week.isSet).toList();
-    final orderedWeeks = [...scheduledWeeks, ...inactiveWeeks];
-    final scheduledCount = scheduledWeeks.length;
+    final orderedWeeks = weeks;
+    final scheduledCount = weeks.length;
     final totalCount = weeks.length;
 
     return AppCard(
@@ -78,7 +76,7 @@ class MonthScheduleCard extends StatelessWidget {
                   (week) => WeekMiniRow(
                     week: week,
                     scheme: scheme,
-                    isFaded: !week.isSet,
+                    isFaded: false,
                   ),
                 )
                 .toList(),

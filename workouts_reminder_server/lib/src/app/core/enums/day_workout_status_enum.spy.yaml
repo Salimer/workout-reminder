@@ -1,0 +1,8 @@
+enum: DayWorkoutStatusEnum
+serialized: byName
+default: pending
+values:
+  - pending
+  - performed
+  - skipped
+  - notScheduled

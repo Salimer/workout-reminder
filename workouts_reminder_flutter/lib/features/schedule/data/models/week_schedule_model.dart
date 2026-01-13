@@ -1,3 +1,5 @@
+// import '../../../../core/constants/enums.dart';
+
 import '../../../../core/constants/enums.dart';
 import 'day_schedule_model.dart';
 
@@ -6,7 +8,6 @@ class WeekScheduleModel {
   final DateTime createdAt;
   final DateTime deadline;
   final String note;
-  final bool isSet;
 
   bool get isCompleted {
     final now = DateTime.now();
@@ -50,7 +51,6 @@ class WeekScheduleModel {
     required this.createdAt,
     required this.deadline,
     required this.note,
-    required this.isSet,
   });
 
   Map<String, dynamic> toJson() {
@@ -59,7 +59,6 @@ class WeekScheduleModel {
       'createdAt': createdAt.toIso8601String(),
       'deadline': deadline.toIso8601String(),
       'note': note,
-      'isSet': isSet,
     };
   }
 
@@ -73,7 +72,6 @@ class WeekScheduleModel {
       createdAt: DateTime.parse(json['createdAt']),
       deadline: DateTime.parse(json['deadline']),
       note: json['note'],
-      isSet: json['isSet'] as bool,
     );
   }
 
@@ -82,14 +80,12 @@ class WeekScheduleModel {
     DateTime? createdAt,
     DateTime? deadline,
     String? note,
-    bool? isSet,
   }) {
     return WeekScheduleModel(
       days: days ?? this.days,
       createdAt: createdAt ?? this.createdAt,
       deadline: deadline ?? this.deadline,
       note: note ?? this.note,
-      isSet: isSet ?? this.isSet,
     );
   }
 
@@ -101,7 +97,6 @@ class WeekScheduleModel {
       note: 'week 1',
       createdAt: DateTime.now(),
       deadline: DateTime.now().add(const Duration(days: 7)),
-      isSet: false,
     );
   }
 
@@ -126,7 +121,6 @@ class WeekScheduleModel {
       createdAt: created,
       deadline: deadline,
       note: note,
-      isSet: true,
     );
   }
 }

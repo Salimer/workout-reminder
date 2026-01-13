@@ -1,0 +1,9 @@
+class: Notification
+table: notification
+fields:
+  title: String
+  body: String
+  scheduledDate: DateTime
+  payload: String
+  createdAt: DateTime, default=now
+  updatedAt: DateTime, default=now
