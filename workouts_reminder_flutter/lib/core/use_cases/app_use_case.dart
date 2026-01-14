@@ -6,6 +6,7 @@ import '../../features/schedule/presentation/state/progress.dart';
 import '../../features/schedule/use_cases/notifications_use_case.dart';
 import '../../features/workout/use_cases/workout_use_case.dart';
 import '../constants/enums.dart';
+import '../providers/client.dart';
 
 part 'app_use_case.g.dart';
 
@@ -28,6 +29,11 @@ class AppUseCase {
           notificationsUseCaseProvider,
         )
         .scheduleWeekNotifications(schedule);
+
+
+    final client = ref.read(clientProvider);
+
+    client.progress.createWeekSchedule(schedule.toServerSchedule());
 
     ref.read(progressProvider.notifier).createWeekSchedule(schedule);
   }

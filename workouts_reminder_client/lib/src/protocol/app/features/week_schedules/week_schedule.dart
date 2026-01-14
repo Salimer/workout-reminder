@@ -17,7 +17,7 @@ import 'package:workouts_reminder_client/src/protocol/protocol.dart' as _i3;
 abstract class WeekSchedule implements _i1.SerializableModel {
   WeekSchedule._({
     this.id,
-    required this.days,
+    this.days,
     required this.deadline,
     this.note,
     DateTime? createdAt,
@@ -27,7 +27,7 @@ abstract class WeekSchedule implements _i1.SerializableModel {
 
   factory WeekSchedule({
     int? id,
-    required List<_i2.DaySchedule> days,
+    List<_i2.DaySchedule>? days,
     required DateTime deadline,
     String? note,
     DateTime? createdAt,
@@ -37,9 +37,11 @@ abstract class WeekSchedule implements _i1.SerializableModel {
   factory WeekSchedule.fromJson(Map<String, dynamic> jsonSerialization) {
     return WeekSchedule(
       id: jsonSerialization['id'] as int?,
-      days: _i3.Protocol().deserialize<List<_i2.DaySchedule>>(
-        jsonSerialization['days'],
-      ),
+      days: jsonSerialization['days'] == null
+          ? null
+          : _i3.Protocol().deserialize<List<_i2.DaySchedule>>(
+              jsonSerialization['days'],
+            ),
       deadline: _i1.DateTimeJsonExtension.fromJson(
         jsonSerialization['deadline'],
       ),
@@ -58,7 +60,7 @@ abstract class WeekSchedule implements _i1.SerializableModel {
   /// the id will be null.
   int? id;
 
-  List<_i2.DaySchedule> days;
+  List<_i2.DaySchedule>? days;
 
   DateTime deadline;
 
@@ -84,7 +86,7 @@ abstract class WeekSchedule implements _i1.SerializableModel {
     return {
       '__className__': 'WeekSchedule',
       if (id != null) 'id': id,
-      'days': days.toJson(valueToJson: (v) => v.toJson()),
+      if (days != null) 'days': days?.toJson(valueToJson: (v) => v.toJson()),
       'deadline': deadline.toJson(),
       if (note != null) 'note': note,
       'createdAt': createdAt.toJson(),
@@ -103,7 +105,7 @@ class _Undefined {}
 class _WeekScheduleImpl extends WeekSchedule {
   _WeekScheduleImpl({
     int? id,
-    required List<_i2.DaySchedule> days,
+    List<_i2.DaySchedule>? days,
     required DateTime deadline,
     String? note,
     DateTime? createdAt,
@@ -123,7 +125,7 @@ class _WeekScheduleImpl extends WeekSchedule {
   @override
   WeekSchedule copyWith({
     Object? id = _Undefined,
-    List<_i2.DaySchedule>? days,
+    Object? days = _Undefined,
     DateTime? deadline,
     Object? note = _Undefined,
     DateTime? createdAt,
@@ -131,7 +133,9 @@ class _WeekScheduleImpl extends WeekSchedule {
   }) {
     return WeekSchedule(
       id: id is int? ? id : this.id,
-      days: days ?? this.days.map((e0) => e0.copyWith()).toList(),
+      days: days is List<_i2.DaySchedule>?
+          ? days
+          : this.days?.map((e0) => e0.copyWith()).toList(),
       deadline: deadline ?? this.deadline,
       note: note is String? ? note : this.note,
       createdAt: createdAt ?? this.createdAt,

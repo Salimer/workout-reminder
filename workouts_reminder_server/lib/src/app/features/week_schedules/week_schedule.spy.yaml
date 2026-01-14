@@ -1,7 +1,7 @@
 class: WeekSchedule
 table: week_schedule
 fields:
-  days: List<DaySchedule>
+  days: List<DaySchedule>?, relation
   deadline: DateTime
   note: String?
   createdAt: DateTime, default=now

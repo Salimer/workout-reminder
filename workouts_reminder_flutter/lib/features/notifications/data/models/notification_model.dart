@@ -1,4 +1,5 @@
 import 'package:timezone/timezone.dart';
+import 'package:workouts_reminder_client/workouts_reminder_client.dart';
 
 class NotificationModel {
   final int id;
@@ -64,6 +65,16 @@ class NotificationModel {
       body: body,
       scheduledDate: scheduledDate,
       payload: scheduledDate.toString(),
+    );
+  }
+
+  Notification toServerNotification() {
+    return Notification(
+      id: id,
+      title: title,
+      body: body,
+      scheduledDate: scheduledDate,
+      payload: payload ?? '',
     );
   }
 }

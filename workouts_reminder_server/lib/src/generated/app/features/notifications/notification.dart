@@ -23,7 +23,8 @@ abstract class Notification
     DateTime? createdAt,
     DateTime? updatedAt,
   }) : createdAt = createdAt ?? DateTime.now(),
-       updatedAt = updatedAt ?? DateTime.now();
+       updatedAt = updatedAt ?? DateTime.now(),
+       _dayScheduleNotificationsDayScheduleId = null;
 
   factory Notification({
     int? id,
@@ -36,7 +37,7 @@ abstract class Notification
   }) = _NotificationImpl;
 
   factory Notification.fromJson(Map<String, dynamic> jsonSerialization) {
-    return Notification(
+    return NotificationImplicit._(
       id: jsonSerialization['id'] as int?,
       title: jsonSerialization['title'] as String,
       body: jsonSerialization['body'] as String,
@@ -50,6 +51,8 @@ abstract class Notification
       updatedAt: jsonSerialization['updatedAt'] == null
           ? null
           : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['updatedAt']),
+      $_dayScheduleNotificationsDayScheduleId:
+          jsonSerialization['_dayScheduleNotificationsDayScheduleId'] as int?,
     );
   }
 
@@ -71,6 +74,8 @@ abstract class Notification
   DateTime createdAt;
 
   DateTime updatedAt;
+
+  final int? _dayScheduleNotificationsDayScheduleId;
 
   @override
   _i1.Table<int?> get table => t;
@@ -98,6 +103,9 @@ abstract class Notification
       'payload': payload,
       'createdAt': createdAt.toJson(),
       'updatedAt': updatedAt.toJson(),
+      if (_dayScheduleNotificationsDayScheduleId != null)
+        '_dayScheduleNotificationsDayScheduleId':
+            _dayScheduleNotificationsDayScheduleId,
     };
   }
 
@@ -179,7 +187,7 @@ class _NotificationImpl extends Notification {
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
-    return Notification(
+    return NotificationImplicit._(
       id: id is int? ? id : this.id,
       title: title ?? this.title,
       body: body ?? this.body,
@@ -187,8 +195,53 @@ class _NotificationImpl extends Notification {
       payload: payload ?? this.payload,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      $_dayScheduleNotificationsDayScheduleId:
+          this._dayScheduleNotificationsDayScheduleId,
     );
   }
+}
+
+class NotificationImplicit extends _NotificationImpl {
+  NotificationImplicit._({
+    int? id,
+    required String title,
+    required String body,
+    required DateTime scheduledDate,
+    required String payload,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    int? $_dayScheduleNotificationsDayScheduleId,
+  }) : _dayScheduleNotificationsDayScheduleId =
+           $_dayScheduleNotificationsDayScheduleId,
+       super(
+         id: id,
+         title: title,
+         body: body,
+         scheduledDate: scheduledDate,
+         payload: payload,
+         createdAt: createdAt,
+         updatedAt: updatedAt,
+       );
+
+  factory NotificationImplicit(
+    Notification notification, {
+    int? $_dayScheduleNotificationsDayScheduleId,
+  }) {
+    return NotificationImplicit._(
+      id: notification.id,
+      title: notification.title,
+      body: notification.body,
+      scheduledDate: notification.scheduledDate,
+      payload: notification.payload,
+      createdAt: notification.createdAt,
+      updatedAt: notification.updatedAt,
+      $_dayScheduleNotificationsDayScheduleId:
+          $_dayScheduleNotificationsDayScheduleId,
+    );
+  }
+
+  @override
+  final int? _dayScheduleNotificationsDayScheduleId;
 }
 
 class NotificationUpdateTable extends _i1.UpdateTable<NotificationTable> {
@@ -226,6 +279,13 @@ class NotificationUpdateTable extends _i1.UpdateTable<NotificationTable> {
         table.updatedAt,
         value,
       );
+
+  _i1.ColumnValue<int, int> $_dayScheduleNotificationsDayScheduleId(
+    int? value,
+  ) => _i1.ColumnValue(
+    table.$_dayScheduleNotificationsDayScheduleId,
+    value,
+  );
 }
 
 class NotificationTable extends _i1.Table<int?> {
@@ -257,6 +317,10 @@ class NotificationTable extends _i1.Table<int?> {
       this,
       hasDefault: true,
     );
+    $_dayScheduleNotificationsDayScheduleId = _i1.ColumnInt(
+      '_dayScheduleNotificationsDayScheduleId',
+      this,
+    );
   }
 
   late final NotificationUpdateTable updateTable;
@@ -273,8 +337,22 @@ class NotificationTable extends _i1.Table<int?> {
 
   late final _i1.ColumnDateTime updatedAt;
 
+  late final _i1.ColumnInt $_dayScheduleNotificationsDayScheduleId;
+
   @override
   List<_i1.Column> get columns => [
+    id,
+    title,
+    body,
+    scheduledDate,
+    payload,
+    createdAt,
+    updatedAt,
+    $_dayScheduleNotificationsDayScheduleId,
+  ];
+
+  @override
+  List<_i1.Column> get managedColumns => [
     id,
     title,
     body,

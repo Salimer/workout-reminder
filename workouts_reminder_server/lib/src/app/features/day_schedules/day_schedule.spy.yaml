@@ -2,7 +2,7 @@ class: DaySchedule
 table: day_schedule
 fields:
   day: WeekdayEnum
-  notifications: List<Notification>?
+  notifications: List<Notification>?, relation
   status: DayWorkoutStatusEnum
   createdAt: DateTime, default=now
   updatedAt: DateTime, default=now

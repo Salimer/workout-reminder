@@ -59,12 +59,6 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'protocol:WeekdayEnum',
         ),
         _i2.ColumnDefinition(
-          name: 'notifications',
-          columnType: _i2.ColumnType.json,
-          isNullable: true,
-          dartType: 'List<protocol:Notification>?',
-        ),
-        _i2.ColumnDefinition(
           name: 'status',
           columnType: _i2.ColumnType.text,
           isNullable: false,
@@ -84,8 +78,25 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'DateTime',
           columnDefault: 'CURRENT_TIMESTAMP',
         ),
+        _i2.ColumnDefinition(
+          name: '_weekScheduleDaysWeekScheduleId',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: true,
+          dartType: 'int?',
+        ),
       ],
-      foreignKeys: [],
+      foreignKeys: [
+        _i2.ForeignKeyDefinition(
+          constraintName: 'day_schedule_fk_0',
+          columns: ['_weekScheduleDaysWeekScheduleId'],
+          referenceTable: 'week_schedule',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _i2.ForeignKeyAction.noAction,
+          onDelete: _i2.ForeignKeyAction.noAction,
+          matchType: null,
+        ),
+      ],
       indexes: [
         _i2.IndexDefinition(
           indexName: 'day_schedule_pkey',
@@ -154,8 +165,25 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'DateTime',
           columnDefault: 'CURRENT_TIMESTAMP',
         ),
+        _i2.ColumnDefinition(
+          name: '_dayScheduleNotificationsDayScheduleId',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: true,
+          dartType: 'int?',
+        ),
       ],
-      foreignKeys: [],
+      foreignKeys: [
+        _i2.ForeignKeyDefinition(
+          constraintName: 'notification_fk_0',
+          columns: ['_dayScheduleNotificationsDayScheduleId'],
+          referenceTable: 'day_schedule',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _i2.ForeignKeyAction.noAction,
+          onDelete: _i2.ForeignKeyAction.noAction,
+          matchType: null,
+        ),
+      ],
       indexes: [
         _i2.IndexDefinition(
           indexName: 'notification_pkey',
@@ -191,12 +219,6 @@ class Protocol extends _i1.SerializationManagerServer {
           columnType: _i2.ColumnType.uuid,
           isNullable: false,
           dartType: 'UuidValue',
-        ),
-        _i2.ColumnDefinition(
-          name: 'weeks',
-          columnType: _i2.ColumnType.json,
-          isNullable: false,
-          dartType: 'List<protocol:WeekSchedule>',
         ),
         _i2.ColumnDefinition(
           name: 'createdAt',
@@ -258,12 +280,6 @@ class Protocol extends _i1.SerializationManagerServer {
           columnDefault: 'nextval(\'week_schedule_id_seq\'::regclass)',
         ),
         _i2.ColumnDefinition(
-          name: 'days',
-          columnType: _i2.ColumnType.json,
-          isNullable: false,
-          dartType: 'List<protocol:DaySchedule>',
-        ),
-        _i2.ColumnDefinition(
           name: 'deadline',
           columnType: _i2.ColumnType.timestampWithoutTimeZone,
           isNullable: false,
@@ -289,8 +305,25 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'DateTime',
           columnDefault: 'CURRENT_TIMESTAMP',
         ),
+        _i2.ColumnDefinition(
+          name: '_progressWeeksProgressId',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: true,
+          dartType: 'int?',
+        ),
       ],
-      foreignKeys: [],
+      foreignKeys: [
+        _i2.ForeignKeyDefinition(
+          constraintName: 'week_schedule_fk_0',
+          columns: ['_progressWeeksProgressId'],
+          referenceTable: 'progress',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _i2.ForeignKeyAction.noAction,
+          onDelete: _i2.ForeignKeyAction.noAction,
+          matchType: null,
+        ),
+      ],
       indexes: [
         _i2.IndexDefinition(
           indexName: 'week_schedule_pkey',
@@ -403,8 +436,24 @@ class Protocol extends _i1.SerializationManagerServer {
               .toList()
           as T;
     }
+    if (t == _i1.getType<List<_i10.WeekSchedule>?>()) {
+      return (data != null
+              ? (data as List)
+                    .map((e) => deserialize<_i10.WeekSchedule>(e))
+                    .toList()
+              : null)
+          as T;
+    }
     if (t == List<_i7.DaySchedule>) {
       return (data as List).map((e) => deserialize<_i7.DaySchedule>(e)).toList()
+          as T;
+    }
+    if (t == _i1.getType<List<_i7.DaySchedule>?>()) {
+      return (data != null
+              ? (data as List)
+                    .map((e) => deserialize<_i7.DaySchedule>(e))
+                    .toList()
+              : null)
           as T;
     }
     try {

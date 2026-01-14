@@ -2,7 +2,7 @@ class: Progress
 table: progress
 fields:
   userId: UuidValue
-  weeks: List<WeekSchedule>
+  weeks: List<WeekSchedule>?, relation
   createdAt: DateTime, default=now
   updatedAt: DateTime, default=now
 

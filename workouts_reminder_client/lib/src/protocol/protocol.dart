@@ -128,8 +128,24 @@ class Protocol extends _i1.SerializationManager {
               .toList()
           as T;
     }
+    if (t == _i1.getType<List<_i7.WeekSchedule>?>()) {
+      return (data != null
+              ? (data as List)
+                    .map((e) => deserialize<_i7.WeekSchedule>(e))
+                    .toList()
+              : null)
+          as T;
+    }
     if (t == List<_i4.DaySchedule>) {
       return (data as List).map((e) => deserialize<_i4.DaySchedule>(e)).toList()
+          as T;
+    }
+    if (t == _i1.getType<List<_i4.DaySchedule>?>()) {
+      return (data != null
+              ? (data as List)
+                    .map((e) => deserialize<_i4.DaySchedule>(e))
+                    .toList()
+              : null)
           as T;
     }
     try {

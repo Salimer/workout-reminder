@@ -18,7 +18,7 @@ abstract class Progress implements _i1.SerializableModel {
   Progress._({
     this.id,
     required this.userId,
-    required this.weeks,
+    this.weeks,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) : createdAt = createdAt ?? DateTime.now(),
@@ -27,7 +27,7 @@ abstract class Progress implements _i1.SerializableModel {
   factory Progress({
     int? id,
     required _i1.UuidValue userId,
-    required List<_i2.WeekSchedule> weeks,
+    List<_i2.WeekSchedule>? weeks,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) = _ProgressImpl;
@@ -36,9 +36,11 @@ abstract class Progress implements _i1.SerializableModel {
     return Progress(
       id: jsonSerialization['id'] as int?,
       userId: _i1.UuidValueJsonExtension.fromJson(jsonSerialization['userId']),
-      weeks: _i3.Protocol().deserialize<List<_i2.WeekSchedule>>(
-        jsonSerialization['weeks'],
-      ),
+      weeks: jsonSerialization['weeks'] == null
+          ? null
+          : _i3.Protocol().deserialize<List<_i2.WeekSchedule>>(
+              jsonSerialization['weeks'],
+            ),
       createdAt: jsonSerialization['createdAt'] == null
           ? null
           : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
@@ -55,7 +57,7 @@ abstract class Progress implements _i1.SerializableModel {
 
   _i1.UuidValue userId;
 
-  List<_i2.WeekSchedule> weeks;
+  List<_i2.WeekSchedule>? weeks;
 
   DateTime createdAt;
 
@@ -77,7 +79,7 @@ abstract class Progress implements _i1.SerializableModel {
       '__className__': 'Progress',
       if (id != null) 'id': id,
       'userId': userId.toJson(),
-      'weeks': weeks.toJson(valueToJson: (v) => v.toJson()),
+      if (weeks != null) 'weeks': weeks?.toJson(valueToJson: (v) => v.toJson()),
       'createdAt': createdAt.toJson(),
       'updatedAt': updatedAt.toJson(),
     };
@@ -95,7 +97,7 @@ class _ProgressImpl extends Progress {
   _ProgressImpl({
     int? id,
     required _i1.UuidValue userId,
-    required List<_i2.WeekSchedule> weeks,
+    List<_i2.WeekSchedule>? weeks,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) : super._(
@@ -113,14 +115,16 @@ class _ProgressImpl extends Progress {
   Progress copyWith({
     Object? id = _Undefined,
     _i1.UuidValue? userId,
-    List<_i2.WeekSchedule>? weeks,
+    Object? weeks = _Undefined,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
     return Progress(
       id: id is int? ? id : this.id,
       userId: userId ?? this.userId,
-      weeks: weeks ?? this.weeks.map((e0) => e0.copyWith()).toList(),
+      weeks: weeks is List<_i2.WeekSchedule>?
+          ? weeks
+          : this.weeks?.map((e0) => e0.copyWith()).toList(),
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

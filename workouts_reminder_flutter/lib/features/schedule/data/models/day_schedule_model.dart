@@ -1,15 +1,15 @@
 import 'package:timezone/timezone.dart' as tz;
+import 'package:workouts_reminder_client/workouts_reminder_client.dart' show DaySchedule, DayWorkoutStatusEnum, WeekdayEnum;
 
-import '../../../../core/constants/enums.dart';
+import '../../../../core/constants/enums.dart' as enums;
 import '../../../notifications/data/models/notification_model.dart';
 
 class DayScheduleModel {
-  final WeekdayEnum day;
+  final enums.WeekdayEnum day;
   final List<NotificationModel>? notifications;
-  final DayWorkoutStatusEnum status;
+  final enums.DayWorkoutStatusEnum status;
 
-  bool get hasWorkout => status != DayWorkoutStatusEnum.notScheduled;
-
+  bool get hasWorkout => status != enums.DayWorkoutStatusEnum.notScheduled;
   DayScheduleModel({
     required this.day,
     this.notifications,
@@ -28,10 +28,10 @@ class DayScheduleModel {
 
   factory DayScheduleModel.fromJson(Map<String, dynamic> json) {
     return DayScheduleModel(
-      day: WeekdayEnum.values.firstWhere(
+      day: enums.WeekdayEnum.values.firstWhere(
         (e) => e.toString() == json['day'],
       ),
-      status: DayWorkoutStatusEnum.fromString(json['status']),
+      status: enums.DayWorkoutStatusEnum.fromString(json['status']),
       notifications: json['notifications'] != null
           ? List<NotificationModel>.from(
               (json['notifications'] as List).map(
@@ -43,9 +43,9 @@ class DayScheduleModel {
   }
 
   DayScheduleModel copyWith({
-    WeekdayEnum? day,
+    enums.WeekdayEnum? day,
     List<NotificationModel>? notifications,
-    DayWorkoutStatusEnum? status,
+    enums.DayWorkoutStatusEnum? status,
   }) {
     return DayScheduleModel(
       day: day ?? this.day,
@@ -54,22 +54,22 @@ class DayScheduleModel {
     );
   }
 
-  factory DayScheduleModel.init(WeekdayEnum day) {
+  factory DayScheduleModel.init(enums.WeekdayEnum day) {
     return DayScheduleModel(
       day: day,
       notifications: [],
-      status: DayWorkoutStatusEnum.notScheduled,
+      status: enums.DayWorkoutStatusEnum.notScheduled,
     );
   }
 
   factory DayScheduleModel.forWorkoutDay({
-    required WeekdayEnum day,
-    required DayWorkoutStatusEnum status,
+    required enums.WeekdayEnum day,
+    required enums.DayWorkoutStatusEnum status,
   }) {
     return DayScheduleModel(
       day: day,
       status: status,
-      notifications: status != DayWorkoutStatusEnum.notScheduled
+      notifications: status != enums.DayWorkoutStatusEnum.notScheduled
           ? _buildDayNotifications(
               day: day,
               start: tz.TZDateTime.now(tz.local),
@@ -79,7 +79,7 @@ class DayScheduleModel {
   }
 
   static List<NotificationModel> _buildDayNotifications({
-    required WeekdayEnum day,
+    required enums.WeekdayEnum day,
     required tz.TZDateTime start,
   }) {
     final morning = _nextOccurrence(
@@ -131,21 +131,21 @@ class DayScheduleModel {
     return (yyyymmdd * 10) + slot;
   }
 
-  static int _asDateTimeWeekday(WeekdayEnum day) {
+  static int _asDateTimeWeekday(enums.WeekdayEnum day) {
     switch (day) {
-      case WeekdayEnum.monday:
+      case enums.WeekdayEnum.monday:
         return DateTime.monday;
-      case WeekdayEnum.tuesday:
+      case enums.WeekdayEnum.tuesday:
         return DateTime.tuesday;
-      case WeekdayEnum.wednesday:
+      case enums.WeekdayEnum.wednesday:
         return DateTime.wednesday;
-      case WeekdayEnum.thursday:
+      case enums.WeekdayEnum.thursday:
         return DateTime.thursday;
-      case WeekdayEnum.friday:
+      case enums.WeekdayEnum.friday:
         return DateTime.friday;
-      case WeekdayEnum.saturday:
+      case enums.WeekdayEnum.saturday:
         return DateTime.saturday;
-      case WeekdayEnum.sunday:
+      case enums.WeekdayEnum.sunday:
         return DateTime.sunday;
     }
   }
@@ -170,5 +170,15 @@ class DayScheduleModel {
       candidate = candidate.add(const Duration(days: 7));
     }
     return candidate;
+  }
+
+  DaySchedule toServerDaySchedule() {
+    return DaySchedule(
+      day: WeekdayEnum.fromJson(day.name),
+      status: DayWorkoutStatusEnum.fromJson(status.name),
+      notifications: notifications
+          ?.map((notification) => notification.toServerNotification())
+          .toList(),
+    );
   }
 }

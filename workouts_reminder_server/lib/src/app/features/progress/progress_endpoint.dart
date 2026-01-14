@@ -38,7 +38,7 @@ class ProgressEndpoint extends Endpoint {
       }
 
       final updatedProgress = existingProgress.copyWith(
-        weeks: [...existingProgress.weeks, weekSchedule],
+        weeks: [...?existingProgress.weeks, weekSchedule],
         updatedAt: DateTime.now(),
       );
 

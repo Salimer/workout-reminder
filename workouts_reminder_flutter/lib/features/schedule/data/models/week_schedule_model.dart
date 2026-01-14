@@ -1,5 +1,7 @@
 // import '../../../../core/constants/enums.dart';
 
+import 'package:workouts_reminder_client/workouts_reminder_client.dart' show WeekSchedule;
+
 import '../../../../core/constants/enums.dart';
 import 'day_schedule_model.dart';
 
@@ -119,6 +121,14 @@ class WeekScheduleModel {
         );
       }).toList(),
       createdAt: created,
+      deadline: deadline,
+      note: note,
+    );
+  }
+
+  WeekSchedule toServerSchedule() {
+    return WeekSchedule(
+      days: days.map((day) => day.toServerDaySchedule()).toList(),
       deadline: deadline,
       note: note,
     );
