@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:workouts_reminder_flutter/features/home/presentation/state/bottom_navigation.dart';
 
 import '../../../progress/presentation/views/progress_view.dart';
 import '../../../schedule/presentation/views/schedule_view.dart';
 import '../../../settings/presentation/views/settings_view.dart';
+import '../state/bottom_navigation.dart';
 import 'main_view.dart';
 
 // ***************
@@ -48,16 +48,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(bottomNavigationProvider, (previous, next) {
-      if (next.shouldAnimate && previous != next) {
-        debugPrint("Animating to page: ${next.currentIndex}");
-        _pageController.animateToPage(
-          next.currentIndex,
-          duration: const Duration(milliseconds: 250),
-          curve: Curves.easeInOut,
-        );
-      }
-    });
+    _bottomNavListener(ref);
 
     return Scaffold(
       body: SafeArea(
@@ -91,5 +82,18 @@ class _HomeViewState extends ConsumerState<HomeView> {
         },
       ),
     );
+  }
+
+  void _bottomNavListener(WidgetRef ref) {
+    ref.listen(bottomNavigationProvider, (previous, next) {
+      if (next.shouldAnimate && previous != next) {
+        debugPrint("Animating to page: ${next.currentIndex}");
+        _pageController.animateToPage(
+          next.currentIndex,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
   }
 }

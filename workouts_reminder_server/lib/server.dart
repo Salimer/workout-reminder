@@ -24,8 +24,8 @@ void run(List<String> args) async {
     identityProviderBuilders: [
       // Configure the email identity provider for email/password authentication.
       EmailIdpConfigFromPasswords(
-        sendRegistrationVerificationCode: _sendRegistrationCode,
-        sendPasswordResetVerificationCode: _sendPasswordResetCode,
+        // sendRegistrationVerificationCode: _sendRegistrationCode,
+        // sendPasswordResetVerificationCode: _sendPasswordResetCode,
       ),
     ],
   );

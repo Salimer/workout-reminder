@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:workouts_reminder_flutter/core/services/notifications_service.dart';
+import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 
+import '../../../../core/providers/client.dart';
 import '../../../../core/providers/theme.dart' show themeProvider;
 import '../../../../core/widgets/animated_section.dart';
 import 'package:go_router/go_router.dart';
@@ -90,6 +90,9 @@ class SettingsView extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 borderRadius: BorderRadius.circular(16),
                 child: ListTile(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 8,
@@ -126,20 +129,6 @@ class SettingsView extends StatelessWidget {
               index: 4,
               child: Consumer(
                 builder: (context, ref, _) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) async {
-                    final List<PendingNotificationRequest> pending = await ref
-                        .read(notificationsSvcProvider)
-                        .getPendingNotificationRequests();
-
-                    // debugPrint('Pending notifications (${pending.length}):');
-                    // for (final n in pending) {
-                    //   debugPrint(
-                    //     '- ID: ${n.id}, Title: ${n.title}, Body: ${n.body}, Payload: ${n.payload}',
-                    //   );
-                    // }
-
-                    // debugPrint(pending.map((n) => n.toString()).join('\n'));
-                  });
                   final themeMode = ref.watch(themeProvider);
                   final effectiveDark =
                       MediaQuery.of(context).platformBrightness ==
@@ -186,6 +175,78 @@ class SettingsView extends StatelessWidget {
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 20),
+            AppAnimatedSection(
+              index: 5,
+              child: Text(
+                'Account',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            AppAnimatedSection(
+              index: 6,
+              child: Consumer(
+                builder: (context, ref, _) {
+                  return AppCard(
+                    padding: EdgeInsets.zero,
+                    borderRadius: BorderRadius.circular(16),
+                    child: ListTile(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: scheme.error.withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(Icons.logout, color: scheme.error),
+                      ),
+                      title: const Text('Sign out'),
+                      subtitle: const Text('End this session on this device'),
+                      onTap: () async {
+                        final shouldSignOut = await showDialog<bool>(
+                          context: context,
+                          builder: (dialogContext) {
+                            return AlertDialog(
+                              title: const Text('Sign out?'),
+                              content: const Text(
+                                'You will need to sign in again to access your workouts.',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    dialogContext.pop(false);
+                                  },
+                                  child: const Text('Cancel'),
+                                ),
+                                FilledButton(
+                                  onPressed: () {
+                                    dialogContext.pop(true);
+                                  },
+                                  child: const Text('Sign out'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+
+                        if (shouldSignOut == true && context.mounted) {
+                          await ref.read(clientProvider).auth.signOutDevice();
+                        }
+                      },
                     ),
                   );
                 },

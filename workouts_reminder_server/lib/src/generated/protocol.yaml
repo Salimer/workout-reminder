@@ -1,3 +1,5 @@
+progress:
+  - createWeekSchedule:
 emailIdp:
   - login:
   - startRegistration:
@@ -6,5 +8,7 @@ emailIdp:
   - startPasswordReset:
   - verifyPasswordResetCode:
   - finishPasswordReset:
+jwtRefresh:
+  - refreshAccessToken:
 greeting:
   - hello:

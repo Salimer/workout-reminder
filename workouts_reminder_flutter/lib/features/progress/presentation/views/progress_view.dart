@@ -66,9 +66,7 @@ class ProgressView extends StatelessWidget {
                             index: headerIndex,
                             child: Text(
                               DateFormat('MMMM yyyy').format(group.month),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
+                              style: Theme.of(context).textTheme.titleMedium
                                   ?.copyWith(
                                     fontWeight: FontWeight.w700,
                                   ),
