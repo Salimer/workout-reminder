@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/widgets/app_card.dart';
-import '../../../schedule/presentation/state/progress.dart';
+import '../../../progress/presentation/state/progress_state.dart';
 import '../../data/models/hero_content_model.dart';
 
 class HeroCard extends StatelessWidget {
@@ -28,13 +28,13 @@ class HeroCard extends StatelessWidget {
         builder: (context, ref, _) {
           DayWorkoutStatusEnum dayStatus;
           final activeWeek = ref.watch(
-            progressProvider.select(
+            progressStateProvider.select(
               (value) => value.requireValue.activeWeek,
             ),
           );
           if (activeWeek != null) {
             dayStatus = ref.watch(
-              progressProvider.select(
+              progressStateProvider.select(
                 (value) => value.requireValue.activeWeek!.getTodayStatusEnum(),
               ),
             );

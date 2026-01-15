@@ -5,19 +5,20 @@ import 'package:flutter_riverpod/experimental/persist.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/constants/enums.dart';
+import '../../../../core/providers/client.dart';
 import '../../../../core/providers/local_storage.dart';
-import '../../../progress/data/models/progress_model.dart';
-import '../../data/models/week_schedule_model.dart';
+import '../../data/models/progress_model.dart';
+import '../../../schedule/data/models/week_schedule_model.dart';
 
-part 'progress.g.dart';
+part 'progress_state.g.dart';
 
 @Riverpod(keepAlive: true)
-class Progress extends _$Progress {
+class ProgressState extends _$ProgressState {
   @override
   FutureOr<ProgressModel> build() async {
-    await persist(
+    persist(
       ref.watch(localStorageProvider.future),
-      key: 'progress',
+      key: 'progress_state',
       options: const StorageOptions(
         cacheTime: StorageCacheTime.unsafe_forever,
         destroyKey: '1.0.4-add-day-status',
@@ -25,8 +26,22 @@ class Progress extends _$Progress {
       ),
       encode: (state) => jsonEncode(state.toJson()),
       decode: (data) => ProgressModel.fromJson(jsonDecode(data)),
-    ).future;
-    return state.value ?? ProgressModel.init();
+    );
+
+    return _fetchedProgress();
+
+    // return state.value ?? ProgressModel.init();
+  }
+
+  Future<ProgressModel> _fetchedProgress() async {
+    final schedule = await ref.read(clientProvider).progress.getProgress();
+
+    if (schedule == null) {
+      throw Exception('No progress data found from server');
+    }
+
+    final usableSchedule = ProgressModel.fromServerProgress(schedule);
+    return usableSchedule;
   }
 
   void set(ProgressModel data) {

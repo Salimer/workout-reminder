@@ -7,7 +7,7 @@ import 'package:workouts_reminder_flutter/core/providers/client.dart';
 import '../../../../core/config/routes.dart';
 import '../../../../core/providers/first_relaunch.dart';
 import '../../../home/use_cases/bottom_navigation_use_case.dart';
-import '../../../schedule/presentation/state/progress.dart';
+import '../../../progress/presentation/state/progress_state.dart';
 import '../widgets/glow_blob_widget.dart';
 import '../widgets/landscape_brand_widget.dart';
 import '../widgets/portrait_brand_widget.dart';
@@ -27,12 +27,15 @@ class _SplashViewState extends ConsumerState<SplashView> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       ref.read(firstRelaunchProvider.notifier).setFalse();
+      debugPrint("SplashView: Checking authentication and progress state...");
       await Future.wait([
         Future.delayed(const Duration(seconds: 2)),
-        ref.read(progressProvider.future),
+        Future(() => debugPrint("SplashView: Fetching progress state...")),
+        ref.read(progressStateProvider.future),
       ]);
+      debugPrint("SplashView: Progress state fetched.");
 
-      final progress = ref.read(progressProvider).requireValue;
+      final progress = ref.read(progressStateProvider).requireValue;
 
       // If the week schedule is outdated, you can handle it here
       // For example, navigate to the schedule setup view

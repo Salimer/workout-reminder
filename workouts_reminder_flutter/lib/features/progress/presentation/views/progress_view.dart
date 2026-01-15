@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/widgets/animated_section.dart';
 import '../../../schedule/data/models/week_schedule_model.dart';
-import '../../../schedule/presentation/state/progress.dart';
+import '../state/progress_state.dart';
 import '../../data/models/month_group_model.dart';
 import '../widgets/month_schedule_card.dart';
 import '../widgets/progress_hero.dart';
@@ -20,7 +20,7 @@ class ProgressView extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         // final progress = ProgressModel.init()
-        final progress = ref.watch(progressProvider).requireValue;
+        final progress = ref.watch(progressStateProvider).requireValue;
         final monthGroups = _groupWeeksByMonth(progress.weeks);
 
         return SafeArea(

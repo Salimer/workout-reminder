@@ -2,7 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/models/home_view_model.dart';
 import '../../../profile/presentation/state/profile_state.dart';
-import '../../../schedule/presentation/state/progress.dart';
+import '../../../progress/presentation/state/progress_state.dart';
 import '../../../../core/constants/enums.dart';
 
 part 'home_view_state.g.dart';
@@ -12,7 +12,7 @@ class HomeViewState extends _$HomeViewState {
   @override
   HomeViewModel build() {
     final profile = ref.watch(profileStateProvider).value;
-    final progress = ref.watch(progressProvider).value;
+    final progress = ref.watch(progressStateProvider).value;
 
     final now = DateTime.now();
     final greeting = _getGreeting(now);

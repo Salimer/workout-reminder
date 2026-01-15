@@ -9,7 +9,7 @@ class WeekScheduleModel {
   final List<DayScheduleModel> days;
   final DateTime createdAt;
   final DateTime deadline;
-  final String note;
+  final String? note;
 
   bool get isCompleted {
     final now = DateTime.now();
@@ -131,6 +131,19 @@ class WeekScheduleModel {
       days: days.map((day) => day.toServerDaySchedule()).toList(),
       deadline: deadline,
       note: note,
+    );
+  }
+
+  factory WeekScheduleModel.fromServerWeekSchedule(
+    WeekSchedule weekSchedule,
+  ) {
+    return WeekScheduleModel(
+      days: weekSchedule.days!
+          .map((day) => DayScheduleModel.fromServerDaySchedule(day))
+          .toList(),
+      createdAt: DateTime.now(), // Server does not send createdAt
+      deadline: weekSchedule.deadline,
+      note: weekSchedule.note,
     );
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/experimental/mutation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../features/schedule/data/models/week_schedule_model.dart';
-import '../../features/schedule/presentation/state/progress.dart';
+import '../../features/progress/presentation/state/progress_state.dart';
 import '../../features/schedule/use_cases/notifications_use_case.dart';
 import '../../features/workout/use_cases/workout_use_case.dart';
 import '../constants/enums.dart';
@@ -30,18 +30,17 @@ class AppUseCase {
         )
         .scheduleWeekNotifications(schedule);
 
-
     final client = ref.read(clientProvider);
 
     client.progress.createWeekSchedule(schedule.toServerSchedule());
 
-    ref.read(progressProvider.notifier).createWeekSchedule(schedule);
+    ref.read(progressStateProvider.notifier).createWeekSchedule(schedule);
   }
 
   Future<void> clearWeekPlan() async {
     await ref.read(notificationsUseCaseProvider).clearWeekNotifications();
 
-    ref.read(progressProvider.notifier).clearCurrentWeekPlan();
+    ref.read(progressStateProvider.notifier).clearCurrentWeekPlan();
   }
 
   Future<void> skipTodayWorkout() async {

@@ -55,6 +55,16 @@ class Endpoints extends _i1.EndpointDispatch {
       name: 'progress',
       endpoint: endpoints['progress']!,
       methodConnectors: {
+        'getProgress': _i1.MethodConnector(
+          name: 'getProgress',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['progress'] as _i2.ProgressEndpoint)
+                  .getProgress(session),
+        ),
         'createWeekSchedule': _i1.MethodConnector(
           name: 'createWeekSchedule',
           params: {

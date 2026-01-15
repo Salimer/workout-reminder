@@ -1,5 +1,6 @@
 import 'package:timezone/timezone.dart' as tz;
-import 'package:workouts_reminder_client/workouts_reminder_client.dart' show DaySchedule, DayWorkoutStatusEnum, WeekdayEnum;
+import 'package:workouts_reminder_client/workouts_reminder_client.dart'
+    show DaySchedule, DayWorkoutStatusEnum, WeekdayEnum;
 
 import '../../../../core/constants/enums.dart' as enums;
 import '../../../notifications/data/models/notification_model.dart';
@@ -178,6 +179,23 @@ class DayScheduleModel {
       status: DayWorkoutStatusEnum.fromJson(status.name),
       notifications: notifications
           ?.map((notification) => notification.toServerNotification())
+          .toList(),
+    );
+  }
+
+  factory DayScheduleModel.fromServerDaySchedule(
+    DaySchedule daySchedule,
+  ) {
+    return DayScheduleModel(
+      day: enums.WeekdayEnum.fromString(daySchedule.day.name),
+      status: enums.DayWorkoutStatusEnum.fromServerStatus(
+        daySchedule.status.name,
+      ),
+      notifications: daySchedule.notifications
+          ?.map(
+            (notification) =>
+                NotificationModel.fromServerNotification(notification),
+          )
           .toList(),
     );
   }

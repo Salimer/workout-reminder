@@ -1,52 +1,42 @@
 import 'package:serverpod/serverpod.dart';
 
 import '../../../generated/protocol.dart';
+import 'create_week_schedule_service.dart';
 
 class ProgressEndpoint extends Endpoint {
+  final CreateWeekScheduleService _progressService =
+      const CreateWeekScheduleService();
+
   @override
   bool get requireLogin => true;
+
+  Future<Progress?> getProgress(Session session) async {
+    final userId = UuidValue.withValidation(
+      session.authenticated!.userIdentifier,
+    );
+    final progress = await Progress.db.findFirstRow(
+      session,
+      where: (t) => t.userId.equals(userId),
+      include: Progress.include(
+        weeks: WeekSchedule.includeList(
+          include: WeekSchedule.include(
+            days: DaySchedule.includeList(
+              include: DaySchedule.include(
+                notifications: Notification.includeList(),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    return progress;
+  }
 
   Future<void> createWeekSchedule(
     Session session,
     WeekSchedule weekSchedule,
   ) async {
-    final authInfo = session.authenticated;
-    if (authInfo == null) {
-      throw Exception('User is not authenticated.');
-    }
-
-    final userId = UuidValue.withValidation(authInfo.userIdentifier);
-
-    await session.db.transaction((transaction) async {
-      final existingProgress = await Progress.db.findFirstRow(
-        session,
-        where: (t) => t.userId.equals(userId),
-        transaction: transaction,
-      );
-
-      if (existingProgress == null) {
-        await Progress.db.insertRow(
-          session,
-          Progress(
-            userId: userId,
-            weeks: [weekSchedule],
-            updatedAt: DateTime.now(),
-          ),
-          transaction: transaction,
-        );
-        return;
-      }
-
-      final updatedProgress = existingProgress.copyWith(
-        weeks: [...?existingProgress.weeks, weekSchedule],
-        updatedAt: DateTime.now(),
-      );
-
-      await Progress.db.updateRow(
-        session,
-        updatedProgress,
-        transaction: transaction,
-      );
-    });
+    await _progressService.call(session, weekSchedule);
   }
 }

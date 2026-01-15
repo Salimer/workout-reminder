@@ -39,7 +39,7 @@ class WeekMiniRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    week.note,
+                    week.note ?? 'Weekly Plan',
                     style: Theme.of(context).textTheme.labelLarge?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),

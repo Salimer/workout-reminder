@@ -1,3 +1,4 @@
+import 'package:workouts_reminder_client/workouts_reminder_client.dart' show Progress;
 import 'package:workouts_reminder_flutter/core/constants/enums.dart';
 
 import '../../../schedule/data/models/day_schedule_model.dart';
@@ -116,6 +117,16 @@ class ProgressModel {
 
   factory ProgressModel.initSeedData() {
     return ProgressModel(weeks: seedWeeksFromToday());
+  }
+
+  factory ProgressModel.fromServerProgress(Progress progress) {
+    return ProgressModel(
+      weeks: progress.weeks!
+          .map(
+            (week) => WeekScheduleModel.fromServerWeekSchedule(week),
+          )
+          .toList()
+    );
   }
 }
 

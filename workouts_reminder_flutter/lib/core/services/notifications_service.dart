@@ -73,11 +73,15 @@ class NotificationsService {
   }
 
   Future<void> scheduleNotification(NotificationModel notification) async {
+    final scheduledDate = tz.TZDateTime.from(
+      notification.scheduledDate,
+      tz.local,
+    );
     await flutterLocalNotificationsPlugin.zonedSchedule(
       notification.id,
       notification.title,
       notification.body,
-      notification.scheduledDate,
+      scheduledDate,
       // tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
       const NotificationDetails(
         android: AndroidNotificationDetails(

@@ -45,6 +45,21 @@ enum DayWorkoutStatusEnum {
       orElse: () => throw ArgumentError('Invalid status string: $status'),
     );
   }
+
+  static DayWorkoutStatusEnum fromServerStatus(String status) {
+    switch (status) {
+      case 'pending':
+        return DayWorkoutStatusEnum.pending;
+      case 'performed':
+        return DayWorkoutStatusEnum.performed;
+      case 'skipped':
+        return DayWorkoutStatusEnum.skipped;
+      case 'notScheduled':
+        return DayWorkoutStatusEnum.notScheduled;
+      default:
+        throw ArgumentError('Invalid server status string: $status');
+    }
+  }
 }
 
 enum ProgressItemType {

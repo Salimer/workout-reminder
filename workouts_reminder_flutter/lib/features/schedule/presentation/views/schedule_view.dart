@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/widgets/animated_section.dart';
 import '../../../../core/widgets/app_card.dart';
-import '../state/progress.dart';
+import '../../../progress/presentation/state/progress_state.dart';
 import '../widgets/week_schedule_summary.dart';
 import '../widgets/workout_days_picker.dart';
 
@@ -86,7 +86,7 @@ class ScheduleView extends StatelessWidget {
               child: Consumer(
                 builder: (context, ref, _) {
                   final week = ref.watch(
-                    progressProvider.select(
+                    progressStateProvider.select(
                       (value) => value.requireValue.activeWeek,
                     ),
                   );

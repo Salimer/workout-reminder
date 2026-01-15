@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/config/routes.dart';
 import '../../../../core/widgets/animated_section.dart';
 import '../../../../core/widgets/app_card.dart';
-import '../../../schedule/presentation/state/progress.dart';
+import '../../../progress/presentation/state/progress_state.dart';
 import '../../use_cases/bottom_navigation_use_case.dart';
 import '../widgets/daily_coach_card.dart';
 import '../widgets/hero_card.dart';
@@ -24,7 +24,9 @@ class MainView extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         final activeWeek = ref.watch(
-          progressProvider.select((value) => value.requireValue.activeWeek),
+          progressStateProvider.select(
+            (value) => value.requireValue.activeWeek,
+          ),
         );
 
         // PLAN YOUR WEEK STATE

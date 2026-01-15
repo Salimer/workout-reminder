@@ -44,7 +44,7 @@ class WeekScheduleSummary extends StatelessWidget {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        schedule.note,
+                        schedule.note ?? 'Weekly Plan',
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: scheme.onSurface.withValues(alpha: 0.75),
                         ),

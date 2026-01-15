@@ -1,11 +1,10 @@
-import 'package:timezone/timezone.dart';
 import 'package:workouts_reminder_client/workouts_reminder_client.dart';
 
 class NotificationModel {
   final int id;
   final String title;
   final String body;
-  final TZDateTime scheduledDate;
+  final DateTime scheduledDate;
   final String? payload;
 
   NotificationModel({
@@ -17,9 +16,7 @@ class NotificationModel {
   });
 
   factory NotificationModel.init() {
-    final scheduledDate = TZDateTime.now(
-      local,
-    ).add(const Duration(seconds: 5));
+    final scheduledDate = DateTime.now().add(const Duration(seconds: 5));
     return NotificationModel(
       id: DateTime.now().millisecondsSinceEpoch % 100000,
       title: 'Workout Reminder',
@@ -44,8 +41,7 @@ class NotificationModel {
       id: json['id'],
       title: json['title'],
       body: json['body'],
-      scheduledDate: TZDateTime.parse(
-        local,
+      scheduledDate: DateTime.parse(
         json['scheduledDate'],
       ),
       payload: json['payload'],
@@ -54,7 +50,7 @@ class NotificationModel {
 
   factory NotificationModel.forWorkoutDay({
     required int id,
-    required TZDateTime scheduledDate,
+    required DateTime scheduledDate,
     required String title,
     required String body,
     required String payload,
@@ -75,6 +71,17 @@ class NotificationModel {
       body: body,
       scheduledDate: scheduledDate,
       payload: payload ?? '',
+    );
+  }
+
+  factory NotificationModel.fromServerNotification(
+      Notification notification) {
+    return NotificationModel(
+      id: notification.id!,
+      title: notification.title,
+      body: notification.body,
+      scheduledDate: notification.scheduledDate,
+      payload: notification.payload,
     );
   }
 }

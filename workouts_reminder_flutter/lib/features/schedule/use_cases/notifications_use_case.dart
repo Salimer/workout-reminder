@@ -7,7 +7,7 @@ import '../../../core/services/notifications_service.dart';
 import '../../notifications/data/models/notification_model.dart';
 import '../data/models/day_schedule_model.dart';
 import '../data/models/week_schedule_model.dart';
-import '../presentation/state/progress.dart';
+import '../../progress/presentation/state/progress_state.dart';
 
 part 'notifications_use_case.g.dart';
 
@@ -77,7 +77,7 @@ class NotificationsUseCase {
 
   Future<void> _clearDayNotifications(WeekdayEnum day) async {
     final List<int> ids = ref
-        .read(progressProvider)
+        .read(progressStateProvider)
         .requireValue
         .activeWeek!
         .notificationIdsForDay(day);
@@ -88,7 +88,10 @@ class NotificationsUseCase {
   }
 
   Future<void> _enableDayNotifications(WeekdayEnum day) async {
-    final weekSchedule = ref.read(progressProvider).requireValue.activeWeek!;
+    final weekSchedule = ref
+        .read(progressStateProvider)
+        .requireValue
+        .activeWeek!;
     final daySchedule = weekSchedule.days[day.index];
     await scheduleDayNotifications(daySchedule);
   }
