@@ -62,12 +62,12 @@ GoRouter routes(Ref ref) {
     ],
     refreshListenable: ref.read(clientProvider).auth.authInfoListenable,
     redirect: (context, state) {
-      final isAuthed = ref.read(clientProvider).auth.isAuthenticated;
-      final isOnSignIn = state.matchedLocation == '/sign_in'; // or check name
-      final firstRelaunch = ref.read(firstRelaunchProvider);
-      if (firstRelaunch) {
+      if (ref.read(firstRelaunchProvider)) {
         return null;
       }
+      
+      final isAuthed = ref.read(clientProvider).auth.isAuthenticated;
+      final isOnSignIn = state.name == AppRoutes.signIn;
 
       if (!isAuthed && !isOnSignIn) {
         return state.namedLocation(AppRoutes.signIn);

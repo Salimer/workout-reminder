@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
-import 'package:workouts_reminder_flutter/core/providers/auth_state.dart';
-import 'package:workouts_reminder_flutter/core/providers/client.dart';
 
 import '../../../../core/config/routes.dart';
+import '../../../../core/providers/client.dart';
 import '../../../../core/providers/first_relaunch.dart';
-import '../../../home/use_cases/bottom_navigation_use_case.dart';
-import '../../../progress/presentation/state/progress_state.dart';
+import '../../../../core/services/notifications_service.dart';
 import '../widgets/glow_blob_widget.dart';
 import '../widgets/landscape_brand_widget.dart';
 import '../widgets/portrait_brand_widget.dart';
@@ -28,36 +26,37 @@ class _SplashViewState extends ConsumerState<SplashView> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       ref.read(firstRelaunchProvider.notifier).setFalse();
       debugPrint("SplashView: Checking authentication");
-      // try {
-      //   await Future.wait([
-      await Future.delayed(const Duration(seconds: 2));
-      //   ]);
-      // } catch (_) {}
 
-      // final progress = ref.read(progressStateProvider).requireValue;
-
-      // If the week schedule is outdated, you can handle it here
-      // For example, navigate to the schedule setup view
-      // If it's valid, navigate to the main view
-      // if (progress.activeWeek == null) {
-      //   ref.read(bottomNavigationUseCaseProvider).goToScheduleView();
-      // }
-      // final isAuthenticated = ref.read(authStateProvider);
-      final isAuthenticated = ref.read(clientProvider).auth.isAuthenticated;
-      if (!isAuthenticated) {
-        ref
-            .read(routesProvider)
-            .goNamed(
-              AppRoutes.signIn,
-            );
-      } else {
-        ref
-            .read(routesProvider)
-            .goNamed(
-              AppRoutes.progressLoader,
-            );
-      }
+      await _startInitializers();
+      _handleFirstNav();
     });
+  }
+
+  Future<void> _startInitializers() async {
+    try {
+      await Future.wait([
+        Future.delayed(const Duration(seconds: 2)),
+        ref.read(clientProvider).auth.initialize(),
+        ref.read(notificationsSvcProvider).initialize(),
+      ]);
+    } catch (_) {}
+  }
+
+  void _handleFirstNav() {
+    final isAuthenticated = ref.read(clientProvider).auth.isAuthenticated;
+    if (!isAuthenticated) {
+      ref
+          .read(routesProvider)
+          .goNamed(
+            AppRoutes.signIn,
+          );
+    } else {
+      ref
+          .read(routesProvider)
+          .goNamed(
+            AppRoutes.progressLoader,
+          );
+    }
   }
 
   @override
