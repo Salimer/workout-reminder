@@ -7,17 +7,20 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/client.dart';
 import '../../../../core/providers/local_storage.dart';
+import '../../../home/use_cases/bottom_navigation_use_case.dart';
 import '../../data/models/progress_model.dart';
 import '../../../schedule/data/models/week_schedule_model.dart';
 
 part 'progress_state.g.dart';
 
-@Riverpod(keepAlive: true)
+@Riverpod(keepAlive: false)
 class ProgressState extends _$ProgressState {
   @override
   FutureOr<ProgressModel> build() async {
+    await Future.delayed(const Duration(milliseconds: 900));
+    final storageFuture = ref.watch(localStorageProvider.future);
     persist(
-      ref.watch(localStorageProvider.future),
+      storageFuture,
       key: 'progress_state',
       options: const StorageOptions(
         cacheTime: StorageCacheTime.unsafe_forever,
@@ -27,13 +30,28 @@ class ProgressState extends _$ProgressState {
       encode: (state) => jsonEncode(state.toJson()),
       decode: (data) => ProgressModel.fromJson(jsonDecode(data)),
     );
-
-    return _fetchedProgress();
-
-    // return state.value ?? ProgressModel.init();
+    debugPrint("ProgressState: build() called, fetching progress...");
+    ref.onDispose(() {
+      // clean the local storage when the provider is disposed
+      debugPrint("ProgressState: Disposed.");
+      storageFuture.then((storage) async {
+        await storage.delete('progress_state');
+        debugPrint("ProgressState: Local storage cleared.");
+      });
+    });
+    ProgressModel progress;
+    try {
+      debugPrint("Attempting to fetch progress from server...");
+      progress = await _fetchedProgress();
+    } catch (_) {
+      progress = state.value ?? ProgressModel.init();
+    }
+    _setBottomNavView(progress);
+    return progress;
   }
 
   Future<ProgressModel> _fetchedProgress() async {
+    debugPrint("Starting to fetch progress from server...");
     final schedule = await ref.read(clientProvider).progress.getProgress();
 
     if (schedule == null) {
@@ -42,6 +60,12 @@ class ProgressState extends _$ProgressState {
 
     final usableSchedule = ProgressModel.fromServerProgress(schedule);
     return usableSchedule;
+  }
+
+  void _setBottomNavView(ProgressModel progress) {
+    if (progress.activeWeek == null) {
+      ref.read(bottomNavigationUseCaseProvider).goToScheduleView();
+    }
   }
 
   void set(ProgressModel data) {

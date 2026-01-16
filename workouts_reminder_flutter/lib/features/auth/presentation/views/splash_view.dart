@@ -27,22 +27,21 @@ class _SplashViewState extends ConsumerState<SplashView> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       ref.read(firstRelaunchProvider.notifier).setFalse();
-      debugPrint("SplashView: Checking authentication and progress state...");
-      await Future.wait([
-        Future.delayed(const Duration(seconds: 2)),
-        Future(() => debugPrint("SplashView: Fetching progress state...")),
-        ref.read(progressStateProvider.future),
-      ]);
-      debugPrint("SplashView: Progress state fetched.");
+      debugPrint("SplashView: Checking authentication");
+      // try {
+      //   await Future.wait([
+      await Future.delayed(const Duration(seconds: 2));
+      //   ]);
+      // } catch (_) {}
 
-      final progress = ref.read(progressStateProvider).requireValue;
+      // final progress = ref.read(progressStateProvider).requireValue;
 
       // If the week schedule is outdated, you can handle it here
       // For example, navigate to the schedule setup view
       // If it's valid, navigate to the main view
-      if (progress.activeWeek == null) {
-        ref.read(bottomNavigationUseCaseProvider).goToScheduleView();
-      }
+      // if (progress.activeWeek == null) {
+      //   ref.read(bottomNavigationUseCaseProvider).goToScheduleView();
+      // }
       // final isAuthenticated = ref.read(authStateProvider);
       final isAuthenticated = ref.read(clientProvider).auth.isAuthenticated;
       if (!isAuthenticated) {
@@ -55,7 +54,7 @@ class _SplashViewState extends ConsumerState<SplashView> {
         ref
             .read(routesProvider)
             .goNamed(
-              AppRoutes.home,
+              AppRoutes.progressLoader,
             );
       }
     });
@@ -63,6 +62,8 @@ class _SplashViewState extends ConsumerState<SplashView> {
 
   @override
   Widget build(BuildContext context) {
+    // ref.watch(progressStateProvider);
+
     final scheme = Theme.of(context).colorScheme;
     final size = MediaQuery.sizeOf(context);
     final accent = scheme.primary;

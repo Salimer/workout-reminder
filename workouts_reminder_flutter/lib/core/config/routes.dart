@@ -10,6 +10,7 @@ import '../../features/auth/presentation/views/sign_in_view.dart';
 import '../../features/home/presentation/views/home_view.dart';
 import '../../features/profile/presentation/views/profile_view.dart';
 import '../../features/auth/presentation/views/splash_view.dart';
+import '../../features/progress/presentation/views/progress_loader_view.dart';
 import '../providers/client.dart';
 import '../providers/first_relaunch.dart';
 
@@ -37,12 +38,12 @@ GoRouter routes(Ref ref) {
         },
       ),
       GoRoute(
-        name: AppRoutes.home,
-        path: '/home',
+        name: AppRoutes.progressLoader,
+        path: '/progress_loader',
         pageBuilder: (context, state) {
           return _adaptivePageBuilder(
             state,
-            const HomeView(),
+            const ProgressLoaderView(),
           );
         },
         routes: [
@@ -72,7 +73,7 @@ GoRouter routes(Ref ref) {
         return state.namedLocation(AppRoutes.signIn);
       }
       if (isAuthed && isOnSignIn) {
-        return state.namedLocation(AppRoutes.home);
+        return state.namedLocation(AppRoutes.progressLoader);
       }
       return null;
     },
@@ -91,4 +92,5 @@ class AppRoutes {
   static const String home = 'home';
   static const String profile = 'profile';
   static const String signIn = 'sign_in';
+  static const String progressLoader = 'progress_loader';
 }
