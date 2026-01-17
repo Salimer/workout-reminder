@@ -7,7 +7,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 
 import '../../features/auth/presentation/views/sign_in_view.dart';
-import '../../features/home/presentation/views/home_view.dart';
 import '../../features/profile/presentation/views/profile_view.dart';
 import '../../features/auth/presentation/views/splash_view.dart';
 import '../../features/progress/presentation/views/progress_loader_view.dart';
@@ -54,7 +53,7 @@ GoRouter routes(Ref ref) {
               return _adaptivePageBuilder(
                 state,
                 const ProfileView(),
-              );
+            );
             },
           ),
         ],
@@ -65,8 +64,9 @@ GoRouter routes(Ref ref) {
       if (ref.read(firstRelaunchProvider)) {
         return null;
       }
-      
+
       final isAuthed = ref.read(clientProvider).auth.isAuthenticated;
+      // final isOnSignIn = state.matchedLocation == '/sign_in';
       final isOnSignIn = state.name == AppRoutes.signIn;
 
       if (!isAuthed && !isOnSignIn) {
