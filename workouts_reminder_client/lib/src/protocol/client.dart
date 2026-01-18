@@ -32,10 +32,10 @@ class EndpointProfile extends _i1.EndpointRef {
   @override
   String get name => 'profile';
 
-  _i2.Future<_i3.Profile?> getOrCreateProfile() =>
+  _i2.Future<_i3.Profile?> getProfile() =>
       caller.callServerEndpoint<_i3.Profile?>(
         'profile',
-        'getOrCreateProfile',
+        'getProfile',
         {},
       );
 
@@ -44,6 +44,13 @@ class EndpointProfile extends _i1.EndpointRef {
     'deleteUser',
     {},
   );
+
+  _i2.Future<_i3.Profile> updateProfile(_i3.Profile profile) =>
+      caller.callServerEndpoint<_i3.Profile>(
+        'profile',
+        'updateProfile',
+        {'profile': profile},
+      );
 }
 
 /// {@category Endpoint}
@@ -59,12 +66,27 @@ class EndpointProgress extends _i1.EndpointRef {
         'getProgress',
         {},
       );
+}
+
+/// {@category Endpoint}
+class EndpointWeekSchedule extends _i1.EndpointRef {
+  EndpointWeekSchedule(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'weekSchedule';
 
   _i2.Future<void> createWeekSchedule(_i5.WeekSchedule weekSchedule) =>
       caller.callServerEndpoint<void>(
-        'progress',
+        'weekSchedule',
         'createWeekSchedule',
         {'weekSchedule': weekSchedule},
+      );
+
+  _i2.Future<void> deleteWeekSchedule(int weekScheduleId) =>
+      caller.callServerEndpoint<void>(
+        'weekSchedule',
+        'deleteWeekSchedule',
+        {'weekScheduleId': weekScheduleId},
       );
 }
 
@@ -337,6 +359,7 @@ class Client extends _i1.ServerpodClientShared {
        ) {
     profile = EndpointProfile(this);
     progress = EndpointProgress(this);
+    weekSchedule = EndpointWeekSchedule(this);
     emailIdp = EndpointEmailIdp(this);
     jwtRefresh = EndpointJwtRefresh(this);
     greeting = EndpointGreeting(this);
@@ -346,6 +369,8 @@ class Client extends _i1.ServerpodClientShared {
   late final EndpointProfile profile;
 
   late final EndpointProgress progress;
+
+  late final EndpointWeekSchedule weekSchedule;
 
   late final EndpointEmailIdp emailIdp;
 
@@ -359,6 +384,7 @@ class Client extends _i1.ServerpodClientShared {
   Map<String, _i1.EndpointRef> get endpointRefLookup => {
     'profile': profile,
     'progress': progress,
+    'weekSchedule': weekSchedule,
     'emailIdp': emailIdp,
     'jwtRefresh': jwtRefresh,
     'greeting': greeting,

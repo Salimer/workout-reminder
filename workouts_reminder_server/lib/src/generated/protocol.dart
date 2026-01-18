@@ -19,15 +19,17 @@ import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
 import 'app/core/enums/day_workout_status_enum.dart' as _i5;
 import 'app/core/enums/weekday_enum.dart' as _i6;
 import 'app/features/day_schedules/day_schedule.dart' as _i7;
-import 'app/features/notifications/notification.dart' as _i8;
-import 'app/features/profile/goal.dart' as _i9;
-import 'app/features/profile/profile.dart' as _i10;
-import 'app/features/progress/progress.dart' as _i11;
-import 'app/features/week_schedules/week_schedule.dart' as _i12;
-import 'greeting.dart' as _i13;
+import 'app/features/exceptions/serverpod_exception.dart' as _i8;
+import 'app/features/notifications/notification.dart' as _i9;
+import 'app/features/profile/goal.dart' as _i10;
+import 'app/features/profile/profile.dart' as _i11;
+import 'app/features/progress/progress.dart' as _i12;
+import 'app/features/week_schedules/week_schedule.dart' as _i13;
+import 'greeting.dart' as _i14;
 export 'app/core/enums/day_workout_status_enum.dart';
 export 'app/core/enums/weekday_enum.dart';
 export 'app/features/day_schedules/day_schedule.dart';
+export 'app/features/exceptions/serverpod_exception.dart';
 export 'app/features/notifications/notification.dart';
 export 'app/features/profile/goal.dart';
 export 'app/features/profile/profile.dart';
@@ -566,23 +568,26 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i7.DaySchedule) {
       return _i7.DaySchedule.fromJson(data) as T;
     }
-    if (t == _i8.Notification) {
-      return _i8.Notification.fromJson(data) as T;
+    if (t == _i8.ServerpodException) {
+      return _i8.ServerpodException.fromJson(data) as T;
     }
-    if (t == _i9.Goal) {
-      return _i9.Goal.fromJson(data) as T;
+    if (t == _i9.Notification) {
+      return _i9.Notification.fromJson(data) as T;
     }
-    if (t == _i10.Profile) {
-      return _i10.Profile.fromJson(data) as T;
+    if (t == _i10.Goal) {
+      return _i10.Goal.fromJson(data) as T;
     }
-    if (t == _i11.Progress) {
-      return _i11.Progress.fromJson(data) as T;
+    if (t == _i11.Profile) {
+      return _i11.Profile.fromJson(data) as T;
     }
-    if (t == _i12.WeekSchedule) {
-      return _i12.WeekSchedule.fromJson(data) as T;
+    if (t == _i12.Progress) {
+      return _i12.Progress.fromJson(data) as T;
     }
-    if (t == _i13.Greeting) {
-      return _i13.Greeting.fromJson(data) as T;
+    if (t == _i13.WeekSchedule) {
+      return _i13.WeekSchedule.fromJson(data) as T;
+    }
+    if (t == _i14.Greeting) {
+      return _i14.Greeting.fromJson(data) as T;
     }
     if (t == _i1.getType<_i5.DayWorkoutStatusEnum?>()) {
       return (data != null ? _i5.DayWorkoutStatusEnum.fromJson(data) : null)
@@ -594,57 +599,60 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i1.getType<_i7.DaySchedule?>()) {
       return (data != null ? _i7.DaySchedule.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i8.Notification?>()) {
-      return (data != null ? _i8.Notification.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i8.ServerpodException?>()) {
+      return (data != null ? _i8.ServerpodException.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i9.Goal?>()) {
-      return (data != null ? _i9.Goal.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i9.Notification?>()) {
+      return (data != null ? _i9.Notification.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i10.Profile?>()) {
-      return (data != null ? _i10.Profile.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i10.Goal?>()) {
+      return (data != null ? _i10.Goal.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i11.Progress?>()) {
-      return (data != null ? _i11.Progress.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i11.Profile?>()) {
+      return (data != null ? _i11.Profile.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i12.WeekSchedule?>()) {
-      return (data != null ? _i12.WeekSchedule.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i12.Progress?>()) {
+      return (data != null ? _i12.Progress.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i13.Greeting?>()) {
-      return (data != null ? _i13.Greeting.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i13.WeekSchedule?>()) {
+      return (data != null ? _i13.WeekSchedule.fromJson(data) : null) as T;
     }
-    if (t == List<_i8.Notification>) {
+    if (t == _i1.getType<_i14.Greeting?>()) {
+      return (data != null ? _i14.Greeting.fromJson(data) : null) as T;
+    }
+    if (t == List<_i9.Notification>) {
       return (data as List)
-              .map((e) => deserialize<_i8.Notification>(e))
+              .map((e) => deserialize<_i9.Notification>(e))
               .toList()
           as T;
     }
-    if (t == _i1.getType<List<_i8.Notification>?>()) {
+    if (t == _i1.getType<List<_i9.Notification>?>()) {
       return (data != null
               ? (data as List)
-                    .map((e) => deserialize<_i8.Notification>(e))
+                    .map((e) => deserialize<_i9.Notification>(e))
                     .toList()
               : null)
           as T;
     }
-    if (t == List<_i9.Goal>) {
-      return (data as List).map((e) => deserialize<_i9.Goal>(e)).toList() as T;
+    if (t == List<_i10.Goal>) {
+      return (data as List).map((e) => deserialize<_i10.Goal>(e)).toList() as T;
     }
-    if (t == _i1.getType<List<_i9.Goal>?>()) {
+    if (t == _i1.getType<List<_i10.Goal>?>()) {
       return (data != null
-              ? (data as List).map((e) => deserialize<_i9.Goal>(e)).toList()
+              ? (data as List).map((e) => deserialize<_i10.Goal>(e)).toList()
               : null)
           as T;
     }
-    if (t == List<_i12.WeekSchedule>) {
+    if (t == List<_i13.WeekSchedule>) {
       return (data as List)
-              .map((e) => deserialize<_i12.WeekSchedule>(e))
+              .map((e) => deserialize<_i13.WeekSchedule>(e))
               .toList()
           as T;
     }
-    if (t == _i1.getType<List<_i12.WeekSchedule>?>()) {
+    if (t == _i1.getType<List<_i13.WeekSchedule>?>()) {
       return (data != null
               ? (data as List)
-                    .map((e) => deserialize<_i12.WeekSchedule>(e))
+                    .map((e) => deserialize<_i13.WeekSchedule>(e))
                     .toList()
               : null)
           as T;
@@ -678,12 +686,13 @@ class Protocol extends _i1.SerializationManagerServer {
       _i5.DayWorkoutStatusEnum => 'DayWorkoutStatusEnum',
       _i6.WeekdayEnum => 'WeekdayEnum',
       _i7.DaySchedule => 'DaySchedule',
-      _i8.Notification => 'Notification',
-      _i9.Goal => 'Goal',
-      _i10.Profile => 'Profile',
-      _i11.Progress => 'Progress',
-      _i12.WeekSchedule => 'WeekSchedule',
-      _i13.Greeting => 'Greeting',
+      _i8.ServerpodException => 'ServerpodException',
+      _i9.Notification => 'Notification',
+      _i10.Goal => 'Goal',
+      _i11.Profile => 'Profile',
+      _i12.Progress => 'Progress',
+      _i13.WeekSchedule => 'WeekSchedule',
+      _i14.Greeting => 'Greeting',
       _ => null,
     };
   }
@@ -707,17 +716,19 @@ class Protocol extends _i1.SerializationManagerServer {
         return 'WeekdayEnum';
       case _i7.DaySchedule():
         return 'DaySchedule';
-      case _i8.Notification():
+      case _i8.ServerpodException():
+        return 'ServerpodException';
+      case _i9.Notification():
         return 'Notification';
-      case _i9.Goal():
+      case _i10.Goal():
         return 'Goal';
-      case _i10.Profile():
+      case _i11.Profile():
         return 'Profile';
-      case _i11.Progress():
+      case _i12.Progress():
         return 'Progress';
-      case _i12.WeekSchedule():
+      case _i13.WeekSchedule():
         return 'WeekSchedule';
-      case _i13.Greeting():
+      case _i14.Greeting():
         return 'Greeting';
     }
     className = _i2.Protocol().getClassNameForObject(data);
@@ -750,23 +761,26 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName == 'DaySchedule') {
       return deserialize<_i7.DaySchedule>(data['data']);
     }
+    if (dataClassName == 'ServerpodException') {
+      return deserialize<_i8.ServerpodException>(data['data']);
+    }
     if (dataClassName == 'Notification') {
-      return deserialize<_i8.Notification>(data['data']);
+      return deserialize<_i9.Notification>(data['data']);
     }
     if (dataClassName == 'Goal') {
-      return deserialize<_i9.Goal>(data['data']);
+      return deserialize<_i10.Goal>(data['data']);
     }
     if (dataClassName == 'Profile') {
-      return deserialize<_i10.Profile>(data['data']);
+      return deserialize<_i11.Profile>(data['data']);
     }
     if (dataClassName == 'Progress') {
-      return deserialize<_i11.Progress>(data['data']);
+      return deserialize<_i12.Progress>(data['data']);
     }
     if (dataClassName == 'WeekSchedule') {
-      return deserialize<_i12.WeekSchedule>(data['data']);
+      return deserialize<_i13.WeekSchedule>(data['data']);
     }
     if (dataClassName == 'Greeting') {
-      return deserialize<_i13.Greeting>(data['data']);
+      return deserialize<_i14.Greeting>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
@@ -806,16 +820,16 @@ class Protocol extends _i1.SerializationManagerServer {
     switch (t) {
       case _i7.DaySchedule:
         return _i7.DaySchedule.t;
-      case _i8.Notification:
-        return _i8.Notification.t;
-      case _i9.Goal:
-        return _i9.Goal.t;
-      case _i10.Profile:
-        return _i10.Profile.t;
-      case _i11.Progress:
-        return _i11.Progress.t;
-      case _i12.WeekSchedule:
-        return _i12.WeekSchedule.t;
+      case _i9.Notification:
+        return _i9.Notification.t;
+      case _i10.Goal:
+        return _i10.Goal.t;
+      case _i11.Profile:
+        return _i11.Profile.t;
+      case _i12.Progress:
+        return _i12.Progress.t;
+      case _i13.WeekSchedule:
+        return _i13.WeekSchedule.t;
     }
     return null;
   }

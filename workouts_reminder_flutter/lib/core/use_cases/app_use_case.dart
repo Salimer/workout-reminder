@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/experimental/mutation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 
+import '../../features/profile/data/models/profile_model.dart';
+import '../../features/profile/presentation/state/profile_state.dart';
 import '../../features/schedule/data/models/week_schedule_model.dart';
 import '../../features/progress/presentation/state/progress_state.dart';
 import '../../features/schedule/use_cases/notifications_use_case.dart';
@@ -25,20 +27,34 @@ class AppUseCase {
       workoutDays: selectedDays,
     );
 
+    final client = ref.read(clientProvider);
+
+    await client.weekSchedule.createWeekSchedule(schedule.toServerSchedule());
+
+    ref.read(progressStateProvider.notifier).createWeekSchedule(schedule);
+
     await ref
         .read(
           notificationsUseCaseProvider,
         )
         .scheduleWeekNotifications(schedule);
-
-    final client = ref.read(clientProvider);
-
-    client.progress.createWeekSchedule(schedule.toServerSchedule());
-
-    ref.read(progressStateProvider.notifier).createWeekSchedule(schedule);
   }
 
   Future<void> clearWeekPlan() async {
+    final weekScheduleId = ref
+        .read(progressStateProvider)
+        .value
+        ?.activeWeek
+        ?.id;
+
+    if (weekScheduleId == null) {
+      throw Exception('No active week schedule to delete.');
+    }
+    await ref
+        .read(clientProvider)
+        .weekSchedule
+        .deleteWeekSchedule(weekScheduleId);
+
     await ref.read(notificationsUseCaseProvider).clearWeekNotifications();
 
     ref.read(progressStateProvider.notifier).clearCurrentWeekPlan();
@@ -67,6 +83,16 @@ class AppUseCase {
     await ref.read(clientProvider).profile.deleteUser();
     await signOut();
   }
+
+  Future<void> updateProfile(ProfileModel profile) async {
+    final updatedProfile = await ref
+        .read(clientProvider)
+        .profile
+        .updateProfile(profile.toServer(ref));
+    ref
+        .read(profileStateProvider.notifier)
+        .set(ProfileModel.fromServerProfile(updatedProfile));
+  }
 }
 
 final scheduleWeekPlanMutation = Mutation<void>(
@@ -79,4 +105,8 @@ final clearWeekPlanMutation = Mutation<void>(
 
 final changeDayWorkoutStatusMutation = Mutation<void>(
   label: 'skip_today_workout',
+);
+
+final updateProfileMutation = Mutation<void>(
+  label: 'update_profile',
 );

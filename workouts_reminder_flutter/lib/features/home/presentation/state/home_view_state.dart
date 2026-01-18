@@ -19,7 +19,7 @@ class HomeViewState extends _$HomeViewState {
     final userName = (profile?.characterName.isNotEmpty ?? false)
         ? profile!.characterName
         : 'Champion';
-    final goals = profile?.goals ?? [];
+    final goals = profile?.goals.map((goal) => goal.text).toList() ?? [];
 
     // Calculate Streak (Total completed days for now)
     final streak = progress?.streak ?? 0;

@@ -134,6 +134,8 @@ class TestEndpoints {
 
   late final _ProgressEndpoint progress;
 
+  late final _WeekScheduleEndpoint weekSchedule;
+
   late final _EmailIdpEndpoint emailIdp;
 
   late final _JwtRefreshEndpoint jwtRefresh;
@@ -153,6 +155,10 @@ class _InternalTestEndpoints extends TestEndpoints
       serializationManager,
     );
     progress = _ProgressEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    weekSchedule = _WeekScheduleEndpoint(
       endpoints,
       serializationManager,
     );
@@ -181,20 +187,20 @@ class _ProfileEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i4.Profile?> getOrCreateProfile(
+  _i3.Future<_i4.Profile?> getProfile(
     _i1.TestSessionBuilder sessionBuilder,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
             endpoint: 'profile',
-            method: 'getOrCreateProfile',
+            method: 'getProfile',
           );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'profile',
-          methodName: 'getOrCreateProfile',
+          methodName: 'getProfile',
           parameters: _i1.testObjectToJson({}),
           serializationManager: _serializationManager,
         );
@@ -232,6 +238,37 @@ class _ProfileEndpoint {
                   _localCallContext.arguments,
                 )
                 as _i3.Future<void>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i4.Profile> updateProfile(
+    _i1.TestSessionBuilder sessionBuilder,
+    _i4.Profile profile,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'profile',
+            method: 'updateProfile',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'profile',
+          methodName: 'updateProfile',
+          parameters: _i1.testObjectToJson({'profile': profile}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i4.Profile>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -279,6 +316,17 @@ class _ProgressEndpoint {
       }
     });
   }
+}
+
+class _WeekScheduleEndpoint {
+  _WeekScheduleEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
 
   _i3.Future<void> createWeekSchedule(
     _i1.TestSessionBuilder sessionBuilder,
@@ -287,15 +335,46 @@ class _ProgressEndpoint {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-            endpoint: 'progress',
+            endpoint: 'weekSchedule',
             method: 'createWeekSchedule',
           );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'progress',
+          endpointPath: 'weekSchedule',
           methodName: 'createWeekSchedule',
           parameters: _i1.testObjectToJson({'weekSchedule': weekSchedule}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<void>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<void> deleteWeekSchedule(
+    _i1.TestSessionBuilder sessionBuilder,
+    int weekScheduleId,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'weekSchedule',
+            method: 'deleteWeekSchedule',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'weekSchedule',
+          methodName: 'deleteWeekSchedule',
+          parameters: _i1.testObjectToJson({'weekScheduleId': weekScheduleId}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =

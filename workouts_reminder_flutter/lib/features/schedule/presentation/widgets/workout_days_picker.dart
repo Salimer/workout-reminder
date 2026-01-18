@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/experimental/mutation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:workouts_reminder_flutter/features/home/use_cases/bottom_navigation_use_case.dart';
+import 'package:workouts_reminder_client/workouts_reminder_client.dart' show ServerpodException;
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/widgets/animated_section.dart';
 import '../../../../core/use_cases/app_use_case.dart';
+import '../../../home/use_cases/bottom_navigation_use_case.dart';
 
 class WorkoutDaysPicker extends StatefulWidget {
   final Set<WeekdayEnum> initialSelectedDays;
@@ -84,11 +84,15 @@ class _WorkoutDaysPickerState extends State<WorkoutDaysPicker> {
                     final state = ref.watch(mutation);
                     ref.listen(mutation, (_, next) {
                       if (next.hasError) {
+                        final error = (next as MutationError).error;
+                        final message = error is ServerpodException
+                            ? error.message
+                            : error.toString();
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                'Error scheduling workouts: ${(next as MutationError).error}',
+                                'Error scheduling workouts: $message',
                               ),
                             ),
                           );
@@ -108,8 +112,8 @@ class _WorkoutDaysPickerState extends State<WorkoutDaysPicker> {
                                         )
                                         .createWeekSchedule(_selectedDays);
 
-                                    ref
-                                        .read(bottomNavigationUseCaseProvider)
+                                    tsx
+                                        .get(bottomNavigationUseCaseProvider)
                                         .goToMainView();
                                   })
                                   .catchError((_) {});

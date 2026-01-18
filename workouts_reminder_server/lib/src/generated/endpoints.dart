@@ -13,15 +13,18 @@
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../app/features/profile/profile_endpoint.dart' as _i2;
 import '../app/features/progress/progress_endpoint.dart' as _i3;
-import '../auth/email_idp_endpoint.dart' as _i4;
-import '../auth/jwt_refresh_endpoint.dart' as _i5;
-import '../greeting_endpoint.dart' as _i6;
-import 'package:workouts_reminder_server/src/generated/app/features/week_schedules/week_schedule.dart'
-    as _i7;
-import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
+import '../app/features/week_schedules/week_schedule_endpoint.dart' as _i4;
+import '../auth/email_idp_endpoint.dart' as _i5;
+import '../auth/jwt_refresh_endpoint.dart' as _i6;
+import '../greeting_endpoint.dart' as _i7;
+import 'package:workouts_reminder_server/src/generated/app/features/profile/profile.dart'
     as _i8;
-import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+import 'package:workouts_reminder_server/src/generated/app/features/week_schedules/week_schedule.dart'
     as _i9;
+import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
+    as _i10;
+import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+    as _i11;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -39,19 +42,25 @@ class Endpoints extends _i1.EndpointDispatch {
           'progress',
           null,
         ),
-      'emailIdp': _i4.EmailIdpEndpoint()
+      'weekSchedule': _i4.WeekScheduleEndpoint()
+        ..initialize(
+          server,
+          'weekSchedule',
+          null,
+        ),
+      'emailIdp': _i5.EmailIdpEndpoint()
         ..initialize(
           server,
           'emailIdp',
           null,
         ),
-      'jwtRefresh': _i5.JwtRefreshEndpoint()
+      'jwtRefresh': _i6.JwtRefreshEndpoint()
         ..initialize(
           server,
           'jwtRefresh',
           null,
         ),
-      'greeting': _i6.GreetingEndpoint()
+      'greeting': _i7.GreetingEndpoint()
         ..initialize(
           server,
           'greeting',
@@ -62,15 +71,15 @@ class Endpoints extends _i1.EndpointDispatch {
       name: 'profile',
       endpoint: endpoints['profile']!,
       methodConnectors: {
-        'getOrCreateProfile': _i1.MethodConnector(
-          name: 'getOrCreateProfile',
+        'getProfile': _i1.MethodConnector(
+          name: 'getProfile',
           params: {},
           call:
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
               ) async => (endpoints['profile'] as _i2.ProfileEndpoint)
-                  .getOrCreateProfile(session),
+                  .getProfile(session),
         ),
         'deleteUser': _i1.MethodConnector(
           name: 'deleteUser',
@@ -81,6 +90,25 @@ class Endpoints extends _i1.EndpointDispatch {
                 Map<String, dynamic> params,
               ) async => (endpoints['profile'] as _i2.ProfileEndpoint)
                   .deleteUser(session),
+        ),
+        'updateProfile': _i1.MethodConnector(
+          name: 'updateProfile',
+          params: {
+            'profile': _i1.ParameterDescription(
+              name: 'profile',
+              type: _i1.getType<_i8.Profile>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['profile'] as _i2.ProfileEndpoint).updateProfile(
+                    session,
+                    params['profile'],
+                  ),
         ),
       },
     );
@@ -98,12 +126,18 @@ class Endpoints extends _i1.EndpointDispatch {
               ) async => (endpoints['progress'] as _i3.ProgressEndpoint)
                   .getProgress(session),
         ),
+      },
+    );
+    connectors['weekSchedule'] = _i1.EndpointConnector(
+      name: 'weekSchedule',
+      endpoint: endpoints['weekSchedule']!,
+      methodConnectors: {
         'createWeekSchedule': _i1.MethodConnector(
           name: 'createWeekSchedule',
           params: {
             'weekSchedule': _i1.ParameterDescription(
               name: 'weekSchedule',
-              type: _i1.getType<_i7.WeekSchedule>(),
+              type: _i1.getType<_i9.WeekSchedule>(),
               nullable: false,
             ),
           },
@@ -111,10 +145,29 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['progress'] as _i3.ProgressEndpoint)
+              ) async => (endpoints['weekSchedule'] as _i4.WeekScheduleEndpoint)
                   .createWeekSchedule(
                     session,
                     params['weekSchedule'],
+                  ),
+        ),
+        'deleteWeekSchedule': _i1.MethodConnector(
+          name: 'deleteWeekSchedule',
+          params: {
+            'weekScheduleId': _i1.ParameterDescription(
+              name: 'weekScheduleId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['weekSchedule'] as _i4.WeekScheduleEndpoint)
+                  .deleteWeekSchedule(
+                    session,
+                    params['weekScheduleId'],
                   ),
         ),
       },
@@ -141,7 +194,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['emailIdp'] as _i4.EmailIdpEndpoint).login(
+              ) async => (endpoints['emailIdp'] as _i5.EmailIdpEndpoint).login(
                 session,
                 email: params['email'],
                 password: params['password'],
@@ -160,7 +213,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['emailIdp'] as _i4.EmailIdpEndpoint)
+              ) async => (endpoints['emailIdp'] as _i5.EmailIdpEndpoint)
                   .startRegistration(
                     session,
                     email: params['email'],
@@ -184,7 +237,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['emailIdp'] as _i4.EmailIdpEndpoint)
+              ) async => (endpoints['emailIdp'] as _i5.EmailIdpEndpoint)
                   .verifyRegistrationCode(
                     session,
                     accountRequestId: params['accountRequestId'],
@@ -209,7 +262,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['emailIdp'] as _i4.EmailIdpEndpoint)
+              ) async => (endpoints['emailIdp'] as _i5.EmailIdpEndpoint)
                   .finishRegistration(
                     session,
                     registrationToken: params['registrationToken'],
@@ -229,7 +282,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['emailIdp'] as _i4.EmailIdpEndpoint)
+              ) async => (endpoints['emailIdp'] as _i5.EmailIdpEndpoint)
                   .startPasswordReset(
                     session,
                     email: params['email'],
@@ -253,7 +306,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['emailIdp'] as _i4.EmailIdpEndpoint)
+              ) async => (endpoints['emailIdp'] as _i5.EmailIdpEndpoint)
                   .verifyPasswordResetCode(
                     session,
                     passwordResetRequestId: params['passwordResetRequestId'],
@@ -278,7 +331,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['emailIdp'] as _i4.EmailIdpEndpoint)
+              ) async => (endpoints['emailIdp'] as _i5.EmailIdpEndpoint)
                   .finishPasswordReset(
                     session,
                     finishPasswordResetToken:
@@ -305,7 +358,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['jwtRefresh'] as _i5.JwtRefreshEndpoint)
+              ) async => (endpoints['jwtRefresh'] as _i6.JwtRefreshEndpoint)
                   .refreshAccessToken(
                     session,
                     refreshToken: params['refreshToken'],
@@ -330,16 +383,16 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['greeting'] as _i6.GreetingEndpoint).hello(
+              ) async => (endpoints['greeting'] as _i7.GreetingEndpoint).hello(
                 session,
                 params['name'],
               ),
         ),
       },
     );
-    modules['serverpod_auth_idp'] = _i8.Endpoints()
+    modules['serverpod_auth_idp'] = _i10.Endpoints()
       ..initializeEndpoints(server);
-    modules['serverpod_auth_core'] = _i9.Endpoints()
+    modules['serverpod_auth_core'] = _i11.Endpoints()
       ..initializeEndpoints(server);
   }
 }

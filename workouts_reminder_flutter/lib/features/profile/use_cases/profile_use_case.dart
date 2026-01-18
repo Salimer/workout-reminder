@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../data/models/goal_model.dart';
 import '../presentation/state/profile_state.dart';
 
 part 'profile_use_case.g.dart';
@@ -9,7 +10,7 @@ class ProfileUseCase extends _$ProfileUseCase {
   @override
   void build() {}
 
-  void updateGoals(List<String> goals) {
+  void updateGoals(List<GoalModel> goals) {
     ref.read(profileStateProvider.notifier).updateGoals(goals);
   }
 

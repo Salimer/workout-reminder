@@ -1,11 +1,13 @@
 // import '../../../../core/constants/enums.dart';
 
-import 'package:workouts_reminder_client/workouts_reminder_client.dart' show WeekSchedule;
+import 'package:workouts_reminder_client/workouts_reminder_client.dart'
+    show WeekSchedule;
 
 import '../../../../core/constants/enums.dart';
 import 'day_schedule_model.dart';
 
 class WeekScheduleModel {
+  final int? id;
   final List<DayScheduleModel> days;
   final DateTime createdAt;
   final DateTime deadline;
@@ -49,6 +51,7 @@ class WeekScheduleModel {
   }
 
   WeekScheduleModel({
+    this.id,
     required this.days,
     required this.createdAt,
     required this.deadline,
@@ -138,6 +141,7 @@ class WeekScheduleModel {
     WeekSchedule weekSchedule,
   ) {
     return WeekScheduleModel(
+      id: weekSchedule.id,
       days: weekSchedule.days!
           .map((day) => DayScheduleModel.fromServerDaySchedule(day))
           .toList(),

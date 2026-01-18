@@ -1,0 +1,4 @@
+exception: ServerpodException
+fields:
+  message: String
+  errorCode: int, default=1001

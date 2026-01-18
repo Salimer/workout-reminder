@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/experimental/mutation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/widgets/animated_section.dart';
 import '../../../../core/widgets/app_card.dart';
+import '../../../../core/use_cases/app_use_case.dart';
+import '../../data/models/goal_model.dart';
 import '../../use_cases/profile_use_case.dart';
 import '../state/profile_state.dart';
 import '../widgets/selectable_chip.dart';
@@ -339,8 +342,8 @@ class _ProfileViewState extends State<ProfileView> {
                                 for (final suggested in _suggestedGoals)
                                   SelectableChip(
                                     label: suggested,
-                                    isSelected: profile.goals.contains(
-                                      suggested,
+                                    isSelected: profile.goals.any(
+                                      (goal) => goal.text == suggested,
                                     ),
                                     onToggle: (_) => _toggleGoal(
                                       ref,
@@ -349,9 +352,13 @@ class _ProfileViewState extends State<ProfileView> {
                                     ),
                                   ),
                                 // Custom goals (anything in profile.goals that isn't suggested)
-                                for (final custom in profile.goals.where(
-                                  (g) => !_suggestedGoals.contains(g),
-                                ))
+                                for (final custom
+                                    in profile.goals
+                                        .where(
+                                          (g) =>
+                                              !_suggestedGoals.contains(g.text),
+                                        )
+                                        .map((goal) => goal.text))
                                   SelectableChip(
                                     label: custom,
                                     isSelected: true,
@@ -369,6 +376,74 @@ class _ProfileViewState extends State<ProfileView> {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 16),
+                    AppAnimatedSection(
+                      index: 5,
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: Consumer(
+                          builder: (context, ref, _) {
+                            final mutation = updateProfileMutation;
+                            final state = ref.watch(mutation);
+                            ref.listen(mutation, (_, next) {
+                              if (next.hasError && context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Error saving profile: ${(next as MutationError).error}',
+                                    ),
+                                  ),
+                                );
+                              }
+                            });
+                            return FilledButton.icon(
+                              onPressed: state.isPending
+                                  ? null
+                                  : () async {
+                                      await updateProfileMutation
+                                          .run(ref, (tsx) async {
+                                            await Future.delayed(
+                                              const Duration(milliseconds: 900),
+                                            );
+                                            await tsx
+                                                .get(appUseCaseProvider)
+                                                .updateProfile(profile);
+                                          })
+                                          .then((_) {
+                                            if (context.mounted) {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                    'Profile saved.',
+                                                  ),
+                                                  behavior:
+                                                      SnackBarBehavior.floating,
+                                                  duration: Duration(
+                                                    seconds: 2,
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          })
+                                          .catchError((_) {});
+                                    },
+                              icon: state.isPending
+                                  ? const SizedBox(
+                                      height: 18,
+                                      width: 18,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : const Icon(Icons.save_outlined),
+                              label: const Text('Save all changes'),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
                   ],
                 ),
                 loading: () => const Center(child: CircularProgressIndicator()),
@@ -381,26 +456,28 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  void _addCustomGoal(List<String> currentGoals, WidgetRef ref) {
+  void _addCustomGoal(List<GoalModel> currentGoals, WidgetRef ref) {
     final goal = _goalController.text.trim();
-    if (goal.isNotEmpty && !currentGoals.contains(goal)) {
-      final newGoals = [...currentGoals, goal];
+    final hasGoal = currentGoals.any((g) => g.text == goal);
+    if (goal.isNotEmpty && !hasGoal) {
+      final newGoals = [...currentGoals, GoalModel(text: goal)];
       ref.read(profileUseCaseProvider.notifier).updateGoals(newGoals);
       _goalController.clear();
     }
   }
 
-  void _removeGoal(WidgetRef ref, List<String> currentGoals, String goal) {
-    final newGoals = currentGoals.where((g) => g != goal).toList();
+  void _removeGoal(WidgetRef ref, List<GoalModel> currentGoals, String goal) {
+    final newGoals = currentGoals.where((g) => g.text != goal).toList();
     ref.read(profileUseCaseProvider.notifier).updateGoals(newGoals);
   }
 
-  void _toggleGoal(WidgetRef ref, List<String> currentGoals, String goal) {
-    final newGoals = List<String>.from(currentGoals);
-    if (newGoals.contains(goal)) {
-      newGoals.remove(goal);
+  void _toggleGoal(WidgetRef ref, List<GoalModel> currentGoals, String goal) {
+    final newGoals = List<GoalModel>.from(currentGoals);
+    final index = newGoals.indexWhere((g) => g.text == goal);
+    if (index != -1) {
+      newGoals.removeAt(index);
     } else {
-      newGoals.add(goal);
+      newGoals.add(GoalModel(text: goal));
     }
     ref.read(profileUseCaseProvider.notifier).updateGoals(newGoals);
   }

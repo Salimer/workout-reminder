@@ -11,6 +11,11 @@ class CreateWeekScheduleService {
   ) async {
     final userId = _requireUserId(session);
     await session.db.transaction((transaction) async {
+      await _requireMotivation(
+        session,
+        userId,
+        transaction,
+      );
       final progress = await _requireProgress(
         session,
         userId,
@@ -19,7 +24,10 @@ class CreateWeekScheduleService {
 
       final progressId = progress.id;
       if (progressId == null) {
-        throw StateError('Progress ID is missing.');
+        throw ServerpodException(
+          message: 'Progress ID is missing.',
+          errorCode: 500,
+        );
       }
 
       final insertedWeek = await _insertWeekSchedule(
@@ -46,7 +54,10 @@ class CreateWeekScheduleService {
   UuidValue _requireUserId(Session session) {
     final authInfo = session.authenticated;
     if (authInfo == null) {
-      throw Exception('User is not authenticated.');
+      throw ServerpodException(
+        message: 'User is not authenticated.',
+        errorCode: 401,
+      );
     }
 
     return UuidValue.withValidation(authInfo.userIdentifier);
@@ -76,7 +87,10 @@ class CreateWeekScheduleService {
     );
 
     if (existingProgress == null) {
-      throw StateError('Progress row is missing for user.');
+      throw ServerpodException(
+        message: 'Progress row is missing for user.',
+        errorCode: 404,
+      );
     }
 
     return _touchProgress(
@@ -100,6 +114,26 @@ class CreateWeekScheduleService {
       columns: (t) => [t.updatedAt],
       transaction: transaction,
     );
+  }
+
+  Future<void> _requireMotivation(
+    Session session,
+    UuidValue userId,
+    Transaction transaction,
+  ) async {
+    final profile = await Profile.db.findFirstRow(
+      session,
+      where: (t) => t.authUserId.equals(userId),
+      transaction: transaction,
+    );
+
+    final motivation = profile?.motivation.trim() ?? '';
+    if (motivation.isEmpty) {
+      throw ServerpodException(
+        message: 'Please add your motivation before creating a schedule.',
+        errorCode: 422,
+      );
+    }
   }
 
   Future<WeekSchedule> _insertWeekSchedule(
@@ -134,7 +168,10 @@ class CreateWeekScheduleService {
 
     final weekScheduleId = weekSchedule.id;
     if (weekScheduleId == null) {
-      throw StateError('Week schedule ID is missing.');
+      throw ServerpodException(
+        message: 'Week schedule ID is missing.',
+        errorCode: 500,
+      );
     }
 
     for (final day in days) {
@@ -185,7 +222,10 @@ class CreateWeekScheduleService {
     }
 
     if (dayScheduleId == null) {
-      throw StateError('Day schedule ID is missing.');
+      throw ServerpodException(
+        message: 'Day schedule ID is missing.',
+        errorCode: 500,
+      );
     }
 
     final rows = notifications

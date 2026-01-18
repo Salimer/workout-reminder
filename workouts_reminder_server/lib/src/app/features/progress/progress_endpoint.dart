@@ -1,11 +1,9 @@
 import 'package:serverpod/serverpod.dart';
 
 import '../../../generated/protocol.dart';
-import 'create_week_schedule_service.dart';
 
 class ProgressEndpoint extends Endpoint {
-  final CreateWeekScheduleService _progressService =
-      const CreateWeekScheduleService();
+  
 
   @override
   bool get requireLogin => true;
@@ -33,10 +31,5 @@ class ProgressEndpoint extends Endpoint {
     return progress;
   }
 
-  Future<void> createWeekSchedule(
-    Session session,
-    WeekSchedule weekSchedule,
-  ) async {
-    await _progressService.call(session, weekSchedule);
-  }
+  
 }

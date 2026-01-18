@@ -1,9 +1,12 @@
 profile:
-  - getOrCreateProfile:
+  - getProfile:
   - deleteUser:
+  - updateProfile:
 progress:
   - getProgress:
+weekSchedule:
   - createWeekSchedule:
+  - deleteWeekSchedule:
 emailIdp:
   - login:
   - startRegistration:

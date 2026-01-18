@@ -17,7 +17,7 @@ part 'progress_state.g.dart';
 class ProgressState extends _$ProgressState {
   @override
   FutureOr<ProgressModel> build() async {
-    await Future.delayed(const Duration(milliseconds: 900));
+    // await Future.delayed(const Duration(milliseconds: 500));
     final storageFuture = ref.watch(localStorageProvider.future);
     persist(
       storageFuture,
@@ -25,7 +25,6 @@ class ProgressState extends _$ProgressState {
       options: const StorageOptions(
         cacheTime: StorageCacheTime.unsafe_forever,
         destroyKey: '1.0.4-add-day-status',
-        // destroyKey: '1.0.2-add-created-deadline',
       ),
       encode: (state) => jsonEncode(state.toJson()),
       decode: (data) => ProgressModel.fromJson(jsonDecode(data)),
@@ -36,7 +35,6 @@ class ProgressState extends _$ProgressState {
       debugPrint("ProgressState: Disposed.");
       storageFuture.then((storage) async {
         await storage.delete('progress_state');
-        debugPrint("ProgressState: Local storage cleared.");
       });
     });
     ProgressModel progress;
@@ -55,8 +53,8 @@ class ProgressState extends _$ProgressState {
     final schedule = await ref.read(clientProvider).progress.getProgress();
 
     if (schedule == null) {
-      // throw Exception('No progress data found from server');
-      return ProgressModel.init();
+      throw Exception('No progress data found from server');
+      // return ProgressModel.init();
     }
 
     final usableSchedule = ProgressModel.fromServerProgress(schedule);

@@ -21,16 +21,29 @@ class CreateProfileService {
       notificationTone: 'Friendly',
     );
 
-    await Profile.db.insertRow(
+    final savedProfile = await Profile.db.insertRow(
       session,
       profile,
       transaction: transaction,
     );
+
+    await Goal.db.insert(
+      session,
+      [
+        Goal(
+          profileId: savedProfile.id!,
+          text: 'Lose fat',
+          updatedAt: DateTime.now(),
+        ),
+      ],
+      transaction: transaction,
+    );
+
     return await const GetProfileService().callForUserId(
           session,
           userId,
           transaction: transaction,
         ) ??
-        profile;
+        savedProfile;
   }
 }
