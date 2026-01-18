@@ -328,7 +328,7 @@ class _WeekScheduleEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<void> createWeekSchedule(
+  _i3.Future<_i6.WeekSchedule?> createWeekSchedule(
     _i1.TestSessionBuilder sessionBuilder,
     _i6.WeekSchedule weekSchedule,
   ) async {
@@ -351,7 +351,7 @@ class _WeekScheduleEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<void>);
+                as _i3.Future<_i6.WeekSchedule?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -359,7 +359,7 @@ class _WeekScheduleEndpoint {
     });
   }
 
-  _i3.Future<void> deleteWeekSchedule(
+  _i3.Future<_i5.Progress?> deleteWeekSchedule(
     _i1.TestSessionBuilder sessionBuilder,
     int weekScheduleId,
   ) async {
@@ -382,7 +382,7 @@ class _WeekScheduleEndpoint {
                   _localUniqueSession,
                   _localCallContext.arguments,
                 )
-                as _i3.Future<void>);
+                as _i3.Future<_i5.Progress?>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

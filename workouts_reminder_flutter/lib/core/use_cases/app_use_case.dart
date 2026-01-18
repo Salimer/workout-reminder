@@ -2,8 +2,10 @@ import 'package:flutter_riverpod/experimental/mutation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 
+import '../../features/home/use_cases/bottom_navigation_use_case.dart';
 import '../../features/profile/data/models/profile_model.dart';
 import '../../features/profile/presentation/state/profile_state.dart';
+import '../../features/progress/data/models/progress_model.dart';
 import '../../features/schedule/data/models/week_schedule_model.dart';
 import '../../features/progress/presentation/state/progress_state.dart';
 import '../../features/schedule/use_cases/notifications_use_case.dart';
@@ -29,9 +31,24 @@ class AppUseCase {
 
     final client = ref.read(clientProvider);
 
-    await client.weekSchedule.createWeekSchedule(schedule.toServerSchedule());
+    final scheduleWithWeekId = await client.weekSchedule.createWeekSchedule(
+      schedule.toServerSchedule(),
+    );
 
-    ref.read(progressStateProvider.notifier).createWeekSchedule(schedule);
+    if (scheduleWithWeekId == null) {
+      throw Exception('Failed to create week schedule on server.');
+    }
+
+    ref.read(bottomNavigationUseCaseProvider).goToMainView();
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    ref
+        .read(progressStateProvider.notifier)
+        .createWeekSchedule(
+          WeekScheduleModel.fromServerWeekSchedule(
+            scheduleWithWeekId,
+          ),
+        );
 
     await ref
         .read(
@@ -43,21 +60,33 @@ class AppUseCase {
   Future<void> clearWeekPlan() async {
     final weekScheduleId = ref
         .read(progressStateProvider)
-        .value
-        ?.activeWeek
+        .requireValue
+        .activeWeek
         ?.id;
 
     if (weekScheduleId == null) {
       throw Exception('No active week schedule to delete.');
     }
-    await ref
+    final updatedProgress = await ref
         .read(clientProvider)
         .weekSchedule
         .deleteWeekSchedule(weekScheduleId);
 
+    if (updatedProgress == null) {
+      throw Exception(
+        'Failed to retrieve updated progress after deleting week schedule.',
+      );
+    }
+
     await ref.read(notificationsUseCaseProvider).clearWeekNotifications();
 
-    ref.read(progressStateProvider.notifier).clearCurrentWeekPlan();
+    ref
+        .read(progressStateProvider.notifier)
+        .set(
+          ProgressModel.fromServerProgress(
+            updatedProgress,
+          ),
+        );
   }
 
   Future<void> skipTodayWorkout() async {

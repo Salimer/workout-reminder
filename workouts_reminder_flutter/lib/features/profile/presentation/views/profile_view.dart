@@ -169,27 +169,7 @@ class _ProfileViewState extends State<ProfileView> {
                               ),
                             ),
                             const SizedBox(height: 12),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: FilledButton.icon(
-                                onPressed: () {
-                                  ref
-                                      .read(profileUseCaseProvider.notifier)
-                                      .updateMotivation(
-                                        _motivationController.text.trim(),
-                                      );
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Motivation saved!'),
-                                      behavior: SnackBarBehavior.floating,
-                                      duration: Duration(seconds: 2),
-                                    ),
-                                  );
-                                },
-                                icon: const Icon(Icons.check, size: 18),
-                                label: const Text('Save'),
-                              ),
-                            ),
+                            const SizedBox.shrink(),
                           ],
                         ),
                       ),
@@ -400,6 +380,10 @@ class _ProfileViewState extends State<ProfileView> {
                               onPressed: state.isPending
                                   ? null
                                   : () async {
+                                      final updatedProfile = profile.copyWith(
+                                        motivation: _motivationController.text
+                                            .trim(),
+                                      );
                                       await updateProfileMutation
                                           .run(ref, (tsx) async {
                                             await Future.delayed(
@@ -407,7 +391,9 @@ class _ProfileViewState extends State<ProfileView> {
                                             );
                                             await tsx
                                                 .get(appUseCaseProvider)
-                                                .updateProfile(profile);
+                                                .updateProfile(
+                                                  updatedProfile,
+                                                );
                                           })
                                           .then((_) {
                                             if (context.mounted) {
@@ -438,7 +424,7 @@ class _ProfileViewState extends State<ProfileView> {
                                       ),
                                     )
                                   : const Icon(Icons.save_outlined),
-                              label: const Text('Save all changes'),
+                              label: const Text('Save'),
                             );
                           },
                         ),

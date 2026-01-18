@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/experimental/mutation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:workouts_reminder_client/workouts_reminder_client.dart' show ServerpodException;
+import 'package:workouts_reminder_client/workouts_reminder_client.dart'
+    show ServerpodException;
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/widgets/animated_section.dart';
@@ -111,10 +112,6 @@ class _WorkoutDaysPickerState extends State<WorkoutDaysPicker> {
                                           appUseCaseProvider,
                                         )
                                         .createWeekSchedule(_selectedDays);
-
-                                    tsx
-                                        .get(bottomNavigationUseCaseProvider)
-                                        .goToMainView();
                                   })
                                   .catchError((_) {});
                             }

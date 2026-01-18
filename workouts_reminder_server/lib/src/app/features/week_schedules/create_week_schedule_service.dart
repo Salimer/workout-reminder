@@ -5,12 +5,12 @@ import '../../../generated/protocol.dart';
 class CreateWeekScheduleService {
   const CreateWeekScheduleService();
 
-  Future<void> call(
+  Future<int> call(
     Session session,
     WeekSchedule weekSchedule,
   ) async {
     final userId = _requireUserId(session);
-    await session.db.transaction((transaction) async {
+    return session.db.transaction<int>((transaction) async {
       await _requireMotivation(
         session,
         userId,
@@ -43,10 +43,19 @@ class CreateWeekScheduleService {
         weekSchedule.days,
         transaction,
       );
+
+      if (insertedWeek.id == null) {
+        throw ServerpodException(
+          message: 'Week schedule ID is missing.',
+          errorCode: 500,
+        );
+      }
+
+      return insertedWeek.id!;
     });
   }
 
-  Future<void> createWeekSchedule(
+  Future<int> createWeekSchedule(
     Session session,
     WeekSchedule weekSchedule,
   ) => call(session, weekSchedule);

@@ -75,15 +75,16 @@ class EndpointWeekSchedule extends _i1.EndpointRef {
   @override
   String get name => 'weekSchedule';
 
-  _i2.Future<void> createWeekSchedule(_i5.WeekSchedule weekSchedule) =>
-      caller.callServerEndpoint<void>(
-        'weekSchedule',
-        'createWeekSchedule',
-        {'weekSchedule': weekSchedule},
-      );
+  _i2.Future<_i5.WeekSchedule?> createWeekSchedule(
+    _i5.WeekSchedule weekSchedule,
+  ) => caller.callServerEndpoint<_i5.WeekSchedule?>(
+    'weekSchedule',
+    'createWeekSchedule',
+    {'weekSchedule': weekSchedule},
+  );
 
-  _i2.Future<void> deleteWeekSchedule(int weekScheduleId) =>
-      caller.callServerEndpoint<void>(
+  _i2.Future<_i4.Progress?> deleteWeekSchedule(int weekScheduleId) =>
+      caller.callServerEndpoint<_i4.Progress?>(
         'weekSchedule',
         'deleteWeekSchedule',
         {'weekScheduleId': weekScheduleId},

@@ -55,6 +55,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
         child: Consumer(
           builder: (context, ref, _) {
             return PageView(
+              physics: const NeverScrollableScrollPhysics(),
               controller: _pageController,
               onPageChanged: (index) {
                 ref

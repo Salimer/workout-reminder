@@ -1,54 +1,39 @@
 import 'package:serverpod/serverpod.dart';
 
 import '../../../generated/protocol.dart';
+import '../progress/get_progress_service.dart';
 import 'create_week_schedule_service.dart';
+import 'delete_week_schedule_service.dart';
+import 'get_week_schedule_service.dart';
 
 class WeekScheduleEndpoint extends Endpoint {
   final CreateWeekScheduleService _weekScheduleService =
       const CreateWeekScheduleService();
+  final DeleteWeekScheduleService _deleteWeekScheduleService =
+      const DeleteWeekScheduleService();
+  final GetProgressService _getProgressService = const GetProgressService();
+  final GetWeekScheduleService _getWeekScheduleService =
+      const GetWeekScheduleService();
 
   @override
   bool get requireLogin => true;
 
-  Future<void> createWeekSchedule(
+  Future<WeekSchedule?> createWeekSchedule(
     Session session,
     WeekSchedule weekSchedule,
   ) async {
-    await _weekScheduleService.call(session, weekSchedule);
+    final weekScheduleId = await _weekScheduleService.call(
+      session,
+      weekSchedule,
+    );
+    return _getWeekScheduleService.call(session, weekScheduleId);
   }
 
-  Future<void> deleteWeekSchedule(Session session, int weekScheduleId) async {
-    final userId = UuidValue.withValidation(
-      session.authenticated!.userIdentifier,
-    );
-
-    await session.db.transaction((transaction) async {
-      final progress = await Progress.db.findFirstRow(
-        session,
-        where: (t) => t.authUserId.equals(userId),
-        transaction: transaction,
-      );
-
-      if (progress == null || progress.id == null) {
-        throw ServerpodException(
-          message: 'Progress not found for the user.',
-          errorCode: 404,
-        );
-      }
-
-      final deletedRows = await WeekSchedule.db.deleteWhere(
-        session,
-        where: (t) =>
-            t.id.equals(weekScheduleId) & t.progressId.equals(progress.id!),
-        transaction: transaction,
-      );
-
-      if (deletedRows.isEmpty) {
-        throw ServerpodException(
-          message: 'WeekSchedule not found or does not belong to the user.',
-          errorCode: 404,
-        );
-      }
-    });
+  Future<Progress?> deleteWeekSchedule(
+    Session session,
+    int weekScheduleId,
+  ) async {
+    await _deleteWeekScheduleService.call(session, weekScheduleId);
+    return _getProgressService.call(session);
   }
 }
