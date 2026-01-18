@@ -1,3 +1,5 @@
+profile:
+  - getOrCreateProfile:
 progress:
   - getProgress:
   - createWeekSchedule:

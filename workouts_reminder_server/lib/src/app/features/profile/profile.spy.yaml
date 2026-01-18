@@ -1,0 +1,16 @@
+class: Profile
+table: profile
+fields:
+  userId: UuidValue
+  motivation: String
+  characterName: String
+  fitnessLevel: String
+  notificationTone: String
+  goals: List<Goal>?, relation
+  createdAt: DateTime, default=now
+  updatedAt: DateTime, default=now
+
+indexes:
+  profile_user_unique_idx:
+    fields: userId
+    unique: true

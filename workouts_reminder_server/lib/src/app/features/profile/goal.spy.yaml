@@ -1,0 +1,6 @@
+class: Goal
+table: goal
+fields:
+  text: String
+  createdAt: DateTime, default=now
+  updatedAt: DateTime, default=now

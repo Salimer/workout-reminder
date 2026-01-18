@@ -63,7 +63,9 @@ class _SignInViewState extends ConsumerState<SignInView> {
         emailSignInWidget: EmailSignInWidget(
           controller: _emailAuthController,
         ),
-        
+        onAuthenticated: () {
+          debugPrint("user authenticated");
+        },
       ),
     );
   }

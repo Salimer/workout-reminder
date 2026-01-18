@@ -20,13 +20,17 @@ import 'app/core/enums/day_workout_status_enum.dart' as _i5;
 import 'app/core/enums/weekday_enum.dart' as _i6;
 import 'app/features/day_schedules/day_schedule.dart' as _i7;
 import 'app/features/notifications/notification.dart' as _i8;
-import 'app/features/progress/progress.dart' as _i9;
-import 'app/features/week_schedules/week_schedule.dart' as _i10;
-import 'greeting.dart' as _i11;
+import 'app/features/profile/goal.dart' as _i9;
+import 'app/features/profile/profile.dart' as _i10;
+import 'app/features/progress/progress.dart' as _i11;
+import 'app/features/week_schedules/week_schedule.dart' as _i12;
+import 'greeting.dart' as _i13;
 export 'app/core/enums/day_workout_status_enum.dart';
 export 'app/core/enums/weekday_enum.dart';
 export 'app/features/day_schedules/day_schedule.dart';
 export 'app/features/notifications/notification.dart';
+export 'app/features/profile/goal.dart';
+export 'app/features/profile/profile.dart';
 export 'app/features/progress/progress.dart';
 export 'app/features/week_schedules/week_schedule.dart';
 export 'greeting.dart';
@@ -100,6 +104,75 @@ class Protocol extends _i1.SerializationManagerServer {
       indexes: [
         _i2.IndexDefinition(
           indexName: 'day_schedule_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+      ],
+      managed: true,
+    ),
+    _i2.TableDefinition(
+      name: 'goal',
+      dartName: 'Goal',
+      schema: 'public',
+      module: 'workouts_reminder',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'goal_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'text',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'createdAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+          columnDefault: 'CURRENT_TIMESTAMP',
+        ),
+        _i2.ColumnDefinition(
+          name: 'updatedAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+          columnDefault: 'CURRENT_TIMESTAMP',
+        ),
+        _i2.ColumnDefinition(
+          name: '_profileGoalsProfileId',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: true,
+          dartType: 'int?',
+        ),
+      ],
+      foreignKeys: [
+        _i2.ForeignKeyDefinition(
+          constraintName: 'goal_fk_0',
+          columns: ['_profileGoalsProfileId'],
+          referenceTable: 'profile',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _i2.ForeignKeyAction.noAction,
+          onDelete: _i2.ForeignKeyAction.noAction,
+          matchType: null,
+        ),
+      ],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'goal_pkey',
           tableSpace: null,
           elements: [
             _i2.IndexElementDefinition(
@@ -197,6 +270,95 @@ class Protocol extends _i1.SerializationManagerServer {
           type: 'btree',
           isUnique: true,
           isPrimary: true,
+        ),
+      ],
+      managed: true,
+    ),
+    _i2.TableDefinition(
+      name: 'profile',
+      dartName: 'Profile',
+      schema: 'public',
+      module: 'workouts_reminder',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'profile_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'userId',
+          columnType: _i2.ColumnType.uuid,
+          isNullable: false,
+          dartType: 'UuidValue',
+        ),
+        _i2.ColumnDefinition(
+          name: 'motivation',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'characterName',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'fitnessLevel',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'notificationTone',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'createdAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+          columnDefault: 'CURRENT_TIMESTAMP',
+        ),
+        _i2.ColumnDefinition(
+          name: 'updatedAt',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+          columnDefault: 'CURRENT_TIMESTAMP',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'profile_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'profile_user_unique_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'userId',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
         ),
       ],
       managed: true,
@@ -385,14 +547,20 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i8.Notification) {
       return _i8.Notification.fromJson(data) as T;
     }
-    if (t == _i9.Progress) {
-      return _i9.Progress.fromJson(data) as T;
+    if (t == _i9.Goal) {
+      return _i9.Goal.fromJson(data) as T;
     }
-    if (t == _i10.WeekSchedule) {
-      return _i10.WeekSchedule.fromJson(data) as T;
+    if (t == _i10.Profile) {
+      return _i10.Profile.fromJson(data) as T;
     }
-    if (t == _i11.Greeting) {
-      return _i11.Greeting.fromJson(data) as T;
+    if (t == _i11.Progress) {
+      return _i11.Progress.fromJson(data) as T;
+    }
+    if (t == _i12.WeekSchedule) {
+      return _i12.WeekSchedule.fromJson(data) as T;
+    }
+    if (t == _i13.Greeting) {
+      return _i13.Greeting.fromJson(data) as T;
     }
     if (t == _i1.getType<_i5.DayWorkoutStatusEnum?>()) {
       return (data != null ? _i5.DayWorkoutStatusEnum.fromJson(data) : null)
@@ -407,14 +575,20 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i1.getType<_i8.Notification?>()) {
       return (data != null ? _i8.Notification.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i9.Progress?>()) {
-      return (data != null ? _i9.Progress.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i9.Goal?>()) {
+      return (data != null ? _i9.Goal.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i10.WeekSchedule?>()) {
-      return (data != null ? _i10.WeekSchedule.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i10.Profile?>()) {
+      return (data != null ? _i10.Profile.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i11.Greeting?>()) {
-      return (data != null ? _i11.Greeting.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i11.Progress?>()) {
+      return (data != null ? _i11.Progress.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i12.WeekSchedule?>()) {
+      return (data != null ? _i12.WeekSchedule.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i13.Greeting?>()) {
+      return (data != null ? _i13.Greeting.fromJson(data) : null) as T;
     }
     if (t == List<_i8.Notification>) {
       return (data as List)
@@ -430,16 +604,25 @@ class Protocol extends _i1.SerializationManagerServer {
               : null)
           as T;
     }
-    if (t == List<_i10.WeekSchedule>) {
+    if (t == List<_i9.Goal>) {
+      return (data as List).map((e) => deserialize<_i9.Goal>(e)).toList() as T;
+    }
+    if (t == _i1.getType<List<_i9.Goal>?>()) {
+      return (data != null
+              ? (data as List).map((e) => deserialize<_i9.Goal>(e)).toList()
+              : null)
+          as T;
+    }
+    if (t == List<_i12.WeekSchedule>) {
       return (data as List)
-              .map((e) => deserialize<_i10.WeekSchedule>(e))
+              .map((e) => deserialize<_i12.WeekSchedule>(e))
               .toList()
           as T;
     }
-    if (t == _i1.getType<List<_i10.WeekSchedule>?>()) {
+    if (t == _i1.getType<List<_i12.WeekSchedule>?>()) {
       return (data != null
               ? (data as List)
-                    .map((e) => deserialize<_i10.WeekSchedule>(e))
+                    .map((e) => deserialize<_i12.WeekSchedule>(e))
                     .toList()
               : null)
           as T;
@@ -474,9 +657,11 @@ class Protocol extends _i1.SerializationManagerServer {
       _i6.WeekdayEnum => 'WeekdayEnum',
       _i7.DaySchedule => 'DaySchedule',
       _i8.Notification => 'Notification',
-      _i9.Progress => 'Progress',
-      _i10.WeekSchedule => 'WeekSchedule',
-      _i11.Greeting => 'Greeting',
+      _i9.Goal => 'Goal',
+      _i10.Profile => 'Profile',
+      _i11.Progress => 'Progress',
+      _i12.WeekSchedule => 'WeekSchedule',
+      _i13.Greeting => 'Greeting',
       _ => null,
     };
   }
@@ -502,11 +687,15 @@ class Protocol extends _i1.SerializationManagerServer {
         return 'DaySchedule';
       case _i8.Notification():
         return 'Notification';
-      case _i9.Progress():
+      case _i9.Goal():
+        return 'Goal';
+      case _i10.Profile():
+        return 'Profile';
+      case _i11.Progress():
         return 'Progress';
-      case _i10.WeekSchedule():
+      case _i12.WeekSchedule():
         return 'WeekSchedule';
-      case _i11.Greeting():
+      case _i13.Greeting():
         return 'Greeting';
     }
     className = _i2.Protocol().getClassNameForObject(data);
@@ -542,14 +731,20 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName == 'Notification') {
       return deserialize<_i8.Notification>(data['data']);
     }
+    if (dataClassName == 'Goal') {
+      return deserialize<_i9.Goal>(data['data']);
+    }
+    if (dataClassName == 'Profile') {
+      return deserialize<_i10.Profile>(data['data']);
+    }
     if (dataClassName == 'Progress') {
-      return deserialize<_i9.Progress>(data['data']);
+      return deserialize<_i11.Progress>(data['data']);
     }
     if (dataClassName == 'WeekSchedule') {
-      return deserialize<_i10.WeekSchedule>(data['data']);
+      return deserialize<_i12.WeekSchedule>(data['data']);
     }
     if (dataClassName == 'Greeting') {
-      return deserialize<_i11.Greeting>(data['data']);
+      return deserialize<_i13.Greeting>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
@@ -591,10 +786,14 @@ class Protocol extends _i1.SerializationManagerServer {
         return _i7.DaySchedule.t;
       case _i8.Notification:
         return _i8.Notification.t;
-      case _i9.Progress:
-        return _i9.Progress.t;
-      case _i10.WeekSchedule:
-        return _i10.WeekSchedule.t;
+      case _i9.Goal:
+        return _i9.Goal.t;
+      case _i10.Profile:
+        return _i10.Profile.t;
+      case _i11.Progress:
+        return _i11.Progress.t;
+      case _i12.WeekSchedule:
+        return _i12.WeekSchedule.t;
     }
     return null;
   }

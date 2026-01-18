@@ -12,16 +12,33 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'dart:async' as _i2;
-import 'package:workouts_reminder_client/src/protocol/app/features/progress/progress.dart'
+import 'package:workouts_reminder_client/src/protocol/app/features/profile/profile.dart'
     as _i3;
-import 'package:workouts_reminder_client/src/protocol/app/features/week_schedules/week_schedule.dart'
+import 'package:workouts_reminder_client/src/protocol/app/features/progress/progress.dart'
     as _i4;
-import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
+import 'package:workouts_reminder_client/src/protocol/app/features/week_schedules/week_schedule.dart'
     as _i5;
-import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
+import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
     as _i6;
-import 'package:workouts_reminder_client/src/protocol/greeting.dart' as _i7;
-import 'protocol.dart' as _i8;
+import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
+    as _i7;
+import 'package:workouts_reminder_client/src/protocol/greeting.dart' as _i8;
+import 'protocol.dart' as _i9;
+
+/// {@category Endpoint}
+class EndpointProfile extends _i1.EndpointRef {
+  EndpointProfile(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'profile';
+
+  _i2.Future<_i3.Profile?> getOrCreateProfile() =>
+      caller.callServerEndpoint<_i3.Profile?>(
+        'profile',
+        'getOrCreateProfile',
+        {},
+      );
+}
 
 /// {@category Endpoint}
 class EndpointProgress extends _i1.EndpointRef {
@@ -30,14 +47,14 @@ class EndpointProgress extends _i1.EndpointRef {
   @override
   String get name => 'progress';
 
-  _i2.Future<_i3.Progress?> getProgress() =>
-      caller.callServerEndpoint<_i3.Progress?>(
+  _i2.Future<_i4.Progress?> getProgress() =>
+      caller.callServerEndpoint<_i4.Progress?>(
         'progress',
         'getProgress',
         {},
       );
 
-  _i2.Future<void> createWeekSchedule(_i4.WeekSchedule weekSchedule) =>
+  _i2.Future<void> createWeekSchedule(_i5.WeekSchedule weekSchedule) =>
       caller.callServerEndpoint<void>(
         'progress',
         'createWeekSchedule',
@@ -46,7 +63,7 @@ class EndpointProgress extends _i1.EndpointRef {
 }
 
 /// {@category Endpoint}
-class EndpointEmailIdp extends _i5.EndpointEmailIdpBase {
+class EndpointEmailIdp extends _i6.EndpointEmailIdpBase {
   EndpointEmailIdp(_i1.EndpointCaller caller) : super(caller);
 
   @override
@@ -62,10 +79,10 @@ class EndpointEmailIdp extends _i5.EndpointEmailIdpBase {
   ///
   /// Throws an [AuthUserBlockedException] if the auth user is blocked.
   @override
-  _i2.Future<_i6.AuthSuccess> login({
+  _i2.Future<_i7.AuthSuccess> login({
     required String email,
     required String password,
-  }) => caller.callServerEndpoint<_i6.AuthSuccess>(
+  }) => caller.callServerEndpoint<_i7.AuthSuccess>(
     'emailIdp',
     'login',
     {
@@ -130,10 +147,10 @@ class EndpointEmailIdp extends _i5.EndpointEmailIdpBase {
   ///
   /// Returns a session for the newly created user.
   @override
-  _i2.Future<_i6.AuthSuccess> finishRegistration({
+  _i2.Future<_i7.AuthSuccess> finishRegistration({
     required String registrationToken,
     required String password,
-  }) => caller.callServerEndpoint<_i6.AuthSuccess>(
+  }) => caller.callServerEndpoint<_i7.AuthSuccess>(
     'emailIdp',
     'finishRegistration',
     {
@@ -219,7 +236,7 @@ class EndpointEmailIdp extends _i5.EndpointEmailIdpBase {
 }
 
 /// {@category Endpoint}
-class EndpointJwtRefresh extends _i6.EndpointRefreshJwtTokens {
+class EndpointJwtRefresh extends _i7.EndpointRefreshJwtTokens {
   EndpointJwtRefresh(_i1.EndpointCaller caller) : super(caller);
 
   @override
@@ -244,9 +261,9 @@ class EndpointJwtRefresh extends _i6.EndpointRefreshJwtTokens {
   /// This endpoint is unauthenticated, meaning the client won't include any
   /// authentication information with the call.
   @override
-  _i2.Future<_i6.AuthSuccess> refreshAccessToken({
+  _i2.Future<_i7.AuthSuccess> refreshAccessToken({
     required String refreshToken,
-  }) => caller.callServerEndpoint<_i6.AuthSuccess>(
+  }) => caller.callServerEndpoint<_i7.AuthSuccess>(
     'jwtRefresh',
     'refreshAccessToken',
     {'refreshToken': refreshToken},
@@ -264,8 +281,8 @@ class EndpointGreeting extends _i1.EndpointRef {
   String get name => 'greeting';
 
   /// Returns a personalized greeting message: "Hello {name}".
-  _i2.Future<_i7.Greeting> hello(String name) =>
-      caller.callServerEndpoint<_i7.Greeting>(
+  _i2.Future<_i8.Greeting> hello(String name) =>
+      caller.callServerEndpoint<_i8.Greeting>(
         'greeting',
         'hello',
         {'name': name},
@@ -274,13 +291,13 @@ class EndpointGreeting extends _i1.EndpointRef {
 
 class Modules {
   Modules(Client client) {
-    serverpod_auth_idp = _i5.Caller(client);
-    serverpod_auth_core = _i6.Caller(client);
+    serverpod_auth_idp = _i6.Caller(client);
+    serverpod_auth_core = _i7.Caller(client);
   }
 
-  late final _i5.Caller serverpod_auth_idp;
+  late final _i6.Caller serverpod_auth_idp;
 
-  late final _i6.Caller serverpod_auth_core;
+  late final _i7.Caller serverpod_auth_core;
 }
 
 class Client extends _i1.ServerpodClientShared {
@@ -303,7 +320,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i8.Protocol(),
+         _i9.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -312,12 +329,15 @@ class Client extends _i1.ServerpodClientShared {
          disconnectStreamsOnLostInternetConnection:
              disconnectStreamsOnLostInternetConnection,
        ) {
+    profile = EndpointProfile(this);
     progress = EndpointProgress(this);
     emailIdp = EndpointEmailIdp(this);
     jwtRefresh = EndpointJwtRefresh(this);
     greeting = EndpointGreeting(this);
     modules = Modules(this);
   }
+
+  late final EndpointProfile profile;
 
   late final EndpointProgress progress;
 
@@ -331,6 +351,7 @@ class Client extends _i1.ServerpodClientShared {
 
   @override
   Map<String, _i1.EndpointRef> get endpointRefLookup => {
+    'profile': profile,
     'progress': progress,
     'emailIdp': emailIdp,
     'jwtRefresh': jwtRefresh,

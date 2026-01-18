@@ -15,17 +15,21 @@ import 'app/core/enums/day_workout_status_enum.dart' as _i2;
 import 'app/core/enums/weekday_enum.dart' as _i3;
 import 'app/features/day_schedules/day_schedule.dart' as _i4;
 import 'app/features/notifications/notification.dart' as _i5;
-import 'app/features/progress/progress.dart' as _i6;
-import 'app/features/week_schedules/week_schedule.dart' as _i7;
-import 'greeting.dart' as _i8;
+import 'app/features/profile/goal.dart' as _i6;
+import 'app/features/profile/profile.dart' as _i7;
+import 'app/features/progress/progress.dart' as _i8;
+import 'app/features/week_schedules/week_schedule.dart' as _i9;
+import 'greeting.dart' as _i10;
 import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
-    as _i9;
+    as _i11;
 import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
-    as _i10;
+    as _i12;
 export 'app/core/enums/day_workout_status_enum.dart';
 export 'app/core/enums/weekday_enum.dart';
 export 'app/features/day_schedules/day_schedule.dart';
 export 'app/features/notifications/notification.dart';
+export 'app/features/profile/goal.dart';
+export 'app/features/profile/profile.dart';
 export 'app/features/progress/progress.dart';
 export 'app/features/week_schedules/week_schedule.dart';
 export 'greeting.dart';
@@ -77,14 +81,20 @@ class Protocol extends _i1.SerializationManager {
     if (t == _i5.Notification) {
       return _i5.Notification.fromJson(data) as T;
     }
-    if (t == _i6.Progress) {
-      return _i6.Progress.fromJson(data) as T;
+    if (t == _i6.Goal) {
+      return _i6.Goal.fromJson(data) as T;
     }
-    if (t == _i7.WeekSchedule) {
-      return _i7.WeekSchedule.fromJson(data) as T;
+    if (t == _i7.Profile) {
+      return _i7.Profile.fromJson(data) as T;
     }
-    if (t == _i8.Greeting) {
-      return _i8.Greeting.fromJson(data) as T;
+    if (t == _i8.Progress) {
+      return _i8.Progress.fromJson(data) as T;
+    }
+    if (t == _i9.WeekSchedule) {
+      return _i9.WeekSchedule.fromJson(data) as T;
+    }
+    if (t == _i10.Greeting) {
+      return _i10.Greeting.fromJson(data) as T;
     }
     if (t == _i1.getType<_i2.DayWorkoutStatusEnum?>()) {
       return (data != null ? _i2.DayWorkoutStatusEnum.fromJson(data) : null)
@@ -99,14 +109,20 @@ class Protocol extends _i1.SerializationManager {
     if (t == _i1.getType<_i5.Notification?>()) {
       return (data != null ? _i5.Notification.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i6.Progress?>()) {
-      return (data != null ? _i6.Progress.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i6.Goal?>()) {
+      return (data != null ? _i6.Goal.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i7.WeekSchedule?>()) {
-      return (data != null ? _i7.WeekSchedule.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i7.Profile?>()) {
+      return (data != null ? _i7.Profile.fromJson(data) : null) as T;
     }
-    if (t == _i1.getType<_i8.Greeting?>()) {
-      return (data != null ? _i8.Greeting.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i8.Progress?>()) {
+      return (data != null ? _i8.Progress.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i9.WeekSchedule?>()) {
+      return (data != null ? _i9.WeekSchedule.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i10.Greeting?>()) {
+      return (data != null ? _i10.Greeting.fromJson(data) : null) as T;
     }
     if (t == List<_i5.Notification>) {
       return (data as List)
@@ -122,16 +138,25 @@ class Protocol extends _i1.SerializationManager {
               : null)
           as T;
     }
-    if (t == List<_i7.WeekSchedule>) {
+    if (t == List<_i6.Goal>) {
+      return (data as List).map((e) => deserialize<_i6.Goal>(e)).toList() as T;
+    }
+    if (t == _i1.getType<List<_i6.Goal>?>()) {
+      return (data != null
+              ? (data as List).map((e) => deserialize<_i6.Goal>(e)).toList()
+              : null)
+          as T;
+    }
+    if (t == List<_i9.WeekSchedule>) {
       return (data as List)
-              .map((e) => deserialize<_i7.WeekSchedule>(e))
+              .map((e) => deserialize<_i9.WeekSchedule>(e))
               .toList()
           as T;
     }
-    if (t == _i1.getType<List<_i7.WeekSchedule>?>()) {
+    if (t == _i1.getType<List<_i9.WeekSchedule>?>()) {
       return (data != null
               ? (data as List)
-                    .map((e) => deserialize<_i7.WeekSchedule>(e))
+                    .map((e) => deserialize<_i9.WeekSchedule>(e))
                     .toList()
               : null)
           as T;
@@ -149,10 +174,10 @@ class Protocol extends _i1.SerializationManager {
           as T;
     }
     try {
-      return _i9.Protocol().deserialize<T>(data, t);
+      return _i11.Protocol().deserialize<T>(data, t);
     } on _i1.DeserializationTypeNotFoundException catch (_) {}
     try {
-      return _i10.Protocol().deserialize<T>(data, t);
+      return _i12.Protocol().deserialize<T>(data, t);
     } on _i1.DeserializationTypeNotFoundException catch (_) {}
     return super.deserialize<T>(data, t);
   }
@@ -163,9 +188,11 @@ class Protocol extends _i1.SerializationManager {
       _i3.WeekdayEnum => 'WeekdayEnum',
       _i4.DaySchedule => 'DaySchedule',
       _i5.Notification => 'Notification',
-      _i6.Progress => 'Progress',
-      _i7.WeekSchedule => 'WeekSchedule',
-      _i8.Greeting => 'Greeting',
+      _i6.Goal => 'Goal',
+      _i7.Profile => 'Profile',
+      _i8.Progress => 'Progress',
+      _i9.WeekSchedule => 'WeekSchedule',
+      _i10.Greeting => 'Greeting',
       _ => null,
     };
   }
@@ -191,18 +218,22 @@ class Protocol extends _i1.SerializationManager {
         return 'DaySchedule';
       case _i5.Notification():
         return 'Notification';
-      case _i6.Progress():
+      case _i6.Goal():
+        return 'Goal';
+      case _i7.Profile():
+        return 'Profile';
+      case _i8.Progress():
         return 'Progress';
-      case _i7.WeekSchedule():
+      case _i9.WeekSchedule():
         return 'WeekSchedule';
-      case _i8.Greeting():
+      case _i10.Greeting():
         return 'Greeting';
     }
-    className = _i9.Protocol().getClassNameForObject(data);
+    className = _i11.Protocol().getClassNameForObject(data);
     if (className != null) {
       return 'serverpod_auth_idp.$className';
     }
-    className = _i10.Protocol().getClassNameForObject(data);
+    className = _i12.Protocol().getClassNameForObject(data);
     if (className != null) {
       return 'serverpod_auth_core.$className';
     }
@@ -227,22 +258,28 @@ class Protocol extends _i1.SerializationManager {
     if (dataClassName == 'Notification') {
       return deserialize<_i5.Notification>(data['data']);
     }
+    if (dataClassName == 'Goal') {
+      return deserialize<_i6.Goal>(data['data']);
+    }
+    if (dataClassName == 'Profile') {
+      return deserialize<_i7.Profile>(data['data']);
+    }
     if (dataClassName == 'Progress') {
-      return deserialize<_i6.Progress>(data['data']);
+      return deserialize<_i8.Progress>(data['data']);
     }
     if (dataClassName == 'WeekSchedule') {
-      return deserialize<_i7.WeekSchedule>(data['data']);
+      return deserialize<_i9.WeekSchedule>(data['data']);
     }
     if (dataClassName == 'Greeting') {
-      return deserialize<_i8.Greeting>(data['data']);
+      return deserialize<_i10.Greeting>(data['data']);
     }
     if (dataClassName.startsWith('serverpod_auth_idp.')) {
       data['className'] = dataClassName.substring(19);
-      return _i9.Protocol().deserializeByClassName(data);
+      return _i11.Protocol().deserializeByClassName(data);
     }
     if (dataClassName.startsWith('serverpod_auth_core.')) {
       data['className'] = dataClassName.substring(20);
-      return _i10.Protocol().deserializeByClassName(data);
+      return _i12.Protocol().deserializeByClassName(data);
     }
     return super.deserializeByClassName(data);
   }
@@ -257,10 +294,10 @@ class Protocol extends _i1.SerializationManager {
       return null;
     }
     try {
-      return _i9.Protocol().mapRecordToJson(record);
+      return _i11.Protocol().mapRecordToJson(record);
     } catch (_) {}
     try {
-      return _i10.Protocol().mapRecordToJson(record);
+      return _i12.Protocol().mapRecordToJson(record);
     } catch (_) {}
     throw Exception('Unsupported record type ${record.runtimeType}');
   }
