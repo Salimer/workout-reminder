@@ -28,7 +28,9 @@ class _SplashViewState extends ConsumerState<SplashView> {
       debugPrint("SplashView: Checking authentication");
 
       await _startInitializers();
-      _handleFirstNav();
+      if (mounted) {
+        _handleFirstNav();
+      }
     });
   }
 

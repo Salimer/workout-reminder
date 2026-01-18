@@ -11,13 +11,16 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import '../../../app/features/week_schedules/week_schedule.dart' as _i2;
-import 'package:workouts_reminder_client/src/protocol/protocol.dart' as _i3;
+import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
+    as _i2;
+import '../../../app/features/week_schedules/week_schedule.dart' as _i3;
+import 'package:workouts_reminder_client/src/protocol/protocol.dart' as _i4;
 
 abstract class Progress implements _i1.SerializableModel {
   Progress._({
     this.id,
-    required this.userId,
+    required this.authUserId,
+    this.authUser,
     this.weeks,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -26,8 +29,9 @@ abstract class Progress implements _i1.SerializableModel {
 
   factory Progress({
     int? id,
-    required _i1.UuidValue userId,
-    List<_i2.WeekSchedule>? weeks,
+    required _i1.UuidValue authUserId,
+    _i2.AuthUser? authUser,
+    List<_i3.WeekSchedule>? weeks,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) = _ProgressImpl;
@@ -35,10 +39,17 @@ abstract class Progress implements _i1.SerializableModel {
   factory Progress.fromJson(Map<String, dynamic> jsonSerialization) {
     return Progress(
       id: jsonSerialization['id'] as int?,
-      userId: _i1.UuidValueJsonExtension.fromJson(jsonSerialization['userId']),
+      authUserId: _i1.UuidValueJsonExtension.fromJson(
+        jsonSerialization['authUserId'],
+      ),
+      authUser: jsonSerialization['authUser'] == null
+          ? null
+          : _i4.Protocol().deserialize<_i2.AuthUser>(
+              jsonSerialization['authUser'],
+            ),
       weeks: jsonSerialization['weeks'] == null
           ? null
-          : _i3.Protocol().deserialize<List<_i2.WeekSchedule>>(
+          : _i4.Protocol().deserialize<List<_i3.WeekSchedule>>(
               jsonSerialization['weeks'],
             ),
       createdAt: jsonSerialization['createdAt'] == null
@@ -55,9 +66,11 @@ abstract class Progress implements _i1.SerializableModel {
   /// the id will be null.
   int? id;
 
-  _i1.UuidValue userId;
+  _i1.UuidValue authUserId;
 
-  List<_i2.WeekSchedule>? weeks;
+  _i2.AuthUser? authUser;
+
+  List<_i3.WeekSchedule>? weeks;
 
   DateTime createdAt;
 
@@ -68,8 +81,9 @@ abstract class Progress implements _i1.SerializableModel {
   @_i1.useResult
   Progress copyWith({
     int? id,
-    _i1.UuidValue? userId,
-    List<_i2.WeekSchedule>? weeks,
+    _i1.UuidValue? authUserId,
+    _i2.AuthUser? authUser,
+    List<_i3.WeekSchedule>? weeks,
     DateTime? createdAt,
     DateTime? updatedAt,
   });
@@ -78,7 +92,8 @@ abstract class Progress implements _i1.SerializableModel {
     return {
       '__className__': 'Progress',
       if (id != null) 'id': id,
-      'userId': userId.toJson(),
+      'authUserId': authUserId.toJson(),
+      if (authUser != null) 'authUser': authUser?.toJson(),
       if (weeks != null) 'weeks': weeks?.toJson(valueToJson: (v) => v.toJson()),
       'createdAt': createdAt.toJson(),
       'updatedAt': updatedAt.toJson(),
@@ -96,13 +111,15 @@ class _Undefined {}
 class _ProgressImpl extends Progress {
   _ProgressImpl({
     int? id,
-    required _i1.UuidValue userId,
-    List<_i2.WeekSchedule>? weeks,
+    required _i1.UuidValue authUserId,
+    _i2.AuthUser? authUser,
+    List<_i3.WeekSchedule>? weeks,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) : super._(
          id: id,
-         userId: userId,
+         authUserId: authUserId,
+         authUser: authUser,
          weeks: weeks,
          createdAt: createdAt,
          updatedAt: updatedAt,
@@ -114,15 +131,19 @@ class _ProgressImpl extends Progress {
   @override
   Progress copyWith({
     Object? id = _Undefined,
-    _i1.UuidValue? userId,
+    _i1.UuidValue? authUserId,
+    Object? authUser = _Undefined,
     Object? weeks = _Undefined,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
     return Progress(
       id: id is int? ? id : this.id,
-      userId: userId ?? this.userId,
-      weeks: weeks is List<_i2.WeekSchedule>?
+      authUserId: authUserId ?? this.authUserId,
+      authUser: authUser is _i2.AuthUser?
+          ? authUser
+          : this.authUser?.copyWith(),
+      weeks: weeks is List<_i3.WeekSchedule>?
           ? weeks
           : this.weeks?.map((e0) => e0.copyWith()).toList(),
       createdAt: createdAt ?? this.createdAt,

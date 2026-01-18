@@ -11,23 +11,22 @@ class CreateWeekScheduleService {
   ) async {
     final userId = _requireUserId(session);
     await session.db.transaction((transaction) async {
-      final progress = await _getOrCreateProgress(
+      final progress = await _requireProgress(
         session,
         userId,
         transaction,
       );
 
+      final progressId = progress.id;
+      if (progressId == null) {
+        throw StateError('Progress ID is missing.');
+      }
+
       final insertedWeek = await _insertWeekSchedule(
         session,
         weekSchedule,
+        progressId,
         transaction,
-      );
-
-      await Progress.db.attachRow.weeks(
-        session,
-        progress,
-        insertedWeek,
-        transaction: transaction,
       );
 
       await _insertDaysAndNotifications(
@@ -60,12 +59,12 @@ class CreateWeekScheduleService {
   ) {
     return Progress.db.findFirstRow(
       session,
-      where: (t) => t.userId.equals(userId),
+      where: (t) => t.authUserId.equals(userId),
       transaction: transaction,
     );
   }
 
-  Future<Progress> _getOrCreateProgress(
+  Future<Progress> _requireProgress(
     Session session,
     UuidValue userId,
     Transaction transaction,
@@ -77,15 +76,7 @@ class CreateWeekScheduleService {
     );
 
     if (existingProgress == null) {
-      final progress = Progress(
-        userId: userId,
-        updatedAt: DateTime.now(),
-      );
-      return Progress.db.insertRow(
-        session,
-        progress,
-        transaction: transaction,
-      );
+      throw StateError('Progress row is missing for user.');
     }
 
     return _touchProgress(
@@ -114,9 +105,11 @@ class CreateWeekScheduleService {
   Future<WeekSchedule> _insertWeekSchedule(
     Session session,
     WeekSchedule weekSchedule,
+    int progressId,
     Transaction transaction,
   ) {
     final row = WeekSchedule(
+      progressId: progressId,
       deadline: weekSchedule.deadline,
       note: weekSchedule.note,
       updatedAt: DateTime.now(),
@@ -139,23 +132,22 @@ class CreateWeekScheduleService {
       return;
     }
 
+    final weekScheduleId = weekSchedule.id;
+    if (weekScheduleId == null) {
+      throw StateError('Week schedule ID is missing.');
+    }
+
     for (final day in days) {
       final insertedDay = await _insertDaySchedule(
         session,
         day,
+        weekScheduleId,
         transaction,
-      );
-
-      await WeekSchedule.db.attachRow.days(
-        session,
-        weekSchedule,
-        insertedDay,
-        transaction: transaction,
       );
 
       await _insertNotifications(
         session,
-        insertedDay,
+        insertedDay.id,
         day.notifications,
         transaction,
       );
@@ -165,9 +157,11 @@ class CreateWeekScheduleService {
   Future<DaySchedule> _insertDaySchedule(
     Session session,
     DaySchedule daySchedule,
+    int weekScheduleId,
     Transaction transaction,
   ) {
     final row = DaySchedule(
+      weekScheduleId: weekScheduleId,
       day: daySchedule.day,
       status: daySchedule.status,
       updatedAt: DateTime.now(),
@@ -182,7 +176,7 @@ class CreateWeekScheduleService {
 
   Future<void> _insertNotifications(
     Session session,
-    DaySchedule daySchedule,
+    int? dayScheduleId,
     List<Notification>? notifications,
     Transaction transaction,
   ) async {
@@ -190,9 +184,14 @@ class CreateWeekScheduleService {
       return;
     }
 
+    if (dayScheduleId == null) {
+      throw StateError('Day schedule ID is missing.');
+    }
+
     final rows = notifications
         .map(
           (notification) => Notification(
+            dayScheduleId: dayScheduleId,
             title: notification.title,
             body: notification.body,
             scheduledDate: notification.scheduledDate,
@@ -202,16 +201,9 @@ class CreateWeekScheduleService {
         )
         .toList();
 
-    final insertedNotifications = await Notification.db.insert(
+    await Notification.db.insert(
       session,
       rows,
-      transaction: transaction,
-    );
-
-    await DaySchedule.db.attach.notifications(
-      session,
-      daySchedule,
-      insertedNotifications,
       transaction: transaction,
     );
   }

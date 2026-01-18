@@ -1,8 +1,9 @@
 class: DaySchedule
 table: day_schedule
 fields:
+  weekSchedule: WeekSchedule?, relation(name=week_schedule_days, optional, onDelete=Cascade)
   day: WeekdayEnum
-  notifications: List<Notification>?, relation
+  notifications: List<Notification>?, relation(name=day_schedule_notifications)
   status: DayWorkoutStatusEnum
   createdAt: DateTime, default=now
   updatedAt: DateTime, default=now

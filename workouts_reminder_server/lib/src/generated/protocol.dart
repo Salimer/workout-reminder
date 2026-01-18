@@ -57,6 +57,12 @@ class Protocol extends _i1.SerializationManagerServer {
           columnDefault: 'nextval(\'day_schedule_id_seq\'::regclass)',
         ),
         _i2.ColumnDefinition(
+          name: 'weekScheduleId',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: true,
+          dartType: 'int?',
+        ),
+        _i2.ColumnDefinition(
           name: 'day',
           columnType: _i2.ColumnType.text,
           isNullable: false,
@@ -82,22 +88,16 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'DateTime',
           columnDefault: 'CURRENT_TIMESTAMP',
         ),
-        _i2.ColumnDefinition(
-          name: '_weekScheduleDaysWeekScheduleId',
-          columnType: _i2.ColumnType.bigint,
-          isNullable: true,
-          dartType: 'int?',
-        ),
       ],
       foreignKeys: [
         _i2.ForeignKeyDefinition(
           constraintName: 'day_schedule_fk_0',
-          columns: ['_weekScheduleDaysWeekScheduleId'],
+          columns: ['weekScheduleId'],
           referenceTable: 'week_schedule',
           referenceTableSchema: 'public',
           referenceColumns: ['id'],
           onUpdate: _i2.ForeignKeyAction.noAction,
-          onDelete: _i2.ForeignKeyAction.noAction,
+          onDelete: _i2.ForeignKeyAction.cascade,
           matchType: null,
         ),
       ],
@@ -132,6 +132,12 @@ class Protocol extends _i1.SerializationManagerServer {
           columnDefault: 'nextval(\'goal_id_seq\'::regclass)',
         ),
         _i2.ColumnDefinition(
+          name: 'profileId',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: true,
+          dartType: 'int?',
+        ),
+        _i2.ColumnDefinition(
           name: 'text',
           columnType: _i2.ColumnType.text,
           isNullable: false,
@@ -151,22 +157,16 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'DateTime',
           columnDefault: 'CURRENT_TIMESTAMP',
         ),
-        _i2.ColumnDefinition(
-          name: '_profileGoalsProfileId',
-          columnType: _i2.ColumnType.bigint,
-          isNullable: true,
-          dartType: 'int?',
-        ),
       ],
       foreignKeys: [
         _i2.ForeignKeyDefinition(
           constraintName: 'goal_fk_0',
-          columns: ['_profileGoalsProfileId'],
+          columns: ['profileId'],
           referenceTable: 'profile',
           referenceTableSchema: 'public',
           referenceColumns: ['id'],
           onUpdate: _i2.ForeignKeyAction.noAction,
-          onDelete: _i2.ForeignKeyAction.noAction,
+          onDelete: _i2.ForeignKeyAction.cascade,
           matchType: null,
         ),
       ],
@@ -199,6 +199,12 @@ class Protocol extends _i1.SerializationManagerServer {
           isNullable: false,
           dartType: 'int?',
           columnDefault: 'nextval(\'notification_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'dayScheduleId',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: true,
+          dartType: 'int?',
         ),
         _i2.ColumnDefinition(
           name: 'title',
@@ -238,22 +244,16 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'DateTime',
           columnDefault: 'CURRENT_TIMESTAMP',
         ),
-        _i2.ColumnDefinition(
-          name: '_dayScheduleNotificationsDayScheduleId',
-          columnType: _i2.ColumnType.bigint,
-          isNullable: true,
-          dartType: 'int?',
-        ),
       ],
       foreignKeys: [
         _i2.ForeignKeyDefinition(
           constraintName: 'notification_fk_0',
-          columns: ['_dayScheduleNotificationsDayScheduleId'],
+          columns: ['dayScheduleId'],
           referenceTable: 'day_schedule',
           referenceTableSchema: 'public',
           referenceColumns: ['id'],
           onUpdate: _i2.ForeignKeyAction.noAction,
-          onDelete: _i2.ForeignKeyAction.noAction,
+          onDelete: _i2.ForeignKeyAction.cascade,
           matchType: null,
         ),
       ],
@@ -288,7 +288,7 @@ class Protocol extends _i1.SerializationManagerServer {
           columnDefault: 'nextval(\'profile_id_seq\'::regclass)',
         ),
         _i2.ColumnDefinition(
-          name: 'userId',
+          name: 'authUserId',
           columnType: _i2.ColumnType.uuid,
           isNullable: false,
           dartType: 'UuidValue',
@@ -332,7 +332,18 @@ class Protocol extends _i1.SerializationManagerServer {
           columnDefault: 'CURRENT_TIMESTAMP',
         ),
       ],
-      foreignKeys: [],
+      foreignKeys: [
+        _i2.ForeignKeyDefinition(
+          constraintName: 'profile_fk_0',
+          columns: ['authUserId'],
+          referenceTable: 'serverpod_auth_core_user',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _i2.ForeignKeyAction.noAction,
+          onDelete: _i2.ForeignKeyAction.cascade,
+          matchType: null,
+        ),
+      ],
       indexes: [
         _i2.IndexDefinition(
           indexName: 'profile_pkey',
@@ -348,12 +359,12 @@ class Protocol extends _i1.SerializationManagerServer {
           isPrimary: true,
         ),
         _i2.IndexDefinition(
-          indexName: 'profile_user_unique_idx',
+          indexName: 'profile_auth_user_unique_idx',
           tableSpace: null,
           elements: [
             _i2.IndexElementDefinition(
               type: _i2.IndexElementDefinitionType.column,
-              definition: 'userId',
+              definition: 'authUserId',
             ),
           ],
           type: 'btree',
@@ -377,7 +388,7 @@ class Protocol extends _i1.SerializationManagerServer {
           columnDefault: 'nextval(\'progress_id_seq\'::regclass)',
         ),
         _i2.ColumnDefinition(
-          name: 'userId',
+          name: 'authUserId',
           columnType: _i2.ColumnType.uuid,
           isNullable: false,
           dartType: 'UuidValue',
@@ -397,7 +408,18 @@ class Protocol extends _i1.SerializationManagerServer {
           columnDefault: 'CURRENT_TIMESTAMP',
         ),
       ],
-      foreignKeys: [],
+      foreignKeys: [
+        _i2.ForeignKeyDefinition(
+          constraintName: 'progress_fk_0',
+          columns: ['authUserId'],
+          referenceTable: 'serverpod_auth_core_user',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _i2.ForeignKeyAction.noAction,
+          onDelete: _i2.ForeignKeyAction.cascade,
+          matchType: null,
+        ),
+      ],
       indexes: [
         _i2.IndexDefinition(
           indexName: 'progress_pkey',
@@ -413,12 +435,12 @@ class Protocol extends _i1.SerializationManagerServer {
           isPrimary: true,
         ),
         _i2.IndexDefinition(
-          indexName: 'progress_user_unique_idx',
+          indexName: 'progress_auth_user_unique_idx',
           tableSpace: null,
           elements: [
             _i2.IndexElementDefinition(
               type: _i2.IndexElementDefinitionType.column,
-              definition: 'userId',
+              definition: 'authUserId',
             ),
           ],
           type: 'btree',
@@ -440,6 +462,12 @@ class Protocol extends _i1.SerializationManagerServer {
           isNullable: false,
           dartType: 'int?',
           columnDefault: 'nextval(\'week_schedule_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'progressId',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: true,
+          dartType: 'int?',
         ),
         _i2.ColumnDefinition(
           name: 'deadline',
@@ -467,22 +495,16 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'DateTime',
           columnDefault: 'CURRENT_TIMESTAMP',
         ),
-        _i2.ColumnDefinition(
-          name: '_progressWeeksProgressId',
-          columnType: _i2.ColumnType.bigint,
-          isNullable: true,
-          dartType: 'int?',
-        ),
       ],
       foreignKeys: [
         _i2.ForeignKeyDefinition(
           constraintName: 'week_schedule_fk_0',
-          columns: ['_progressWeeksProgressId'],
+          columns: ['progressId'],
           referenceTable: 'progress',
           referenceTableSchema: 'public',
           referenceColumns: ['id'],
           onUpdate: _i2.ForeignKeyAction.noAction,
-          onDelete: _i2.ForeignKeyAction.noAction,
+          onDelete: _i2.ForeignKeyAction.cascade,
           matchType: null,
         ),
       ],

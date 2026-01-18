@@ -11,12 +11,15 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import '../../../app/features/day_schedules/day_schedule.dart' as _i2;
-import 'package:workouts_reminder_client/src/protocol/protocol.dart' as _i3;
+import '../../../app/features/progress/progress.dart' as _i2;
+import '../../../app/features/day_schedules/day_schedule.dart' as _i3;
+import 'package:workouts_reminder_client/src/protocol/protocol.dart' as _i4;
 
 abstract class WeekSchedule implements _i1.SerializableModel {
   WeekSchedule._({
     this.id,
+    this.progressId,
+    this.progress,
     this.days,
     required this.deadline,
     this.note,
@@ -27,7 +30,9 @@ abstract class WeekSchedule implements _i1.SerializableModel {
 
   factory WeekSchedule({
     int? id,
-    List<_i2.DaySchedule>? days,
+    int? progressId,
+    _i2.Progress? progress,
+    List<_i3.DaySchedule>? days,
     required DateTime deadline,
     String? note,
     DateTime? createdAt,
@@ -37,9 +42,15 @@ abstract class WeekSchedule implements _i1.SerializableModel {
   factory WeekSchedule.fromJson(Map<String, dynamic> jsonSerialization) {
     return WeekSchedule(
       id: jsonSerialization['id'] as int?,
+      progressId: jsonSerialization['progressId'] as int?,
+      progress: jsonSerialization['progress'] == null
+          ? null
+          : _i4.Protocol().deserialize<_i2.Progress>(
+              jsonSerialization['progress'],
+            ),
       days: jsonSerialization['days'] == null
           ? null
-          : _i3.Protocol().deserialize<List<_i2.DaySchedule>>(
+          : _i4.Protocol().deserialize<List<_i3.DaySchedule>>(
               jsonSerialization['days'],
             ),
       deadline: _i1.DateTimeJsonExtension.fromJson(
@@ -60,7 +71,11 @@ abstract class WeekSchedule implements _i1.SerializableModel {
   /// the id will be null.
   int? id;
 
-  List<_i2.DaySchedule>? days;
+  int? progressId;
+
+  _i2.Progress? progress;
+
+  List<_i3.DaySchedule>? days;
 
   DateTime deadline;
 
@@ -75,7 +90,9 @@ abstract class WeekSchedule implements _i1.SerializableModel {
   @_i1.useResult
   WeekSchedule copyWith({
     int? id,
-    List<_i2.DaySchedule>? days,
+    int? progressId,
+    _i2.Progress? progress,
+    List<_i3.DaySchedule>? days,
     DateTime? deadline,
     String? note,
     DateTime? createdAt,
@@ -86,6 +103,8 @@ abstract class WeekSchedule implements _i1.SerializableModel {
     return {
       '__className__': 'WeekSchedule',
       if (id != null) 'id': id,
+      if (progressId != null) 'progressId': progressId,
+      if (progress != null) 'progress': progress?.toJson(),
       if (days != null) 'days': days?.toJson(valueToJson: (v) => v.toJson()),
       'deadline': deadline.toJson(),
       if (note != null) 'note': note,
@@ -105,13 +124,17 @@ class _Undefined {}
 class _WeekScheduleImpl extends WeekSchedule {
   _WeekScheduleImpl({
     int? id,
-    List<_i2.DaySchedule>? days,
+    int? progressId,
+    _i2.Progress? progress,
+    List<_i3.DaySchedule>? days,
     required DateTime deadline,
     String? note,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) : super._(
          id: id,
+         progressId: progressId,
+         progress: progress,
          days: days,
          deadline: deadline,
          note: note,
@@ -125,6 +148,8 @@ class _WeekScheduleImpl extends WeekSchedule {
   @override
   WeekSchedule copyWith({
     Object? id = _Undefined,
+    Object? progressId = _Undefined,
+    Object? progress = _Undefined,
     Object? days = _Undefined,
     DateTime? deadline,
     Object? note = _Undefined,
@@ -133,7 +158,11 @@ class _WeekScheduleImpl extends WeekSchedule {
   }) {
     return WeekSchedule(
       id: id is int? ? id : this.id,
-      days: days is List<_i2.DaySchedule>?
+      progressId: progressId is int? ? progressId : this.progressId,
+      progress: progress is _i2.Progress?
+          ? progress
+          : this.progress?.copyWith(),
+      days: days is List<_i3.DaySchedule>?
           ? days
           : this.days?.map((e0) => e0.copyWith()).toList(),
       deadline: deadline ?? this.deadline,

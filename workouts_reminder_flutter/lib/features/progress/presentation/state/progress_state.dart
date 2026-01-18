@@ -55,7 +55,8 @@ class ProgressState extends _$ProgressState {
     final schedule = await ref.read(clientProvider).progress.getProgress();
 
     if (schedule == null) {
-      throw Exception('No progress data found from server');
+      // throw Exception('No progress data found from server');
+      return ProgressModel.init();
     }
 
     final usableSchedule = ProgressModel.fromServerProgress(schedule);

@@ -72,6 +72,16 @@ class Endpoints extends _i1.EndpointDispatch {
               ) async => (endpoints['profile'] as _i2.ProfileEndpoint)
                   .getOrCreateProfile(session),
         ),
+        'deleteUser': _i1.MethodConnector(
+          name: 'deleteUser',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['profile'] as _i2.ProfileEndpoint)
+                  .deleteUser(session),
+        ),
       },
     );
     connectors['progress'] = _i1.EndpointConnector(

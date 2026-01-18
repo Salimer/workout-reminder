@@ -12,43 +12,53 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import '../../../app/core/enums/weekday_enum.dart' as _i2;
-import '../../../app/features/notifications/notification.dart' as _i3;
-import '../../../app/core/enums/day_workout_status_enum.dart' as _i4;
-import 'package:workouts_reminder_server/src/generated/protocol.dart' as _i5;
+import '../../../app/features/week_schedules/week_schedule.dart' as _i2;
+import '../../../app/core/enums/weekday_enum.dart' as _i3;
+import '../../../app/features/notifications/notification.dart' as _i4;
+import '../../../app/core/enums/day_workout_status_enum.dart' as _i5;
+import 'package:workouts_reminder_server/src/generated/protocol.dart' as _i6;
 
 abstract class DaySchedule
     implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   DaySchedule._({
     this.id,
+    this.weekScheduleId,
+    this.weekSchedule,
     required this.day,
     this.notifications,
     required this.status,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) : createdAt = createdAt ?? DateTime.now(),
-       updatedAt = updatedAt ?? DateTime.now(),
-       _weekScheduleDaysWeekScheduleId = null;
+       updatedAt = updatedAt ?? DateTime.now();
 
   factory DaySchedule({
     int? id,
-    required _i2.WeekdayEnum day,
-    List<_i3.Notification>? notifications,
-    required _i4.DayWorkoutStatusEnum status,
+    int? weekScheduleId,
+    _i2.WeekSchedule? weekSchedule,
+    required _i3.WeekdayEnum day,
+    List<_i4.Notification>? notifications,
+    required _i5.DayWorkoutStatusEnum status,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) = _DayScheduleImpl;
 
   factory DaySchedule.fromJson(Map<String, dynamic> jsonSerialization) {
-    return DayScheduleImplicit._(
+    return DaySchedule(
       id: jsonSerialization['id'] as int?,
-      day: _i2.WeekdayEnum.fromJson((jsonSerialization['day'] as String)),
+      weekScheduleId: jsonSerialization['weekScheduleId'] as int?,
+      weekSchedule: jsonSerialization['weekSchedule'] == null
+          ? null
+          : _i6.Protocol().deserialize<_i2.WeekSchedule>(
+              jsonSerialization['weekSchedule'],
+            ),
+      day: _i3.WeekdayEnum.fromJson((jsonSerialization['day'] as String)),
       notifications: jsonSerialization['notifications'] == null
           ? null
-          : _i5.Protocol().deserialize<List<_i3.Notification>>(
+          : _i6.Protocol().deserialize<List<_i4.Notification>>(
               jsonSerialization['notifications'],
             ),
-      status: _i4.DayWorkoutStatusEnum.fromJson(
+      status: _i5.DayWorkoutStatusEnum.fromJson(
         (jsonSerialization['status'] as String),
       ),
       createdAt: jsonSerialization['createdAt'] == null
@@ -57,8 +67,6 @@ abstract class DaySchedule
       updatedAt: jsonSerialization['updatedAt'] == null
           ? null
           : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['updatedAt']),
-      $_weekScheduleDaysWeekScheduleId:
-          jsonSerialization['_weekScheduleDaysWeekScheduleId'] as int?,
     );
   }
 
@@ -69,17 +77,19 @@ abstract class DaySchedule
   @override
   int? id;
 
-  _i2.WeekdayEnum day;
+  int? weekScheduleId;
 
-  List<_i3.Notification>? notifications;
+  _i2.WeekSchedule? weekSchedule;
 
-  _i4.DayWorkoutStatusEnum status;
+  _i3.WeekdayEnum day;
+
+  List<_i4.Notification>? notifications;
+
+  _i5.DayWorkoutStatusEnum status;
 
   DateTime createdAt;
 
   DateTime updatedAt;
-
-  final int? _weekScheduleDaysWeekScheduleId;
 
   @override
   _i1.Table<int?> get table => t;
@@ -89,9 +99,11 @@ abstract class DaySchedule
   @_i1.useResult
   DaySchedule copyWith({
     int? id,
-    _i2.WeekdayEnum? day,
-    List<_i3.Notification>? notifications,
-    _i4.DayWorkoutStatusEnum? status,
+    int? weekScheduleId,
+    _i2.WeekSchedule? weekSchedule,
+    _i3.WeekdayEnum? day,
+    List<_i4.Notification>? notifications,
+    _i5.DayWorkoutStatusEnum? status,
     DateTime? createdAt,
     DateTime? updatedAt,
   });
@@ -100,14 +112,14 @@ abstract class DaySchedule
     return {
       '__className__': 'DaySchedule',
       if (id != null) 'id': id,
+      if (weekScheduleId != null) 'weekScheduleId': weekScheduleId,
+      if (weekSchedule != null) 'weekSchedule': weekSchedule?.toJson(),
       'day': day.toJson(),
       if (notifications != null)
         'notifications': notifications?.toJson(valueToJson: (v) => v.toJson()),
       'status': status.toJson(),
       'createdAt': createdAt.toJson(),
       'updatedAt': updatedAt.toJson(),
-      if (_weekScheduleDaysWeekScheduleId != null)
-        '_weekScheduleDaysWeekScheduleId': _weekScheduleDaysWeekScheduleId,
     };
   }
 
@@ -116,6 +128,9 @@ abstract class DaySchedule
     return {
       '__className__': 'DaySchedule',
       if (id != null) 'id': id,
+      if (weekScheduleId != null) 'weekScheduleId': weekScheduleId,
+      if (weekSchedule != null)
+        'weekSchedule': weekSchedule?.toJsonForProtocol(),
       'day': day.toJson(),
       if (notifications != null)
         'notifications': notifications?.toJson(
@@ -128,9 +143,13 @@ abstract class DaySchedule
   }
 
   static DayScheduleInclude include({
-    _i3.NotificationIncludeList? notifications,
+    _i2.WeekScheduleInclude? weekSchedule,
+    _i4.NotificationIncludeList? notifications,
   }) {
-    return DayScheduleInclude._(notifications: notifications);
+    return DayScheduleInclude._(
+      weekSchedule: weekSchedule,
+      notifications: notifications,
+    );
   }
 
   static DayScheduleIncludeList includeList({
@@ -164,13 +183,17 @@ class _Undefined {}
 class _DayScheduleImpl extends DaySchedule {
   _DayScheduleImpl({
     int? id,
-    required _i2.WeekdayEnum day,
-    List<_i3.Notification>? notifications,
-    required _i4.DayWorkoutStatusEnum status,
+    int? weekScheduleId,
+    _i2.WeekSchedule? weekSchedule,
+    required _i3.WeekdayEnum day,
+    List<_i4.Notification>? notifications,
+    required _i5.DayWorkoutStatusEnum status,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) : super._(
          id: id,
+         weekScheduleId: weekScheduleId,
+         weekSchedule: weekSchedule,
          day: day,
          notifications: notifications,
          status: status,
@@ -184,76 +207,50 @@ class _DayScheduleImpl extends DaySchedule {
   @override
   DaySchedule copyWith({
     Object? id = _Undefined,
-    _i2.WeekdayEnum? day,
+    Object? weekScheduleId = _Undefined,
+    Object? weekSchedule = _Undefined,
+    _i3.WeekdayEnum? day,
     Object? notifications = _Undefined,
-    _i4.DayWorkoutStatusEnum? status,
+    _i5.DayWorkoutStatusEnum? status,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
-    return DayScheduleImplicit._(
+    return DaySchedule(
       id: id is int? ? id : this.id,
+      weekScheduleId: weekScheduleId is int?
+          ? weekScheduleId
+          : this.weekScheduleId,
+      weekSchedule: weekSchedule is _i2.WeekSchedule?
+          ? weekSchedule
+          : this.weekSchedule?.copyWith(),
       day: day ?? this.day,
-      notifications: notifications is List<_i3.Notification>?
+      notifications: notifications is List<_i4.Notification>?
           ? notifications
           : this.notifications?.map((e0) => e0.copyWith()).toList(),
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      $_weekScheduleDaysWeekScheduleId: this._weekScheduleDaysWeekScheduleId,
     );
   }
-}
-
-class DayScheduleImplicit extends _DayScheduleImpl {
-  DayScheduleImplicit._({
-    int? id,
-    required _i2.WeekdayEnum day,
-    List<_i3.Notification>? notifications,
-    required _i4.DayWorkoutStatusEnum status,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    int? $_weekScheduleDaysWeekScheduleId,
-  }) : _weekScheduleDaysWeekScheduleId = $_weekScheduleDaysWeekScheduleId,
-       super(
-         id: id,
-         day: day,
-         notifications: notifications,
-         status: status,
-         createdAt: createdAt,
-         updatedAt: updatedAt,
-       );
-
-  factory DayScheduleImplicit(
-    DaySchedule daySchedule, {
-    int? $_weekScheduleDaysWeekScheduleId,
-  }) {
-    return DayScheduleImplicit._(
-      id: daySchedule.id,
-      day: daySchedule.day,
-      notifications: daySchedule.notifications,
-      status: daySchedule.status,
-      createdAt: daySchedule.createdAt,
-      updatedAt: daySchedule.updatedAt,
-      $_weekScheduleDaysWeekScheduleId: $_weekScheduleDaysWeekScheduleId,
-    );
-  }
-
-  @override
-  final int? _weekScheduleDaysWeekScheduleId;
 }
 
 class DayScheduleUpdateTable extends _i1.UpdateTable<DayScheduleTable> {
   DayScheduleUpdateTable(super.table);
 
-  _i1.ColumnValue<_i2.WeekdayEnum, _i2.WeekdayEnum> day(
-    _i2.WeekdayEnum value,
+  _i1.ColumnValue<int, int> weekScheduleId(int? value) => _i1.ColumnValue(
+    table.weekScheduleId,
+    value,
+  );
+
+  _i1.ColumnValue<_i3.WeekdayEnum, _i3.WeekdayEnum> day(
+    _i3.WeekdayEnum value,
   ) => _i1.ColumnValue(
     table.day,
     value,
   );
 
-  _i1.ColumnValue<_i4.DayWorkoutStatusEnum, _i4.DayWorkoutStatusEnum> status(
-    _i4.DayWorkoutStatusEnum value,
+  _i1.ColumnValue<_i5.DayWorkoutStatusEnum, _i5.DayWorkoutStatusEnum> status(
+    _i5.DayWorkoutStatusEnum value,
   ) => _i1.ColumnValue(
     table.status,
     value,
@@ -270,17 +267,15 @@ class DayScheduleUpdateTable extends _i1.UpdateTable<DayScheduleTable> {
         table.updatedAt,
         value,
       );
-
-  _i1.ColumnValue<int, int> $_weekScheduleDaysWeekScheduleId(int? value) =>
-      _i1.ColumnValue(
-        table.$_weekScheduleDaysWeekScheduleId,
-        value,
-      );
 }
 
 class DayScheduleTable extends _i1.Table<int?> {
   DayScheduleTable({super.tableRelation}) : super(tableName: 'day_schedule') {
     updateTable = DayScheduleUpdateTable(this);
+    weekScheduleId = _i1.ColumnInt(
+      'weekScheduleId',
+      this,
+    );
     day = _i1.ColumnEnum(
       'day',
       this,
@@ -301,54 +296,65 @@ class DayScheduleTable extends _i1.Table<int?> {
       this,
       hasDefault: true,
     );
-    $_weekScheduleDaysWeekScheduleId = _i1.ColumnInt(
-      '_weekScheduleDaysWeekScheduleId',
-      this,
-    );
   }
 
   late final DayScheduleUpdateTable updateTable;
 
-  late final _i1.ColumnEnum<_i2.WeekdayEnum> day;
+  late final _i1.ColumnInt weekScheduleId;
 
-  _i3.NotificationTable? ___notifications;
+  _i2.WeekScheduleTable? _weekSchedule;
 
-  _i1.ManyRelation<_i3.NotificationTable>? _notifications;
+  late final _i1.ColumnEnum<_i3.WeekdayEnum> day;
 
-  late final _i1.ColumnEnum<_i4.DayWorkoutStatusEnum> status;
+  _i4.NotificationTable? ___notifications;
+
+  _i1.ManyRelation<_i4.NotificationTable>? _notifications;
+
+  late final _i1.ColumnEnum<_i5.DayWorkoutStatusEnum> status;
 
   late final _i1.ColumnDateTime createdAt;
 
   late final _i1.ColumnDateTime updatedAt;
 
-  late final _i1.ColumnInt $_weekScheduleDaysWeekScheduleId;
+  _i2.WeekScheduleTable get weekSchedule {
+    if (_weekSchedule != null) return _weekSchedule!;
+    _weekSchedule = _i1.createRelationTable(
+      relationFieldName: 'weekSchedule',
+      field: DaySchedule.t.weekScheduleId,
+      foreignField: _i2.WeekSchedule.t.id,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i2.WeekScheduleTable(tableRelation: foreignTableRelation),
+    );
+    return _weekSchedule!;
+  }
 
-  _i3.NotificationTable get __notifications {
+  _i4.NotificationTable get __notifications {
     if (___notifications != null) return ___notifications!;
     ___notifications = _i1.createRelationTable(
       relationFieldName: '__notifications',
       field: DaySchedule.t.id,
-      foreignField: _i3.Notification.t.$_dayScheduleNotificationsDayScheduleId,
+      foreignField: _i4.Notification.t.dayScheduleId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i3.NotificationTable(tableRelation: foreignTableRelation),
+          _i4.NotificationTable(tableRelation: foreignTableRelation),
     );
     return ___notifications!;
   }
 
-  _i1.ManyRelation<_i3.NotificationTable> get notifications {
+  _i1.ManyRelation<_i4.NotificationTable> get notifications {
     if (_notifications != null) return _notifications!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'notifications',
       field: DaySchedule.t.id,
-      foreignField: _i3.Notification.t.$_dayScheduleNotificationsDayScheduleId,
+      foreignField: _i4.Notification.t.dayScheduleId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i3.NotificationTable(tableRelation: foreignTableRelation),
+          _i4.NotificationTable(tableRelation: foreignTableRelation),
     );
-    _notifications = _i1.ManyRelation<_i3.NotificationTable>(
+    _notifications = _i1.ManyRelation<_i4.NotificationTable>(
       tableWithRelations: relationTable,
-      table: _i3.NotificationTable(
+      table: _i4.NotificationTable(
         tableRelation: relationTable.tableRelation!.lastRelation,
       ),
     );
@@ -358,16 +364,7 @@ class DayScheduleTable extends _i1.Table<int?> {
   @override
   List<_i1.Column> get columns => [
     id,
-    day,
-    status,
-    createdAt,
-    updatedAt,
-    $_weekScheduleDaysWeekScheduleId,
-  ];
-
-  @override
-  List<_i1.Column> get managedColumns => [
-    id,
+    weekScheduleId,
     day,
     status,
     createdAt,
@@ -376,6 +373,9 @@ class DayScheduleTable extends _i1.Table<int?> {
 
   @override
   _i1.Table? getRelationTable(String relationField) {
+    if (relationField == 'weekSchedule') {
+      return weekSchedule;
+    }
     if (relationField == 'notifications') {
       return __notifications;
     }
@@ -384,14 +384,23 @@ class DayScheduleTable extends _i1.Table<int?> {
 }
 
 class DayScheduleInclude extends _i1.IncludeObject {
-  DayScheduleInclude._({_i3.NotificationIncludeList? notifications}) {
+  DayScheduleInclude._({
+    _i2.WeekScheduleInclude? weekSchedule,
+    _i4.NotificationIncludeList? notifications,
+  }) {
+    _weekSchedule = weekSchedule;
     _notifications = notifications;
   }
 
-  _i3.NotificationIncludeList? _notifications;
+  _i2.WeekScheduleInclude? _weekSchedule;
+
+  _i4.NotificationIncludeList? _notifications;
 
   @override
-  Map<String, _i1.Include?> get includes => {'notifications': _notifications};
+  Map<String, _i1.Include?> get includes => {
+    'weekSchedule': _weekSchedule,
+    'notifications': _notifications,
+  };
 
   @override
   _i1.Table<int?> get table => DaySchedule.t;
@@ -688,11 +697,11 @@ class DayScheduleAttachRepository {
   const DayScheduleAttachRepository._();
 
   /// Creates a relation between this [DaySchedule] and the given [Notification]s
-  /// by setting each [Notification]'s foreign key `_dayScheduleNotificationsDayScheduleId` to refer to this [DaySchedule].
+  /// by setting each [Notification]'s foreign key `dayScheduleId` to refer to this [DaySchedule].
   Future<void> notifications(
     _i1.Session session,
     DaySchedule daySchedule,
-    List<_i3.Notification> notification, {
+    List<_i4.Notification> notification, {
     _i1.Transaction? transaction,
   }) async {
     if (notification.any((e) => e.id == null)) {
@@ -703,16 +712,11 @@ class DayScheduleAttachRepository {
     }
 
     var $notification = notification
-        .map(
-          (e) => _i3.NotificationImplicit(
-            e,
-            $_dayScheduleNotificationsDayScheduleId: daySchedule.id,
-          ),
-        )
+        .map((e) => e.copyWith(dayScheduleId: daySchedule.id))
         .toList();
-    await session.db.update<_i3.Notification>(
+    await session.db.update<_i4.Notification>(
       $notification,
-      columns: [_i3.Notification.t.$_dayScheduleNotificationsDayScheduleId],
+      columns: [_i4.Notification.t.dayScheduleId],
       transaction: transaction,
     );
   }
@@ -721,12 +725,35 @@ class DayScheduleAttachRepository {
 class DayScheduleAttachRowRepository {
   const DayScheduleAttachRowRepository._();
 
+  /// Creates a relation between the given [DaySchedule] and [WeekSchedule]
+  /// by setting the [DaySchedule]'s foreign key `weekScheduleId` to refer to the [WeekSchedule].
+  Future<void> weekSchedule(
+    _i1.Session session,
+    DaySchedule daySchedule,
+    _i2.WeekSchedule weekSchedule, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (daySchedule.id == null) {
+      throw ArgumentError.notNull('daySchedule.id');
+    }
+    if (weekSchedule.id == null) {
+      throw ArgumentError.notNull('weekSchedule.id');
+    }
+
+    var $daySchedule = daySchedule.copyWith(weekScheduleId: weekSchedule.id);
+    await session.db.updateRow<DaySchedule>(
+      $daySchedule,
+      columns: [DaySchedule.t.weekScheduleId],
+      transaction: transaction,
+    );
+  }
+
   /// Creates a relation between this [DaySchedule] and the given [Notification]
-  /// by setting the [Notification]'s foreign key `_dayScheduleNotificationsDayScheduleId` to refer to this [DaySchedule].
+  /// by setting the [Notification]'s foreign key `dayScheduleId` to refer to this [DaySchedule].
   Future<void> notifications(
     _i1.Session session,
     DaySchedule daySchedule,
-    _i3.Notification notification, {
+    _i4.Notification notification, {
     _i1.Transaction? transaction,
   }) async {
     if (notification.id == null) {
@@ -736,13 +763,10 @@ class DayScheduleAttachRowRepository {
       throw ArgumentError.notNull('daySchedule.id');
     }
 
-    var $notification = _i3.NotificationImplicit(
-      notification,
-      $_dayScheduleNotificationsDayScheduleId: daySchedule.id,
-    );
-    await session.db.updateRow<_i3.Notification>(
+    var $notification = notification.copyWith(dayScheduleId: daySchedule.id);
+    await session.db.updateRow<_i4.Notification>(
       $notification,
-      columns: [_i3.Notification.t.$_dayScheduleNotificationsDayScheduleId],
+      columns: [_i4.Notification.t.dayScheduleId],
       transaction: transaction,
     );
   }
@@ -752,13 +776,13 @@ class DayScheduleDetachRepository {
   const DayScheduleDetachRepository._();
 
   /// Detaches the relation between this [DaySchedule] and the given [Notification]
-  /// by setting the [Notification]'s foreign key `_dayScheduleNotificationsDayScheduleId` to `null`.
+  /// by setting the [Notification]'s foreign key `dayScheduleId` to `null`.
   ///
   /// This removes the association between the two models without deleting
   /// the related record.
   Future<void> notifications(
     _i1.Session session,
-    List<_i3.Notification> notification, {
+    List<_i4.Notification> notification, {
     _i1.Transaction? transaction,
   }) async {
     if (notification.any((e) => e.id == null)) {
@@ -766,16 +790,11 @@ class DayScheduleDetachRepository {
     }
 
     var $notification = notification
-        .map(
-          (e) => _i3.NotificationImplicit(
-            e,
-            $_dayScheduleNotificationsDayScheduleId: null,
-          ),
-        )
+        .map((e) => e.copyWith(dayScheduleId: null))
         .toList();
-    await session.db.update<_i3.Notification>(
+    await session.db.update<_i4.Notification>(
       $notification,
-      columns: [_i3.Notification.t.$_dayScheduleNotificationsDayScheduleId],
+      columns: [_i4.Notification.t.dayScheduleId],
       transaction: transaction,
     );
   }
@@ -784,27 +803,46 @@ class DayScheduleDetachRepository {
 class DayScheduleDetachRowRepository {
   const DayScheduleDetachRowRepository._();
 
+  /// Detaches the relation between this [DaySchedule] and the [WeekSchedule] set in `weekSchedule`
+  /// by setting the [DaySchedule]'s foreign key `weekScheduleId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> weekSchedule(
+    _i1.Session session,
+    DaySchedule daySchedule, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (daySchedule.id == null) {
+      throw ArgumentError.notNull('daySchedule.id');
+    }
+
+    var $daySchedule = daySchedule.copyWith(weekScheduleId: null);
+    await session.db.updateRow<DaySchedule>(
+      $daySchedule,
+      columns: [DaySchedule.t.weekScheduleId],
+      transaction: transaction,
+    );
+  }
+
   /// Detaches the relation between this [DaySchedule] and the given [Notification]
-  /// by setting the [Notification]'s foreign key `_dayScheduleNotificationsDayScheduleId` to `null`.
+  /// by setting the [Notification]'s foreign key `dayScheduleId` to `null`.
   ///
   /// This removes the association between the two models without deleting
   /// the related record.
   Future<void> notifications(
     _i1.Session session,
-    _i3.Notification notification, {
+    _i4.Notification notification, {
     _i1.Transaction? transaction,
   }) async {
     if (notification.id == null) {
       throw ArgumentError.notNull('notification.id');
     }
 
-    var $notification = _i3.NotificationImplicit(
-      notification,
-      $_dayScheduleNotificationsDayScheduleId: null,
-    );
-    await session.db.updateRow<_i3.Notification>(
+    var $notification = notification.copyWith(dayScheduleId: null);
+    await session.db.updateRow<_i4.Notification>(
       $notification,
-      columns: [_i3.Notification.t.$_dayScheduleNotificationsDayScheduleId],
+      columns: [_i4.Notification.t.dayScheduleId],
       transaction: transaction,
     );
   }

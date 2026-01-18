@@ -38,6 +38,12 @@ class EndpointProfile extends _i1.EndpointRef {
         'getOrCreateProfile',
         {},
       );
+
+  _i2.Future<void> deleteUser() => caller.callServerEndpoint<void>(
+    'profile',
+    'deleteUser',
+    {},
+  );
 }
 
 /// {@category Endpoint}

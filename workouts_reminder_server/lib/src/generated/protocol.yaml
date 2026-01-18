@@ -1,5 +1,6 @@
 profile:
   - getOrCreateProfile:
+  - deleteUser:
 progress:
   - getProgress:
   - createWeekSchedule:

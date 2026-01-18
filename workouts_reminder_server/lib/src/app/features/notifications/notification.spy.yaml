@@ -1,6 +1,7 @@
 class: Notification
 table: notification
 fields:
+  daySchedule: DaySchedule?, relation(name=day_schedule_notifications, optional, onDelete=Cascade)
   title: String
   body: String
   scheduledDate: DateTime

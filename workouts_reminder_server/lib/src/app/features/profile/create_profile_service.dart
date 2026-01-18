@@ -6,9 +6,13 @@ import 'get_profile_service.dart';
 class CreateProfileService {
   const CreateProfileService();
 
-  Future<Profile> callForUserId(Session session, UuidValue userId) async {
+  Future<Profile> callForUserId(
+    Session session,
+    UuidValue userId, {
+    Transaction? transaction,
+  }) async {
     final profile = Profile(
-      userId: userId,
+      authUserId: userId,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
       motivation: '',
@@ -17,8 +21,16 @@ class CreateProfileService {
       notificationTone: 'Friendly',
     );
 
-    await Profile.db.insertRow(session, profile);
-    return await const GetProfileService().callForUserId(session, userId) ??
+    await Profile.db.insertRow(
+      session,
+      profile,
+      transaction: transaction,
+    );
+    return await const GetProfileService().callForUserId(
+          session,
+          userId,
+          transaction: transaction,
+        ) ??
         profile;
   }
 }

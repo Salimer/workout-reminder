@@ -11,10 +11,14 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
+import '../../../app/features/profile/profile.dart' as _i2;
+import 'package:workouts_reminder_client/src/protocol/protocol.dart' as _i3;
 
 abstract class Goal implements _i1.SerializableModel {
   Goal._({
     this.id,
+    this.profileId,
+    this.profile,
     required this.text,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -23,6 +27,8 @@ abstract class Goal implements _i1.SerializableModel {
 
   factory Goal({
     int? id,
+    int? profileId,
+    _i2.Profile? profile,
     required String text,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -31,6 +37,12 @@ abstract class Goal implements _i1.SerializableModel {
   factory Goal.fromJson(Map<String, dynamic> jsonSerialization) {
     return Goal(
       id: jsonSerialization['id'] as int?,
+      profileId: jsonSerialization['profileId'] as int?,
+      profile: jsonSerialization['profile'] == null
+          ? null
+          : _i3.Protocol().deserialize<_i2.Profile>(
+              jsonSerialization['profile'],
+            ),
       text: jsonSerialization['text'] as String,
       createdAt: jsonSerialization['createdAt'] == null
           ? null
@@ -46,6 +58,10 @@ abstract class Goal implements _i1.SerializableModel {
   /// the id will be null.
   int? id;
 
+  int? profileId;
+
+  _i2.Profile? profile;
+
   String text;
 
   DateTime createdAt;
@@ -57,6 +73,8 @@ abstract class Goal implements _i1.SerializableModel {
   @_i1.useResult
   Goal copyWith({
     int? id,
+    int? profileId,
+    _i2.Profile? profile,
     String? text,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -66,6 +84,8 @@ abstract class Goal implements _i1.SerializableModel {
     return {
       '__className__': 'Goal',
       if (id != null) 'id': id,
+      if (profileId != null) 'profileId': profileId,
+      if (profile != null) 'profile': profile?.toJson(),
       'text': text,
       'createdAt': createdAt.toJson(),
       'updatedAt': updatedAt.toJson(),
@@ -83,11 +103,15 @@ class _Undefined {}
 class _GoalImpl extends Goal {
   _GoalImpl({
     int? id,
+    int? profileId,
+    _i2.Profile? profile,
     required String text,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) : super._(
          id: id,
+         profileId: profileId,
+         profile: profile,
          text: text,
          createdAt: createdAt,
          updatedAt: updatedAt,
@@ -99,12 +123,16 @@ class _GoalImpl extends Goal {
   @override
   Goal copyWith({
     Object? id = _Undefined,
+    Object? profileId = _Undefined,
+    Object? profile = _Undefined,
     String? text,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
     return Goal(
       id: id is int? ? id : this.id,
+      profileId: profileId is int? ? profileId : this.profileId,
+      profile: profile is _i2.Profile? ? profile : this.profile?.copyWith(),
       text: text ?? this.text,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,

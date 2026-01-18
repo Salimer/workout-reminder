@@ -12,19 +12,22 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import '../../../app/features/profile/goal.dart' as _i2;
-import 'package:workouts_reminder_server/src/generated/protocol.dart' as _i3;
+import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+    as _i2;
+import '../../../app/features/profile/goal.dart' as _i3;
+import 'package:workouts_reminder_server/src/generated/protocol.dart' as _i4;
 
 abstract class Profile
     implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   Profile._({
     this.id,
-    required this.userId,
+    required this.authUserId,
+    this.authUser,
+    this.goals,
     required this.motivation,
     required this.characterName,
     required this.fitnessLevel,
     required this.notificationTone,
-    this.goals,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) : createdAt = createdAt ?? DateTime.now(),
@@ -32,12 +35,13 @@ abstract class Profile
 
   factory Profile({
     int? id,
-    required _i1.UuidValue userId,
+    required _i1.UuidValue authUserId,
+    _i2.AuthUser? authUser,
+    List<_i3.Goal>? goals,
     required String motivation,
     required String characterName,
     required String fitnessLevel,
     required String notificationTone,
-    List<_i2.Goal>? goals,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) = _ProfileImpl;
@@ -45,16 +49,23 @@ abstract class Profile
   factory Profile.fromJson(Map<String, dynamic> jsonSerialization) {
     return Profile(
       id: jsonSerialization['id'] as int?,
-      userId: _i1.UuidValueJsonExtension.fromJson(jsonSerialization['userId']),
+      authUserId: _i1.UuidValueJsonExtension.fromJson(
+        jsonSerialization['authUserId'],
+      ),
+      authUser: jsonSerialization['authUser'] == null
+          ? null
+          : _i4.Protocol().deserialize<_i2.AuthUser>(
+              jsonSerialization['authUser'],
+            ),
+      goals: jsonSerialization['goals'] == null
+          ? null
+          : _i4.Protocol().deserialize<List<_i3.Goal>>(
+              jsonSerialization['goals'],
+            ),
       motivation: jsonSerialization['motivation'] as String,
       characterName: jsonSerialization['characterName'] as String,
       fitnessLevel: jsonSerialization['fitnessLevel'] as String,
       notificationTone: jsonSerialization['notificationTone'] as String,
-      goals: jsonSerialization['goals'] == null
-          ? null
-          : _i3.Protocol().deserialize<List<_i2.Goal>>(
-              jsonSerialization['goals'],
-            ),
       createdAt: jsonSerialization['createdAt'] == null
           ? null
           : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
@@ -71,7 +82,11 @@ abstract class Profile
   @override
   int? id;
 
-  _i1.UuidValue userId;
+  _i1.UuidValue authUserId;
+
+  _i2.AuthUser? authUser;
+
+  List<_i3.Goal>? goals;
 
   String motivation;
 
@@ -80,8 +95,6 @@ abstract class Profile
   String fitnessLevel;
 
   String notificationTone;
-
-  List<_i2.Goal>? goals;
 
   DateTime createdAt;
 
@@ -95,12 +108,13 @@ abstract class Profile
   @_i1.useResult
   Profile copyWith({
     int? id,
-    _i1.UuidValue? userId,
+    _i1.UuidValue? authUserId,
+    _i2.AuthUser? authUser,
+    List<_i3.Goal>? goals,
     String? motivation,
     String? characterName,
     String? fitnessLevel,
     String? notificationTone,
-    List<_i2.Goal>? goals,
     DateTime? createdAt,
     DateTime? updatedAt,
   });
@@ -109,12 +123,13 @@ abstract class Profile
     return {
       '__className__': 'Profile',
       if (id != null) 'id': id,
-      'userId': userId.toJson(),
+      'authUserId': authUserId.toJson(),
+      if (authUser != null) 'authUser': authUser?.toJson(),
+      if (goals != null) 'goals': goals?.toJson(valueToJson: (v) => v.toJson()),
       'motivation': motivation,
       'characterName': characterName,
       'fitnessLevel': fitnessLevel,
       'notificationTone': notificationTone,
-      if (goals != null) 'goals': goals?.toJson(valueToJson: (v) => v.toJson()),
       'createdAt': createdAt.toJson(),
       'updatedAt': updatedAt.toJson(),
     };
@@ -125,20 +140,27 @@ abstract class Profile
     return {
       '__className__': 'Profile',
       if (id != null) 'id': id,
-      'userId': userId.toJson(),
+      'authUserId': authUserId.toJson(),
+      if (authUser != null) 'authUser': authUser?.toJsonForProtocol(),
+      if (goals != null)
+        'goals': goals?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
       'motivation': motivation,
       'characterName': characterName,
       'fitnessLevel': fitnessLevel,
       'notificationTone': notificationTone,
-      if (goals != null)
-        'goals': goals?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
       'createdAt': createdAt.toJson(),
       'updatedAt': updatedAt.toJson(),
     };
   }
 
-  static ProfileInclude include({_i2.GoalIncludeList? goals}) {
-    return ProfileInclude._(goals: goals);
+  static ProfileInclude include({
+    _i2.AuthUserInclude? authUser,
+    _i3.GoalIncludeList? goals,
+  }) {
+    return ProfileInclude._(
+      authUser: authUser,
+      goals: goals,
+    );
   }
 
   static ProfileIncludeList includeList({
@@ -172,22 +194,24 @@ class _Undefined {}
 class _ProfileImpl extends Profile {
   _ProfileImpl({
     int? id,
-    required _i1.UuidValue userId,
+    required _i1.UuidValue authUserId,
+    _i2.AuthUser? authUser,
+    List<_i3.Goal>? goals,
     required String motivation,
     required String characterName,
     required String fitnessLevel,
     required String notificationTone,
-    List<_i2.Goal>? goals,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) : super._(
          id: id,
-         userId: userId,
+         authUserId: authUserId,
+         authUser: authUser,
+         goals: goals,
          motivation: motivation,
          characterName: characterName,
          fitnessLevel: fitnessLevel,
          notificationTone: notificationTone,
-         goals: goals,
          createdAt: createdAt,
          updatedAt: updatedAt,
        );
@@ -198,25 +222,29 @@ class _ProfileImpl extends Profile {
   @override
   Profile copyWith({
     Object? id = _Undefined,
-    _i1.UuidValue? userId,
+    _i1.UuidValue? authUserId,
+    Object? authUser = _Undefined,
+    Object? goals = _Undefined,
     String? motivation,
     String? characterName,
     String? fitnessLevel,
     String? notificationTone,
-    Object? goals = _Undefined,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
     return Profile(
       id: id is int? ? id : this.id,
-      userId: userId ?? this.userId,
+      authUserId: authUserId ?? this.authUserId,
+      authUser: authUser is _i2.AuthUser?
+          ? authUser
+          : this.authUser?.copyWith(),
+      goals: goals is List<_i3.Goal>?
+          ? goals
+          : this.goals?.map((e0) => e0.copyWith()).toList(),
       motivation: motivation ?? this.motivation,
       characterName: characterName ?? this.characterName,
       fitnessLevel: fitnessLevel ?? this.fitnessLevel,
       notificationTone: notificationTone ?? this.notificationTone,
-      goals: goals is List<_i2.Goal>?
-          ? goals
-          : this.goals?.map((e0) => e0.copyWith()).toList(),
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -226,11 +254,12 @@ class _ProfileImpl extends Profile {
 class ProfileUpdateTable extends _i1.UpdateTable<ProfileTable> {
   ProfileUpdateTable(super.table);
 
-  _i1.ColumnValue<_i1.UuidValue, _i1.UuidValue> userId(_i1.UuidValue value) =>
-      _i1.ColumnValue(
-        table.userId,
-        value,
-      );
+  _i1.ColumnValue<_i1.UuidValue, _i1.UuidValue> authUserId(
+    _i1.UuidValue value,
+  ) => _i1.ColumnValue(
+    table.authUserId,
+    value,
+  );
 
   _i1.ColumnValue<String, String> motivation(String value) => _i1.ColumnValue(
     table.motivation,
@@ -270,8 +299,8 @@ class ProfileUpdateTable extends _i1.UpdateTable<ProfileTable> {
 class ProfileTable extends _i1.Table<int?> {
   ProfileTable({super.tableRelation}) : super(tableName: 'profile') {
     updateTable = ProfileUpdateTable(this);
-    userId = _i1.ColumnUuid(
-      'userId',
+    authUserId = _i1.ColumnUuid(
+      'authUserId',
       this,
     );
     motivation = _i1.ColumnString(
@@ -304,7 +333,13 @@ class ProfileTable extends _i1.Table<int?> {
 
   late final ProfileUpdateTable updateTable;
 
-  late final _i1.ColumnUuid userId;
+  late final _i1.ColumnUuid authUserId;
+
+  _i2.AuthUserTable? _authUser;
+
+  _i3.GoalTable? ___goals;
+
+  _i1.ManyRelation<_i3.GoalTable>? _goals;
 
   late final _i1.ColumnString motivation;
 
@@ -314,40 +349,49 @@ class ProfileTable extends _i1.Table<int?> {
 
   late final _i1.ColumnString notificationTone;
 
-  _i2.GoalTable? ___goals;
-
-  _i1.ManyRelation<_i2.GoalTable>? _goals;
-
   late final _i1.ColumnDateTime createdAt;
 
   late final _i1.ColumnDateTime updatedAt;
 
-  _i2.GoalTable get __goals {
+  _i2.AuthUserTable get authUser {
+    if (_authUser != null) return _authUser!;
+    _authUser = _i1.createRelationTable(
+      relationFieldName: 'authUser',
+      field: Profile.t.authUserId,
+      foreignField: _i2.AuthUser.t.id,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i2.AuthUserTable(tableRelation: foreignTableRelation),
+    );
+    return _authUser!;
+  }
+
+  _i3.GoalTable get __goals {
     if (___goals != null) return ___goals!;
     ___goals = _i1.createRelationTable(
       relationFieldName: '__goals',
       field: Profile.t.id,
-      foreignField: _i2.Goal.t.$_profileGoalsProfileId,
+      foreignField: _i3.Goal.t.profileId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i2.GoalTable(tableRelation: foreignTableRelation),
+          _i3.GoalTable(tableRelation: foreignTableRelation),
     );
     return ___goals!;
   }
 
-  _i1.ManyRelation<_i2.GoalTable> get goals {
+  _i1.ManyRelation<_i3.GoalTable> get goals {
     if (_goals != null) return _goals!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'goals',
       field: Profile.t.id,
-      foreignField: _i2.Goal.t.$_profileGoalsProfileId,
+      foreignField: _i3.Goal.t.profileId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i2.GoalTable(tableRelation: foreignTableRelation),
+          _i3.GoalTable(tableRelation: foreignTableRelation),
     );
-    _goals = _i1.ManyRelation<_i2.GoalTable>(
+    _goals = _i1.ManyRelation<_i3.GoalTable>(
       tableWithRelations: relationTable,
-      table: _i2.GoalTable(
+      table: _i3.GoalTable(
         tableRelation: relationTable.tableRelation!.lastRelation,
       ),
     );
@@ -357,7 +401,7 @@ class ProfileTable extends _i1.Table<int?> {
   @override
   List<_i1.Column> get columns => [
     id,
-    userId,
+    authUserId,
     motivation,
     characterName,
     fitnessLevel,
@@ -368,6 +412,9 @@ class ProfileTable extends _i1.Table<int?> {
 
   @override
   _i1.Table? getRelationTable(String relationField) {
+    if (relationField == 'authUser') {
+      return authUser;
+    }
     if (relationField == 'goals') {
       return __goals;
     }
@@ -376,14 +423,23 @@ class ProfileTable extends _i1.Table<int?> {
 }
 
 class ProfileInclude extends _i1.IncludeObject {
-  ProfileInclude._({_i2.GoalIncludeList? goals}) {
+  ProfileInclude._({
+    _i2.AuthUserInclude? authUser,
+    _i3.GoalIncludeList? goals,
+  }) {
+    _authUser = authUser;
     _goals = goals;
   }
 
-  _i2.GoalIncludeList? _goals;
+  _i2.AuthUserInclude? _authUser;
+
+  _i3.GoalIncludeList? _goals;
 
   @override
-  Map<String, _i1.Include?> get includes => {'goals': _goals};
+  Map<String, _i1.Include?> get includes => {
+    'authUser': _authUser,
+    'goals': _goals,
+  };
 
   @override
   _i1.Table<int?> get table => Profile.t;
@@ -680,11 +736,11 @@ class ProfileAttachRepository {
   const ProfileAttachRepository._();
 
   /// Creates a relation between this [Profile] and the given [Goal]s
-  /// by setting each [Goal]'s foreign key `_profileGoalsProfileId` to refer to this [Profile].
+  /// by setting each [Goal]'s foreign key `profileId` to refer to this [Profile].
   Future<void> goals(
     _i1.Session session,
     Profile profile,
-    List<_i2.Goal> goal, {
+    List<_i3.Goal> goal, {
     _i1.Transaction? transaction,
   }) async {
     if (goal.any((e) => e.id == null)) {
@@ -694,17 +750,10 @@ class ProfileAttachRepository {
       throw ArgumentError.notNull('profile.id');
     }
 
-    var $goal = goal
-        .map(
-          (e) => _i2.GoalImplicit(
-            e,
-            $_profileGoalsProfileId: profile.id,
-          ),
-        )
-        .toList();
-    await session.db.update<_i2.Goal>(
+    var $goal = goal.map((e) => e.copyWith(profileId: profile.id)).toList();
+    await session.db.update<_i3.Goal>(
       $goal,
-      columns: [_i2.Goal.t.$_profileGoalsProfileId],
+      columns: [_i3.Goal.t.profileId],
       transaction: transaction,
     );
   }
@@ -713,12 +762,35 @@ class ProfileAttachRepository {
 class ProfileAttachRowRepository {
   const ProfileAttachRowRepository._();
 
+  /// Creates a relation between the given [Profile] and [AuthUser]
+  /// by setting the [Profile]'s foreign key `authUserId` to refer to the [AuthUser].
+  Future<void> authUser(
+    _i1.Session session,
+    Profile profile,
+    _i2.AuthUser authUser, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (profile.id == null) {
+      throw ArgumentError.notNull('profile.id');
+    }
+    if (authUser.id == null) {
+      throw ArgumentError.notNull('authUser.id');
+    }
+
+    var $profile = profile.copyWith(authUserId: authUser.id);
+    await session.db.updateRow<Profile>(
+      $profile,
+      columns: [Profile.t.authUserId],
+      transaction: transaction,
+    );
+  }
+
   /// Creates a relation between this [Profile] and the given [Goal]
-  /// by setting the [Goal]'s foreign key `_profileGoalsProfileId` to refer to this [Profile].
+  /// by setting the [Goal]'s foreign key `profileId` to refer to this [Profile].
   Future<void> goals(
     _i1.Session session,
     Profile profile,
-    _i2.Goal goal, {
+    _i3.Goal goal, {
     _i1.Transaction? transaction,
   }) async {
     if (goal.id == null) {
@@ -728,13 +800,10 @@ class ProfileAttachRowRepository {
       throw ArgumentError.notNull('profile.id');
     }
 
-    var $goal = _i2.GoalImplicit(
-      goal,
-      $_profileGoalsProfileId: profile.id,
-    );
-    await session.db.updateRow<_i2.Goal>(
+    var $goal = goal.copyWith(profileId: profile.id);
+    await session.db.updateRow<_i3.Goal>(
       $goal,
-      columns: [_i2.Goal.t.$_profileGoalsProfileId],
+      columns: [_i3.Goal.t.profileId],
       transaction: transaction,
     );
   }
@@ -744,30 +813,23 @@ class ProfileDetachRepository {
   const ProfileDetachRepository._();
 
   /// Detaches the relation between this [Profile] and the given [Goal]
-  /// by setting the [Goal]'s foreign key `_profileGoalsProfileId` to `null`.
+  /// by setting the [Goal]'s foreign key `profileId` to `null`.
   ///
   /// This removes the association between the two models without deleting
   /// the related record.
   Future<void> goals(
     _i1.Session session,
-    List<_i2.Goal> goal, {
+    List<_i3.Goal> goal, {
     _i1.Transaction? transaction,
   }) async {
     if (goal.any((e) => e.id == null)) {
       throw ArgumentError.notNull('goal.id');
     }
 
-    var $goal = goal
-        .map(
-          (e) => _i2.GoalImplicit(
-            e,
-            $_profileGoalsProfileId: null,
-          ),
-        )
-        .toList();
-    await session.db.update<_i2.Goal>(
+    var $goal = goal.map((e) => e.copyWith(profileId: null)).toList();
+    await session.db.update<_i3.Goal>(
       $goal,
-      columns: [_i2.Goal.t.$_profileGoalsProfileId],
+      columns: [_i3.Goal.t.profileId],
       transaction: transaction,
     );
   }
@@ -777,26 +839,23 @@ class ProfileDetachRowRepository {
   const ProfileDetachRowRepository._();
 
   /// Detaches the relation between this [Profile] and the given [Goal]
-  /// by setting the [Goal]'s foreign key `_profileGoalsProfileId` to `null`.
+  /// by setting the [Goal]'s foreign key `profileId` to `null`.
   ///
   /// This removes the association between the two models without deleting
   /// the related record.
   Future<void> goals(
     _i1.Session session,
-    _i2.Goal goal, {
+    _i3.Goal goal, {
     _i1.Transaction? transaction,
   }) async {
     if (goal.id == null) {
       throw ArgumentError.notNull('goal.id');
     }
 
-    var $goal = _i2.GoalImplicit(
-      goal,
-      $_profileGoalsProfileId: null,
-    );
-    await session.db.updateRow<_i2.Goal>(
+    var $goal = goal.copyWith(profileId: null);
+    await session.db.updateRow<_i3.Goal>(
       $goal,
-      columns: [_i2.Goal.t.$_profileGoalsProfileId],
+      columns: [_i3.Goal.t.profileId],
       transaction: transaction,
     );
   }

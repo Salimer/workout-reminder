@@ -16,7 +16,7 @@ class ProgressEndpoint extends Endpoint {
     );
     final progress = await Progress.db.findFirstRow(
       session,
-      where: (t) => t.userId.equals(userId),
+      where: (t) => t.authUserId.equals(userId),
       include: Progress.include(
         weeks: WeekSchedule.includeList(
           include: WeekSchedule.include(

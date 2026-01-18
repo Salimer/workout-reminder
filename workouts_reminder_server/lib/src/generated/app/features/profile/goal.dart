@@ -8,30 +8,42 @@
 // ignore_for_file: type_literal_in_constant_pattern
 // ignore_for_file: use_super_parameters
 // ignore_for_file: invalid_use_of_internal_member
+// ignore_for_file: unnecessary_null_comparison
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
+import '../../../app/features/profile/profile.dart' as _i2;
+import 'package:workouts_reminder_server/src/generated/protocol.dart' as _i3;
 
 abstract class Goal implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   Goal._({
     this.id,
+    this.profileId,
+    this.profile,
     required this.text,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) : createdAt = createdAt ?? DateTime.now(),
-       updatedAt = updatedAt ?? DateTime.now(),
-       _profileGoalsProfileId = null;
+       updatedAt = updatedAt ?? DateTime.now();
 
   factory Goal({
     int? id,
+    int? profileId,
+    _i2.Profile? profile,
     required String text,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) = _GoalImpl;
 
   factory Goal.fromJson(Map<String, dynamic> jsonSerialization) {
-    return GoalImplicit._(
+    return Goal(
       id: jsonSerialization['id'] as int?,
+      profileId: jsonSerialization['profileId'] as int?,
+      profile: jsonSerialization['profile'] == null
+          ? null
+          : _i3.Protocol().deserialize<_i2.Profile>(
+              jsonSerialization['profile'],
+            ),
       text: jsonSerialization['text'] as String,
       createdAt: jsonSerialization['createdAt'] == null
           ? null
@@ -39,8 +51,6 @@ abstract class Goal implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
       updatedAt: jsonSerialization['updatedAt'] == null
           ? null
           : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['updatedAt']),
-      $_profileGoalsProfileId:
-          jsonSerialization['_profileGoalsProfileId'] as int?,
     );
   }
 
@@ -51,13 +61,15 @@ abstract class Goal implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   @override
   int? id;
 
+  int? profileId;
+
+  _i2.Profile? profile;
+
   String text;
 
   DateTime createdAt;
 
   DateTime updatedAt;
-
-  final int? _profileGoalsProfileId;
 
   @override
   _i1.Table<int?> get table => t;
@@ -67,6 +79,8 @@ abstract class Goal implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   @_i1.useResult
   Goal copyWith({
     int? id,
+    int? profileId,
+    _i2.Profile? profile,
     String? text,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -76,11 +90,11 @@ abstract class Goal implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     return {
       '__className__': 'Goal',
       if (id != null) 'id': id,
+      if (profileId != null) 'profileId': profileId,
+      if (profile != null) 'profile': profile?.toJson(),
       'text': text,
       'createdAt': createdAt.toJson(),
       'updatedAt': updatedAt.toJson(),
-      if (_profileGoalsProfileId != null)
-        '_profileGoalsProfileId': _profileGoalsProfileId,
     };
   }
 
@@ -89,14 +103,16 @@ abstract class Goal implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     return {
       '__className__': 'Goal',
       if (id != null) 'id': id,
+      if (profileId != null) 'profileId': profileId,
+      if (profile != null) 'profile': profile?.toJsonForProtocol(),
       'text': text,
       'createdAt': createdAt.toJson(),
       'updatedAt': updatedAt.toJson(),
     };
   }
 
-  static GoalInclude include() {
-    return GoalInclude._();
+  static GoalInclude include({_i2.ProfileInclude? profile}) {
+    return GoalInclude._(profile: profile);
   }
 
   static GoalIncludeList includeList({
@@ -130,11 +146,15 @@ class _Undefined {}
 class _GoalImpl extends Goal {
   _GoalImpl({
     int? id,
+    int? profileId,
+    _i2.Profile? profile,
     required String text,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) : super._(
          id: id,
+         profileId: profileId,
+         profile: profile,
          text: text,
          createdAt: createdAt,
          updatedAt: updatedAt,
@@ -146,54 +166,30 @@ class _GoalImpl extends Goal {
   @override
   Goal copyWith({
     Object? id = _Undefined,
+    Object? profileId = _Undefined,
+    Object? profile = _Undefined,
     String? text,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
-    return GoalImplicit._(
+    return Goal(
       id: id is int? ? id : this.id,
+      profileId: profileId is int? ? profileId : this.profileId,
+      profile: profile is _i2.Profile? ? profile : this.profile?.copyWith(),
       text: text ?? this.text,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      $_profileGoalsProfileId: this._profileGoalsProfileId,
     );
   }
-}
-
-class GoalImplicit extends _GoalImpl {
-  GoalImplicit._({
-    int? id,
-    required String text,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    int? $_profileGoalsProfileId,
-  }) : _profileGoalsProfileId = $_profileGoalsProfileId,
-       super(
-         id: id,
-         text: text,
-         createdAt: createdAt,
-         updatedAt: updatedAt,
-       );
-
-  factory GoalImplicit(
-    Goal goal, {
-    int? $_profileGoalsProfileId,
-  }) {
-    return GoalImplicit._(
-      id: goal.id,
-      text: goal.text,
-      createdAt: goal.createdAt,
-      updatedAt: goal.updatedAt,
-      $_profileGoalsProfileId: $_profileGoalsProfileId,
-    );
-  }
-
-  @override
-  final int? _profileGoalsProfileId;
 }
 
 class GoalUpdateTable extends _i1.UpdateTable<GoalTable> {
   GoalUpdateTable(super.table);
+
+  _i1.ColumnValue<int, int> profileId(int? value) => _i1.ColumnValue(
+    table.profileId,
+    value,
+  );
 
   _i1.ColumnValue<String, String> text(String value) => _i1.ColumnValue(
     table.text,
@@ -211,17 +207,15 @@ class GoalUpdateTable extends _i1.UpdateTable<GoalTable> {
         table.updatedAt,
         value,
       );
-
-  _i1.ColumnValue<int, int> $_profileGoalsProfileId(int? value) =>
-      _i1.ColumnValue(
-        table.$_profileGoalsProfileId,
-        value,
-      );
 }
 
 class GoalTable extends _i1.Table<int?> {
   GoalTable({super.tableRelation}) : super(tableName: 'goal') {
     updateTable = GoalUpdateTable(this);
+    profileId = _i1.ColumnInt(
+      'profileId',
+      this,
+    );
     text = _i1.ColumnString(
       'text',
       this,
@@ -236,13 +230,13 @@ class GoalTable extends _i1.Table<int?> {
       this,
       hasDefault: true,
     );
-    $_profileGoalsProfileId = _i1.ColumnInt(
-      '_profileGoalsProfileId',
-      this,
-    );
   }
 
   late final GoalUpdateTable updateTable;
+
+  late final _i1.ColumnInt profileId;
+
+  _i2.ProfileTable? _profile;
 
   late final _i1.ColumnString text;
 
@@ -250,31 +244,46 @@ class GoalTable extends _i1.Table<int?> {
 
   late final _i1.ColumnDateTime updatedAt;
 
-  late final _i1.ColumnInt $_profileGoalsProfileId;
+  _i2.ProfileTable get profile {
+    if (_profile != null) return _profile!;
+    _profile = _i1.createRelationTable(
+      relationFieldName: 'profile',
+      field: Goal.t.profileId,
+      foreignField: _i2.Profile.t.id,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i2.ProfileTable(tableRelation: foreignTableRelation),
+    );
+    return _profile!;
+  }
 
   @override
   List<_i1.Column> get columns => [
     id,
+    profileId,
     text,
     createdAt,
     updatedAt,
-    $_profileGoalsProfileId,
   ];
 
   @override
-  List<_i1.Column> get managedColumns => [
-    id,
-    text,
-    createdAt,
-    updatedAt,
-  ];
+  _i1.Table? getRelationTable(String relationField) {
+    if (relationField == 'profile') {
+      return profile;
+    }
+    return null;
+  }
 }
 
 class GoalInclude extends _i1.IncludeObject {
-  GoalInclude._();
+  GoalInclude._({_i2.ProfileInclude? profile}) {
+    _profile = profile;
+  }
+
+  _i2.ProfileInclude? _profile;
 
   @override
-  Map<String, _i1.Include?> get includes => {};
+  Map<String, _i1.Include?> get includes => {'profile': _profile};
 
   @override
   _i1.Table<int?> get table => Goal.t;
@@ -302,6 +311,10 @@ class GoalIncludeList extends _i1.IncludeList {
 
 class GoalRepository {
   const GoalRepository._();
+
+  final attachRow = const GoalAttachRowRepository._();
+
+  final detachRow = const GoalDetachRowRepository._();
 
   /// Returns a list of [Goal]s matching the given query parameters.
   ///
@@ -334,6 +347,7 @@ class GoalRepository {
     bool orderDescending = false,
     _i1.OrderByListBuilder<GoalTable>? orderByList,
     _i1.Transaction? transaction,
+    GoalInclude? include,
   }) async {
     return session.db.find<Goal>(
       where: where?.call(Goal.t),
@@ -343,6 +357,7 @@ class GoalRepository {
       limit: limit,
       offset: offset,
       transaction: transaction,
+      include: include,
     );
   }
 
@@ -371,6 +386,7 @@ class GoalRepository {
     bool orderDescending = false,
     _i1.OrderByListBuilder<GoalTable>? orderByList,
     _i1.Transaction? transaction,
+    GoalInclude? include,
   }) async {
     return session.db.findFirstRow<Goal>(
       where: where?.call(Goal.t),
@@ -379,6 +395,7 @@ class GoalRepository {
       orderDescending: orderDescending,
       offset: offset,
       transaction: transaction,
+      include: include,
     );
   }
 
@@ -387,10 +404,12 @@ class GoalRepository {
     _i1.Session session,
     int id, {
     _i1.Transaction? transaction,
+    GoalInclude? include,
   }) async {
     return session.db.findById<Goal>(
       id,
       transaction: transaction,
+      include: include,
     );
   }
 
@@ -548,6 +567,59 @@ class GoalRepository {
     return session.db.count<Goal>(
       where: where?.call(Goal.t),
       limit: limit,
+      transaction: transaction,
+    );
+  }
+}
+
+class GoalAttachRowRepository {
+  const GoalAttachRowRepository._();
+
+  /// Creates a relation between the given [Goal] and [Profile]
+  /// by setting the [Goal]'s foreign key `profileId` to refer to the [Profile].
+  Future<void> profile(
+    _i1.Session session,
+    Goal goal,
+    _i2.Profile profile, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (goal.id == null) {
+      throw ArgumentError.notNull('goal.id');
+    }
+    if (profile.id == null) {
+      throw ArgumentError.notNull('profile.id');
+    }
+
+    var $goal = goal.copyWith(profileId: profile.id);
+    await session.db.updateRow<Goal>(
+      $goal,
+      columns: [Goal.t.profileId],
+      transaction: transaction,
+    );
+  }
+}
+
+class GoalDetachRowRepository {
+  const GoalDetachRowRepository._();
+
+  /// Detaches the relation between this [Goal] and the [Profile] set in `profile`
+  /// by setting the [Goal]'s foreign key `profileId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> profile(
+    _i1.Session session,
+    Goal goal, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (goal.id == null) {
+      throw ArgumentError.notNull('goal.id');
+    }
+
+    var $goal = goal.copyWith(profileId: null);
+    await session.db.updateRow<Goal>(
+      $goal,
+      columns: [Goal.t.profileId],
       transaction: transaction,
     );
   }

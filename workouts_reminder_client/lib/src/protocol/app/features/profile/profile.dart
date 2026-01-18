@@ -11,18 +11,21 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import '../../../app/features/profile/goal.dart' as _i2;
-import 'package:workouts_reminder_client/src/protocol/protocol.dart' as _i3;
+import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
+    as _i2;
+import '../../../app/features/profile/goal.dart' as _i3;
+import 'package:workouts_reminder_client/src/protocol/protocol.dart' as _i4;
 
 abstract class Profile implements _i1.SerializableModel {
   Profile._({
     this.id,
-    required this.userId,
+    required this.authUserId,
+    this.authUser,
+    this.goals,
     required this.motivation,
     required this.characterName,
     required this.fitnessLevel,
     required this.notificationTone,
-    this.goals,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) : createdAt = createdAt ?? DateTime.now(),
@@ -30,12 +33,13 @@ abstract class Profile implements _i1.SerializableModel {
 
   factory Profile({
     int? id,
-    required _i1.UuidValue userId,
+    required _i1.UuidValue authUserId,
+    _i2.AuthUser? authUser,
+    List<_i3.Goal>? goals,
     required String motivation,
     required String characterName,
     required String fitnessLevel,
     required String notificationTone,
-    List<_i2.Goal>? goals,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) = _ProfileImpl;
@@ -43,16 +47,23 @@ abstract class Profile implements _i1.SerializableModel {
   factory Profile.fromJson(Map<String, dynamic> jsonSerialization) {
     return Profile(
       id: jsonSerialization['id'] as int?,
-      userId: _i1.UuidValueJsonExtension.fromJson(jsonSerialization['userId']),
+      authUserId: _i1.UuidValueJsonExtension.fromJson(
+        jsonSerialization['authUserId'],
+      ),
+      authUser: jsonSerialization['authUser'] == null
+          ? null
+          : _i4.Protocol().deserialize<_i2.AuthUser>(
+              jsonSerialization['authUser'],
+            ),
+      goals: jsonSerialization['goals'] == null
+          ? null
+          : _i4.Protocol().deserialize<List<_i3.Goal>>(
+              jsonSerialization['goals'],
+            ),
       motivation: jsonSerialization['motivation'] as String,
       characterName: jsonSerialization['characterName'] as String,
       fitnessLevel: jsonSerialization['fitnessLevel'] as String,
       notificationTone: jsonSerialization['notificationTone'] as String,
-      goals: jsonSerialization['goals'] == null
-          ? null
-          : _i3.Protocol().deserialize<List<_i2.Goal>>(
-              jsonSerialization['goals'],
-            ),
       createdAt: jsonSerialization['createdAt'] == null
           ? null
           : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
@@ -67,7 +78,11 @@ abstract class Profile implements _i1.SerializableModel {
   /// the id will be null.
   int? id;
 
-  _i1.UuidValue userId;
+  _i1.UuidValue authUserId;
+
+  _i2.AuthUser? authUser;
+
+  List<_i3.Goal>? goals;
 
   String motivation;
 
@@ -76,8 +91,6 @@ abstract class Profile implements _i1.SerializableModel {
   String fitnessLevel;
 
   String notificationTone;
-
-  List<_i2.Goal>? goals;
 
   DateTime createdAt;
 
@@ -88,12 +101,13 @@ abstract class Profile implements _i1.SerializableModel {
   @_i1.useResult
   Profile copyWith({
     int? id,
-    _i1.UuidValue? userId,
+    _i1.UuidValue? authUserId,
+    _i2.AuthUser? authUser,
+    List<_i3.Goal>? goals,
     String? motivation,
     String? characterName,
     String? fitnessLevel,
     String? notificationTone,
-    List<_i2.Goal>? goals,
     DateTime? createdAt,
     DateTime? updatedAt,
   });
@@ -102,12 +116,13 @@ abstract class Profile implements _i1.SerializableModel {
     return {
       '__className__': 'Profile',
       if (id != null) 'id': id,
-      'userId': userId.toJson(),
+      'authUserId': authUserId.toJson(),
+      if (authUser != null) 'authUser': authUser?.toJson(),
+      if (goals != null) 'goals': goals?.toJson(valueToJson: (v) => v.toJson()),
       'motivation': motivation,
       'characterName': characterName,
       'fitnessLevel': fitnessLevel,
       'notificationTone': notificationTone,
-      if (goals != null) 'goals': goals?.toJson(valueToJson: (v) => v.toJson()),
       'createdAt': createdAt.toJson(),
       'updatedAt': updatedAt.toJson(),
     };
@@ -124,22 +139,24 @@ class _Undefined {}
 class _ProfileImpl extends Profile {
   _ProfileImpl({
     int? id,
-    required _i1.UuidValue userId,
+    required _i1.UuidValue authUserId,
+    _i2.AuthUser? authUser,
+    List<_i3.Goal>? goals,
     required String motivation,
     required String characterName,
     required String fitnessLevel,
     required String notificationTone,
-    List<_i2.Goal>? goals,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) : super._(
          id: id,
-         userId: userId,
+         authUserId: authUserId,
+         authUser: authUser,
+         goals: goals,
          motivation: motivation,
          characterName: characterName,
          fitnessLevel: fitnessLevel,
          notificationTone: notificationTone,
-         goals: goals,
          createdAt: createdAt,
          updatedAt: updatedAt,
        );
@@ -150,25 +167,29 @@ class _ProfileImpl extends Profile {
   @override
   Profile copyWith({
     Object? id = _Undefined,
-    _i1.UuidValue? userId,
+    _i1.UuidValue? authUserId,
+    Object? authUser = _Undefined,
+    Object? goals = _Undefined,
     String? motivation,
     String? characterName,
     String? fitnessLevel,
     String? notificationTone,
-    Object? goals = _Undefined,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
     return Profile(
       id: id is int? ? id : this.id,
-      userId: userId ?? this.userId,
+      authUserId: authUserId ?? this.authUserId,
+      authUser: authUser is _i2.AuthUser?
+          ? authUser
+          : this.authUser?.copyWith(),
+      goals: goals is List<_i3.Goal>?
+          ? goals
+          : this.goals?.map((e0) => e0.copyWith()).toList(),
       motivation: motivation ?? this.motivation,
       characterName: characterName ?? this.characterName,
       fitnessLevel: fitnessLevel ?? this.fitnessLevel,
       notificationTone: notificationTone ?? this.notificationTone,
-      goals: goals is List<_i2.Goal>?
-          ? goals
-          : this.goals?.map((e0) => e0.copyWith()).toList(),
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 
-import '../../../../core/providers/client.dart';
 import '../../../../core/providers/theme.dart' show themeProvider;
+import '../../../../core/use_cases/app_use_case.dart';
 import '../../../../core/widgets/animated_section.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/config/routes.dart';
@@ -244,7 +243,72 @@ class SettingsView extends StatelessWidget {
                         );
 
                         if (shouldSignOut == true && context.mounted) {
-                          await ref.read(clientProvider).auth.signOutDevice();
+                          await ref.read(appUseCaseProvider).signOut();
+                        }
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 12),
+            AppAnimatedSection(
+              index: 7,
+              child: Consumer(
+                builder: (context, ref, _) {
+                  return AppCard(
+                    padding: EdgeInsets.zero,
+                    borderRadius: BorderRadius.circular(16),
+                    child: ListTile(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: scheme.error.withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.delete_forever,
+                          color: scheme.error,
+                        ),
+                      ),
+                      title: const Text('Delete account'),
+                      subtitle: const Text('Permanently remove your data'),
+                      onTap: () async {
+                        final shouldDelete = await showDialog<bool>(
+                          context: context,
+                          builder: (dialogContext) {
+                            return AlertDialog(
+                              title: const Text('Delete account?'),
+                              content: const Text(
+                                'This action cannot be undone.',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    dialogContext.pop(false);
+                                  },
+                                  child: const Text('Cancel'),
+                                ),
+                                FilledButton(
+                                  onPressed: () {
+                                    dialogContext.pop(true);
+                                  },
+                                  child: const Text('Delete'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+
+                        if (shouldDelete == true && context.mounted) {
+                          await ref.read(appUseCaseProvider).deleteAccount();
                         }
                       },
                     ),

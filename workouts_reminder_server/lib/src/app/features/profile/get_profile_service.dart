@@ -12,13 +12,18 @@ class GetProfileService {
     return callForUserId(session, userId);
   }
 
-  Future<Profile?> callForUserId(Session session, UuidValue userId) async {
+  Future<Profile?> callForUserId(
+    Session session,
+    UuidValue userId, {
+    Transaction? transaction,
+  }) async {
     return Profile.db.findFirstRow(
       session,
-      where: (t) => t.userId.equals(userId),
+      where: (t) => t.authUserId.equals(userId),
       include: Profile.include(
         goals: Goal.includeList(),
       ),
+      transaction: transaction,
     );
   }
 }

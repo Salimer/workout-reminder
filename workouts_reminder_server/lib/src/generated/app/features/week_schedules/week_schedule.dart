@@ -12,25 +12,29 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import '../../../app/features/day_schedules/day_schedule.dart' as _i2;
-import 'package:workouts_reminder_server/src/generated/protocol.dart' as _i3;
+import '../../../app/features/progress/progress.dart' as _i2;
+import '../../../app/features/day_schedules/day_schedule.dart' as _i3;
+import 'package:workouts_reminder_server/src/generated/protocol.dart' as _i4;
 
 abstract class WeekSchedule
     implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   WeekSchedule._({
     this.id,
+    this.progressId,
+    this.progress,
     this.days,
     required this.deadline,
     this.note,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) : createdAt = createdAt ?? DateTime.now(),
-       updatedAt = updatedAt ?? DateTime.now(),
-       _progressWeeksProgressId = null;
+       updatedAt = updatedAt ?? DateTime.now();
 
   factory WeekSchedule({
     int? id,
-    List<_i2.DaySchedule>? days,
+    int? progressId,
+    _i2.Progress? progress,
+    List<_i3.DaySchedule>? days,
     required DateTime deadline,
     String? note,
     DateTime? createdAt,
@@ -38,11 +42,17 @@ abstract class WeekSchedule
   }) = _WeekScheduleImpl;
 
   factory WeekSchedule.fromJson(Map<String, dynamic> jsonSerialization) {
-    return WeekScheduleImplicit._(
+    return WeekSchedule(
       id: jsonSerialization['id'] as int?,
+      progressId: jsonSerialization['progressId'] as int?,
+      progress: jsonSerialization['progress'] == null
+          ? null
+          : _i4.Protocol().deserialize<_i2.Progress>(
+              jsonSerialization['progress'],
+            ),
       days: jsonSerialization['days'] == null
           ? null
-          : _i3.Protocol().deserialize<List<_i2.DaySchedule>>(
+          : _i4.Protocol().deserialize<List<_i3.DaySchedule>>(
               jsonSerialization['days'],
             ),
       deadline: _i1.DateTimeJsonExtension.fromJson(
@@ -55,8 +65,6 @@ abstract class WeekSchedule
       updatedAt: jsonSerialization['updatedAt'] == null
           ? null
           : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['updatedAt']),
-      $_progressWeeksProgressId:
-          jsonSerialization['_progressWeeksProgressId'] as int?,
     );
   }
 
@@ -67,7 +75,11 @@ abstract class WeekSchedule
   @override
   int? id;
 
-  List<_i2.DaySchedule>? days;
+  int? progressId;
+
+  _i2.Progress? progress;
+
+  List<_i3.DaySchedule>? days;
 
   DateTime deadline;
 
@@ -77,8 +89,6 @@ abstract class WeekSchedule
 
   DateTime updatedAt;
 
-  final int? _progressWeeksProgressId;
-
   @override
   _i1.Table<int?> get table => t;
 
@@ -87,7 +97,9 @@ abstract class WeekSchedule
   @_i1.useResult
   WeekSchedule copyWith({
     int? id,
-    List<_i2.DaySchedule>? days,
+    int? progressId,
+    _i2.Progress? progress,
+    List<_i3.DaySchedule>? days,
     DateTime? deadline,
     String? note,
     DateTime? createdAt,
@@ -98,13 +110,13 @@ abstract class WeekSchedule
     return {
       '__className__': 'WeekSchedule',
       if (id != null) 'id': id,
+      if (progressId != null) 'progressId': progressId,
+      if (progress != null) 'progress': progress?.toJson(),
       if (days != null) 'days': days?.toJson(valueToJson: (v) => v.toJson()),
       'deadline': deadline.toJson(),
       if (note != null) 'note': note,
       'createdAt': createdAt.toJson(),
       'updatedAt': updatedAt.toJson(),
-      if (_progressWeeksProgressId != null)
-        '_progressWeeksProgressId': _progressWeeksProgressId,
     };
   }
 
@@ -113,6 +125,8 @@ abstract class WeekSchedule
     return {
       '__className__': 'WeekSchedule',
       if (id != null) 'id': id,
+      if (progressId != null) 'progressId': progressId,
+      if (progress != null) 'progress': progress?.toJsonForProtocol(),
       if (days != null)
         'days': days?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
       'deadline': deadline.toJson(),
@@ -122,8 +136,14 @@ abstract class WeekSchedule
     };
   }
 
-  static WeekScheduleInclude include({_i2.DayScheduleIncludeList? days}) {
-    return WeekScheduleInclude._(days: days);
+  static WeekScheduleInclude include({
+    _i2.ProgressInclude? progress,
+    _i3.DayScheduleIncludeList? days,
+  }) {
+    return WeekScheduleInclude._(
+      progress: progress,
+      days: days,
+    );
   }
 
   static WeekScheduleIncludeList includeList({
@@ -157,13 +177,17 @@ class _Undefined {}
 class _WeekScheduleImpl extends WeekSchedule {
   _WeekScheduleImpl({
     int? id,
-    List<_i2.DaySchedule>? days,
+    int? progressId,
+    _i2.Progress? progress,
+    List<_i3.DaySchedule>? days,
     required DateTime deadline,
     String? note,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) : super._(
          id: id,
+         progressId: progressId,
+         progress: progress,
          days: days,
          deadline: deadline,
          note: note,
@@ -177,66 +201,38 @@ class _WeekScheduleImpl extends WeekSchedule {
   @override
   WeekSchedule copyWith({
     Object? id = _Undefined,
+    Object? progressId = _Undefined,
+    Object? progress = _Undefined,
     Object? days = _Undefined,
     DateTime? deadline,
     Object? note = _Undefined,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
-    return WeekScheduleImplicit._(
+    return WeekSchedule(
       id: id is int? ? id : this.id,
-      days: days is List<_i2.DaySchedule>?
+      progressId: progressId is int? ? progressId : this.progressId,
+      progress: progress is _i2.Progress?
+          ? progress
+          : this.progress?.copyWith(),
+      days: days is List<_i3.DaySchedule>?
           ? days
           : this.days?.map((e0) => e0.copyWith()).toList(),
       deadline: deadline ?? this.deadline,
       note: note is String? ? note : this.note,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      $_progressWeeksProgressId: this._progressWeeksProgressId,
     );
   }
-}
-
-class WeekScheduleImplicit extends _WeekScheduleImpl {
-  WeekScheduleImplicit._({
-    int? id,
-    List<_i2.DaySchedule>? days,
-    required DateTime deadline,
-    String? note,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    int? $_progressWeeksProgressId,
-  }) : _progressWeeksProgressId = $_progressWeeksProgressId,
-       super(
-         id: id,
-         days: days,
-         deadline: deadline,
-         note: note,
-         createdAt: createdAt,
-         updatedAt: updatedAt,
-       );
-
-  factory WeekScheduleImplicit(
-    WeekSchedule weekSchedule, {
-    int? $_progressWeeksProgressId,
-  }) {
-    return WeekScheduleImplicit._(
-      id: weekSchedule.id,
-      days: weekSchedule.days,
-      deadline: weekSchedule.deadline,
-      note: weekSchedule.note,
-      createdAt: weekSchedule.createdAt,
-      updatedAt: weekSchedule.updatedAt,
-      $_progressWeeksProgressId: $_progressWeeksProgressId,
-    );
-  }
-
-  @override
-  final int? _progressWeeksProgressId;
 }
 
 class WeekScheduleUpdateTable extends _i1.UpdateTable<WeekScheduleTable> {
   WeekScheduleUpdateTable(super.table);
+
+  _i1.ColumnValue<int, int> progressId(int? value) => _i1.ColumnValue(
+    table.progressId,
+    value,
+  );
 
   _i1.ColumnValue<DateTime, DateTime> deadline(DateTime value) =>
       _i1.ColumnValue(
@@ -260,17 +256,15 @@ class WeekScheduleUpdateTable extends _i1.UpdateTable<WeekScheduleTable> {
         table.updatedAt,
         value,
       );
-
-  _i1.ColumnValue<int, int> $_progressWeeksProgressId(int? value) =>
-      _i1.ColumnValue(
-        table.$_progressWeeksProgressId,
-        value,
-      );
 }
 
 class WeekScheduleTable extends _i1.Table<int?> {
   WeekScheduleTable({super.tableRelation}) : super(tableName: 'week_schedule') {
     updateTable = WeekScheduleUpdateTable(this);
+    progressId = _i1.ColumnInt(
+      'progressId',
+      this,
+    );
     deadline = _i1.ColumnDateTime(
       'deadline',
       this,
@@ -289,17 +283,17 @@ class WeekScheduleTable extends _i1.Table<int?> {
       this,
       hasDefault: true,
     );
-    $_progressWeeksProgressId = _i1.ColumnInt(
-      '_progressWeeksProgressId',
-      this,
-    );
   }
 
   late final WeekScheduleUpdateTable updateTable;
 
-  _i2.DayScheduleTable? ___days;
+  late final _i1.ColumnInt progressId;
 
-  _i1.ManyRelation<_i2.DayScheduleTable>? _days;
+  _i2.ProgressTable? _progress;
+
+  _i3.DayScheduleTable? ___days;
+
+  _i1.ManyRelation<_i3.DayScheduleTable>? _days;
 
   late final _i1.ColumnDateTime deadline;
 
@@ -309,34 +303,45 @@ class WeekScheduleTable extends _i1.Table<int?> {
 
   late final _i1.ColumnDateTime updatedAt;
 
-  late final _i1.ColumnInt $_progressWeeksProgressId;
+  _i2.ProgressTable get progress {
+    if (_progress != null) return _progress!;
+    _progress = _i1.createRelationTable(
+      relationFieldName: 'progress',
+      field: WeekSchedule.t.progressId,
+      foreignField: _i2.Progress.t.id,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i2.ProgressTable(tableRelation: foreignTableRelation),
+    );
+    return _progress!;
+  }
 
-  _i2.DayScheduleTable get __days {
+  _i3.DayScheduleTable get __days {
     if (___days != null) return ___days!;
     ___days = _i1.createRelationTable(
       relationFieldName: '__days',
       field: WeekSchedule.t.id,
-      foreignField: _i2.DaySchedule.t.$_weekScheduleDaysWeekScheduleId,
+      foreignField: _i3.DaySchedule.t.weekScheduleId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i2.DayScheduleTable(tableRelation: foreignTableRelation),
+          _i3.DayScheduleTable(tableRelation: foreignTableRelation),
     );
     return ___days!;
   }
 
-  _i1.ManyRelation<_i2.DayScheduleTable> get days {
+  _i1.ManyRelation<_i3.DayScheduleTable> get days {
     if (_days != null) return _days!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'days',
       field: WeekSchedule.t.id,
-      foreignField: _i2.DaySchedule.t.$_weekScheduleDaysWeekScheduleId,
+      foreignField: _i3.DaySchedule.t.weekScheduleId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i2.DayScheduleTable(tableRelation: foreignTableRelation),
+          _i3.DayScheduleTable(tableRelation: foreignTableRelation),
     );
-    _days = _i1.ManyRelation<_i2.DayScheduleTable>(
+    _days = _i1.ManyRelation<_i3.DayScheduleTable>(
       tableWithRelations: relationTable,
-      table: _i2.DayScheduleTable(
+      table: _i3.DayScheduleTable(
         tableRelation: relationTable.tableRelation!.lastRelation,
       ),
     );
@@ -346,16 +351,7 @@ class WeekScheduleTable extends _i1.Table<int?> {
   @override
   List<_i1.Column> get columns => [
     id,
-    deadline,
-    note,
-    createdAt,
-    updatedAt,
-    $_progressWeeksProgressId,
-  ];
-
-  @override
-  List<_i1.Column> get managedColumns => [
-    id,
+    progressId,
     deadline,
     note,
     createdAt,
@@ -364,6 +360,9 @@ class WeekScheduleTable extends _i1.Table<int?> {
 
   @override
   _i1.Table? getRelationTable(String relationField) {
+    if (relationField == 'progress') {
+      return progress;
+    }
     if (relationField == 'days') {
       return __days;
     }
@@ -372,14 +371,23 @@ class WeekScheduleTable extends _i1.Table<int?> {
 }
 
 class WeekScheduleInclude extends _i1.IncludeObject {
-  WeekScheduleInclude._({_i2.DayScheduleIncludeList? days}) {
+  WeekScheduleInclude._({
+    _i2.ProgressInclude? progress,
+    _i3.DayScheduleIncludeList? days,
+  }) {
+    _progress = progress;
     _days = days;
   }
 
-  _i2.DayScheduleIncludeList? _days;
+  _i2.ProgressInclude? _progress;
+
+  _i3.DayScheduleIncludeList? _days;
 
   @override
-  Map<String, _i1.Include?> get includes => {'days': _days};
+  Map<String, _i1.Include?> get includes => {
+    'progress': _progress,
+    'days': _days,
+  };
 
   @override
   _i1.Table<int?> get table => WeekSchedule.t;
@@ -676,11 +684,11 @@ class WeekScheduleAttachRepository {
   const WeekScheduleAttachRepository._();
 
   /// Creates a relation between this [WeekSchedule] and the given [DaySchedule]s
-  /// by setting each [DaySchedule]'s foreign key `_weekScheduleDaysWeekScheduleId` to refer to this [WeekSchedule].
+  /// by setting each [DaySchedule]'s foreign key `weekScheduleId` to refer to this [WeekSchedule].
   Future<void> days(
     _i1.Session session,
     WeekSchedule weekSchedule,
-    List<_i2.DaySchedule> daySchedule, {
+    List<_i3.DaySchedule> daySchedule, {
     _i1.Transaction? transaction,
   }) async {
     if (daySchedule.any((e) => e.id == null)) {
@@ -691,16 +699,11 @@ class WeekScheduleAttachRepository {
     }
 
     var $daySchedule = daySchedule
-        .map(
-          (e) => _i2.DayScheduleImplicit(
-            e,
-            $_weekScheduleDaysWeekScheduleId: weekSchedule.id,
-          ),
-        )
+        .map((e) => e.copyWith(weekScheduleId: weekSchedule.id))
         .toList();
-    await session.db.update<_i2.DaySchedule>(
+    await session.db.update<_i3.DaySchedule>(
       $daySchedule,
-      columns: [_i2.DaySchedule.t.$_weekScheduleDaysWeekScheduleId],
+      columns: [_i3.DaySchedule.t.weekScheduleId],
       transaction: transaction,
     );
   }
@@ -709,12 +712,35 @@ class WeekScheduleAttachRepository {
 class WeekScheduleAttachRowRepository {
   const WeekScheduleAttachRowRepository._();
 
+  /// Creates a relation between the given [WeekSchedule] and [Progress]
+  /// by setting the [WeekSchedule]'s foreign key `progressId` to refer to the [Progress].
+  Future<void> progress(
+    _i1.Session session,
+    WeekSchedule weekSchedule,
+    _i2.Progress progress, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (weekSchedule.id == null) {
+      throw ArgumentError.notNull('weekSchedule.id');
+    }
+    if (progress.id == null) {
+      throw ArgumentError.notNull('progress.id');
+    }
+
+    var $weekSchedule = weekSchedule.copyWith(progressId: progress.id);
+    await session.db.updateRow<WeekSchedule>(
+      $weekSchedule,
+      columns: [WeekSchedule.t.progressId],
+      transaction: transaction,
+    );
+  }
+
   /// Creates a relation between this [WeekSchedule] and the given [DaySchedule]
-  /// by setting the [DaySchedule]'s foreign key `_weekScheduleDaysWeekScheduleId` to refer to this [WeekSchedule].
+  /// by setting the [DaySchedule]'s foreign key `weekScheduleId` to refer to this [WeekSchedule].
   Future<void> days(
     _i1.Session session,
     WeekSchedule weekSchedule,
-    _i2.DaySchedule daySchedule, {
+    _i3.DaySchedule daySchedule, {
     _i1.Transaction? transaction,
   }) async {
     if (daySchedule.id == null) {
@@ -724,13 +750,10 @@ class WeekScheduleAttachRowRepository {
       throw ArgumentError.notNull('weekSchedule.id');
     }
 
-    var $daySchedule = _i2.DayScheduleImplicit(
-      daySchedule,
-      $_weekScheduleDaysWeekScheduleId: weekSchedule.id,
-    );
-    await session.db.updateRow<_i2.DaySchedule>(
+    var $daySchedule = daySchedule.copyWith(weekScheduleId: weekSchedule.id);
+    await session.db.updateRow<_i3.DaySchedule>(
       $daySchedule,
-      columns: [_i2.DaySchedule.t.$_weekScheduleDaysWeekScheduleId],
+      columns: [_i3.DaySchedule.t.weekScheduleId],
       transaction: transaction,
     );
   }
@@ -740,13 +763,13 @@ class WeekScheduleDetachRepository {
   const WeekScheduleDetachRepository._();
 
   /// Detaches the relation between this [WeekSchedule] and the given [DaySchedule]
-  /// by setting the [DaySchedule]'s foreign key `_weekScheduleDaysWeekScheduleId` to `null`.
+  /// by setting the [DaySchedule]'s foreign key `weekScheduleId` to `null`.
   ///
   /// This removes the association between the two models without deleting
   /// the related record.
   Future<void> days(
     _i1.Session session,
-    List<_i2.DaySchedule> daySchedule, {
+    List<_i3.DaySchedule> daySchedule, {
     _i1.Transaction? transaction,
   }) async {
     if (daySchedule.any((e) => e.id == null)) {
@@ -754,16 +777,11 @@ class WeekScheduleDetachRepository {
     }
 
     var $daySchedule = daySchedule
-        .map(
-          (e) => _i2.DayScheduleImplicit(
-            e,
-            $_weekScheduleDaysWeekScheduleId: null,
-          ),
-        )
+        .map((e) => e.copyWith(weekScheduleId: null))
         .toList();
-    await session.db.update<_i2.DaySchedule>(
+    await session.db.update<_i3.DaySchedule>(
       $daySchedule,
-      columns: [_i2.DaySchedule.t.$_weekScheduleDaysWeekScheduleId],
+      columns: [_i3.DaySchedule.t.weekScheduleId],
       transaction: transaction,
     );
   }
@@ -772,27 +790,46 @@ class WeekScheduleDetachRepository {
 class WeekScheduleDetachRowRepository {
   const WeekScheduleDetachRowRepository._();
 
+  /// Detaches the relation between this [WeekSchedule] and the [Progress] set in `progress`
+  /// by setting the [WeekSchedule]'s foreign key `progressId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> progress(
+    _i1.Session session,
+    WeekSchedule weekSchedule, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (weekSchedule.id == null) {
+      throw ArgumentError.notNull('weekSchedule.id');
+    }
+
+    var $weekSchedule = weekSchedule.copyWith(progressId: null);
+    await session.db.updateRow<WeekSchedule>(
+      $weekSchedule,
+      columns: [WeekSchedule.t.progressId],
+      transaction: transaction,
+    );
+  }
+
   /// Detaches the relation between this [WeekSchedule] and the given [DaySchedule]
-  /// by setting the [DaySchedule]'s foreign key `_weekScheduleDaysWeekScheduleId` to `null`.
+  /// by setting the [DaySchedule]'s foreign key `weekScheduleId` to `null`.
   ///
   /// This removes the association between the two models without deleting
   /// the related record.
   Future<void> days(
     _i1.Session session,
-    _i2.DaySchedule daySchedule, {
+    _i3.DaySchedule daySchedule, {
     _i1.Transaction? transaction,
   }) async {
     if (daySchedule.id == null) {
       throw ArgumentError.notNull('daySchedule.id');
     }
 
-    var $daySchedule = _i2.DayScheduleImplicit(
-      daySchedule,
-      $_weekScheduleDaysWeekScheduleId: null,
-    );
-    await session.db.updateRow<_i2.DaySchedule>(
+    var $daySchedule = daySchedule.copyWith(weekScheduleId: null);
+    await session.db.updateRow<_i3.DaySchedule>(
       $daySchedule,
-      columns: [_i2.DaySchedule.t.$_weekScheduleDaysWeekScheduleId],
+      columns: [_i3.DaySchedule.t.weekScheduleId],
       transaction: transaction,
     );
   }

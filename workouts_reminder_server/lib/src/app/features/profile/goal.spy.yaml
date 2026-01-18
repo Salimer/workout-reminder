@@ -1,6 +1,7 @@
 class: Goal
 table: goal
 fields:
+  profile: Profile?, relation(name=profile_goals, optional, onDelete=Cascade)
   text: String
   createdAt: DateTime, default=now
   updatedAt: DateTime, default=now

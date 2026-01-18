@@ -12,14 +12,17 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import '../../../app/features/week_schedules/week_schedule.dart' as _i2;
-import 'package:workouts_reminder_server/src/generated/protocol.dart' as _i3;
+import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+    as _i2;
+import '../../../app/features/week_schedules/week_schedule.dart' as _i3;
+import 'package:workouts_reminder_server/src/generated/protocol.dart' as _i4;
 
 abstract class Progress
     implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   Progress._({
     this.id,
-    required this.userId,
+    required this.authUserId,
+    this.authUser,
     this.weeks,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -28,8 +31,9 @@ abstract class Progress
 
   factory Progress({
     int? id,
-    required _i1.UuidValue userId,
-    List<_i2.WeekSchedule>? weeks,
+    required _i1.UuidValue authUserId,
+    _i2.AuthUser? authUser,
+    List<_i3.WeekSchedule>? weeks,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) = _ProgressImpl;
@@ -37,10 +41,17 @@ abstract class Progress
   factory Progress.fromJson(Map<String, dynamic> jsonSerialization) {
     return Progress(
       id: jsonSerialization['id'] as int?,
-      userId: _i1.UuidValueJsonExtension.fromJson(jsonSerialization['userId']),
+      authUserId: _i1.UuidValueJsonExtension.fromJson(
+        jsonSerialization['authUserId'],
+      ),
+      authUser: jsonSerialization['authUser'] == null
+          ? null
+          : _i4.Protocol().deserialize<_i2.AuthUser>(
+              jsonSerialization['authUser'],
+            ),
       weeks: jsonSerialization['weeks'] == null
           ? null
-          : _i3.Protocol().deserialize<List<_i2.WeekSchedule>>(
+          : _i4.Protocol().deserialize<List<_i3.WeekSchedule>>(
               jsonSerialization['weeks'],
             ),
       createdAt: jsonSerialization['createdAt'] == null
@@ -59,9 +70,11 @@ abstract class Progress
   @override
   int? id;
 
-  _i1.UuidValue userId;
+  _i1.UuidValue authUserId;
 
-  List<_i2.WeekSchedule>? weeks;
+  _i2.AuthUser? authUser;
+
+  List<_i3.WeekSchedule>? weeks;
 
   DateTime createdAt;
 
@@ -75,8 +88,9 @@ abstract class Progress
   @_i1.useResult
   Progress copyWith({
     int? id,
-    _i1.UuidValue? userId,
-    List<_i2.WeekSchedule>? weeks,
+    _i1.UuidValue? authUserId,
+    _i2.AuthUser? authUser,
+    List<_i3.WeekSchedule>? weeks,
     DateTime? createdAt,
     DateTime? updatedAt,
   });
@@ -85,7 +99,8 @@ abstract class Progress
     return {
       '__className__': 'Progress',
       if (id != null) 'id': id,
-      'userId': userId.toJson(),
+      'authUserId': authUserId.toJson(),
+      if (authUser != null) 'authUser': authUser?.toJson(),
       if (weeks != null) 'weeks': weeks?.toJson(valueToJson: (v) => v.toJson()),
       'createdAt': createdAt.toJson(),
       'updatedAt': updatedAt.toJson(),
@@ -97,7 +112,8 @@ abstract class Progress
     return {
       '__className__': 'Progress',
       if (id != null) 'id': id,
-      'userId': userId.toJson(),
+      'authUserId': authUserId.toJson(),
+      if (authUser != null) 'authUser': authUser?.toJsonForProtocol(),
       if (weeks != null)
         'weeks': weeks?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
       'createdAt': createdAt.toJson(),
@@ -105,8 +121,14 @@ abstract class Progress
     };
   }
 
-  static ProgressInclude include({_i2.WeekScheduleIncludeList? weeks}) {
-    return ProgressInclude._(weeks: weeks);
+  static ProgressInclude include({
+    _i2.AuthUserInclude? authUser,
+    _i3.WeekScheduleIncludeList? weeks,
+  }) {
+    return ProgressInclude._(
+      authUser: authUser,
+      weeks: weeks,
+    );
   }
 
   static ProgressIncludeList includeList({
@@ -140,13 +162,15 @@ class _Undefined {}
 class _ProgressImpl extends Progress {
   _ProgressImpl({
     int? id,
-    required _i1.UuidValue userId,
-    List<_i2.WeekSchedule>? weeks,
+    required _i1.UuidValue authUserId,
+    _i2.AuthUser? authUser,
+    List<_i3.WeekSchedule>? weeks,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) : super._(
          id: id,
-         userId: userId,
+         authUserId: authUserId,
+         authUser: authUser,
          weeks: weeks,
          createdAt: createdAt,
          updatedAt: updatedAt,
@@ -158,15 +182,19 @@ class _ProgressImpl extends Progress {
   @override
   Progress copyWith({
     Object? id = _Undefined,
-    _i1.UuidValue? userId,
+    _i1.UuidValue? authUserId,
+    Object? authUser = _Undefined,
     Object? weeks = _Undefined,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
     return Progress(
       id: id is int? ? id : this.id,
-      userId: userId ?? this.userId,
-      weeks: weeks is List<_i2.WeekSchedule>?
+      authUserId: authUserId ?? this.authUserId,
+      authUser: authUser is _i2.AuthUser?
+          ? authUser
+          : this.authUser?.copyWith(),
+      weeks: weeks is List<_i3.WeekSchedule>?
           ? weeks
           : this.weeks?.map((e0) => e0.copyWith()).toList(),
       createdAt: createdAt ?? this.createdAt,
@@ -178,11 +206,12 @@ class _ProgressImpl extends Progress {
 class ProgressUpdateTable extends _i1.UpdateTable<ProgressTable> {
   ProgressUpdateTable(super.table);
 
-  _i1.ColumnValue<_i1.UuidValue, _i1.UuidValue> userId(_i1.UuidValue value) =>
-      _i1.ColumnValue(
-        table.userId,
-        value,
-      );
+  _i1.ColumnValue<_i1.UuidValue, _i1.UuidValue> authUserId(
+    _i1.UuidValue value,
+  ) => _i1.ColumnValue(
+    table.authUserId,
+    value,
+  );
 
   _i1.ColumnValue<DateTime, DateTime> createdAt(DateTime value) =>
       _i1.ColumnValue(
@@ -200,8 +229,8 @@ class ProgressUpdateTable extends _i1.UpdateTable<ProgressTable> {
 class ProgressTable extends _i1.Table<int?> {
   ProgressTable({super.tableRelation}) : super(tableName: 'progress') {
     updateTable = ProgressUpdateTable(this);
-    userId = _i1.ColumnUuid(
-      'userId',
+    authUserId = _i1.ColumnUuid(
+      'authUserId',
       this,
     );
     createdAt = _i1.ColumnDateTime(
@@ -218,42 +247,57 @@ class ProgressTable extends _i1.Table<int?> {
 
   late final ProgressUpdateTable updateTable;
 
-  late final _i1.ColumnUuid userId;
+  late final _i1.ColumnUuid authUserId;
 
-  _i2.WeekScheduleTable? ___weeks;
+  _i2.AuthUserTable? _authUser;
 
-  _i1.ManyRelation<_i2.WeekScheduleTable>? _weeks;
+  _i3.WeekScheduleTable? ___weeks;
+
+  _i1.ManyRelation<_i3.WeekScheduleTable>? _weeks;
 
   late final _i1.ColumnDateTime createdAt;
 
   late final _i1.ColumnDateTime updatedAt;
 
-  _i2.WeekScheduleTable get __weeks {
+  _i2.AuthUserTable get authUser {
+    if (_authUser != null) return _authUser!;
+    _authUser = _i1.createRelationTable(
+      relationFieldName: 'authUser',
+      field: Progress.t.authUserId,
+      foreignField: _i2.AuthUser.t.id,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i2.AuthUserTable(tableRelation: foreignTableRelation),
+    );
+    return _authUser!;
+  }
+
+  _i3.WeekScheduleTable get __weeks {
     if (___weeks != null) return ___weeks!;
     ___weeks = _i1.createRelationTable(
       relationFieldName: '__weeks',
       field: Progress.t.id,
-      foreignField: _i2.WeekSchedule.t.$_progressWeeksProgressId,
+      foreignField: _i3.WeekSchedule.t.progressId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i2.WeekScheduleTable(tableRelation: foreignTableRelation),
+          _i3.WeekScheduleTable(tableRelation: foreignTableRelation),
     );
     return ___weeks!;
   }
 
-  _i1.ManyRelation<_i2.WeekScheduleTable> get weeks {
+  _i1.ManyRelation<_i3.WeekScheduleTable> get weeks {
     if (_weeks != null) return _weeks!;
     var relationTable = _i1.createRelationTable(
       relationFieldName: 'weeks',
       field: Progress.t.id,
-      foreignField: _i2.WeekSchedule.t.$_progressWeeksProgressId,
+      foreignField: _i3.WeekSchedule.t.progressId,
       tableRelation: tableRelation,
       createTable: (foreignTableRelation) =>
-          _i2.WeekScheduleTable(tableRelation: foreignTableRelation),
+          _i3.WeekScheduleTable(tableRelation: foreignTableRelation),
     );
-    _weeks = _i1.ManyRelation<_i2.WeekScheduleTable>(
+    _weeks = _i1.ManyRelation<_i3.WeekScheduleTable>(
       tableWithRelations: relationTable,
-      table: _i2.WeekScheduleTable(
+      table: _i3.WeekScheduleTable(
         tableRelation: relationTable.tableRelation!.lastRelation,
       ),
     );
@@ -263,13 +307,16 @@ class ProgressTable extends _i1.Table<int?> {
   @override
   List<_i1.Column> get columns => [
     id,
-    userId,
+    authUserId,
     createdAt,
     updatedAt,
   ];
 
   @override
   _i1.Table? getRelationTable(String relationField) {
+    if (relationField == 'authUser') {
+      return authUser;
+    }
     if (relationField == 'weeks') {
       return __weeks;
     }
@@ -278,14 +325,23 @@ class ProgressTable extends _i1.Table<int?> {
 }
 
 class ProgressInclude extends _i1.IncludeObject {
-  ProgressInclude._({_i2.WeekScheduleIncludeList? weeks}) {
+  ProgressInclude._({
+    _i2.AuthUserInclude? authUser,
+    _i3.WeekScheduleIncludeList? weeks,
+  }) {
+    _authUser = authUser;
     _weeks = weeks;
   }
 
-  _i2.WeekScheduleIncludeList? _weeks;
+  _i2.AuthUserInclude? _authUser;
+
+  _i3.WeekScheduleIncludeList? _weeks;
 
   @override
-  Map<String, _i1.Include?> get includes => {'weeks': _weeks};
+  Map<String, _i1.Include?> get includes => {
+    'authUser': _authUser,
+    'weeks': _weeks,
+  };
 
   @override
   _i1.Table<int?> get table => Progress.t;
@@ -582,11 +638,11 @@ class ProgressAttachRepository {
   const ProgressAttachRepository._();
 
   /// Creates a relation between this [Progress] and the given [WeekSchedule]s
-  /// by setting each [WeekSchedule]'s foreign key `_progressWeeksProgressId` to refer to this [Progress].
+  /// by setting each [WeekSchedule]'s foreign key `progressId` to refer to this [Progress].
   Future<void> weeks(
     _i1.Session session,
     Progress progress,
-    List<_i2.WeekSchedule> weekSchedule, {
+    List<_i3.WeekSchedule> weekSchedule, {
     _i1.Transaction? transaction,
   }) async {
     if (weekSchedule.any((e) => e.id == null)) {
@@ -597,16 +653,11 @@ class ProgressAttachRepository {
     }
 
     var $weekSchedule = weekSchedule
-        .map(
-          (e) => _i2.WeekScheduleImplicit(
-            e,
-            $_progressWeeksProgressId: progress.id,
-          ),
-        )
+        .map((e) => e.copyWith(progressId: progress.id))
         .toList();
-    await session.db.update<_i2.WeekSchedule>(
+    await session.db.update<_i3.WeekSchedule>(
       $weekSchedule,
-      columns: [_i2.WeekSchedule.t.$_progressWeeksProgressId],
+      columns: [_i3.WeekSchedule.t.progressId],
       transaction: transaction,
     );
   }
@@ -615,12 +666,35 @@ class ProgressAttachRepository {
 class ProgressAttachRowRepository {
   const ProgressAttachRowRepository._();
 
+  /// Creates a relation between the given [Progress] and [AuthUser]
+  /// by setting the [Progress]'s foreign key `authUserId` to refer to the [AuthUser].
+  Future<void> authUser(
+    _i1.Session session,
+    Progress progress,
+    _i2.AuthUser authUser, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (progress.id == null) {
+      throw ArgumentError.notNull('progress.id');
+    }
+    if (authUser.id == null) {
+      throw ArgumentError.notNull('authUser.id');
+    }
+
+    var $progress = progress.copyWith(authUserId: authUser.id);
+    await session.db.updateRow<Progress>(
+      $progress,
+      columns: [Progress.t.authUserId],
+      transaction: transaction,
+    );
+  }
+
   /// Creates a relation between this [Progress] and the given [WeekSchedule]
-  /// by setting the [WeekSchedule]'s foreign key `_progressWeeksProgressId` to refer to this [Progress].
+  /// by setting the [WeekSchedule]'s foreign key `progressId` to refer to this [Progress].
   Future<void> weeks(
     _i1.Session session,
     Progress progress,
-    _i2.WeekSchedule weekSchedule, {
+    _i3.WeekSchedule weekSchedule, {
     _i1.Transaction? transaction,
   }) async {
     if (weekSchedule.id == null) {
@@ -630,13 +704,10 @@ class ProgressAttachRowRepository {
       throw ArgumentError.notNull('progress.id');
     }
 
-    var $weekSchedule = _i2.WeekScheduleImplicit(
-      weekSchedule,
-      $_progressWeeksProgressId: progress.id,
-    );
-    await session.db.updateRow<_i2.WeekSchedule>(
+    var $weekSchedule = weekSchedule.copyWith(progressId: progress.id);
+    await session.db.updateRow<_i3.WeekSchedule>(
       $weekSchedule,
-      columns: [_i2.WeekSchedule.t.$_progressWeeksProgressId],
+      columns: [_i3.WeekSchedule.t.progressId],
       transaction: transaction,
     );
   }
@@ -646,13 +717,13 @@ class ProgressDetachRepository {
   const ProgressDetachRepository._();
 
   /// Detaches the relation between this [Progress] and the given [WeekSchedule]
-  /// by setting the [WeekSchedule]'s foreign key `_progressWeeksProgressId` to `null`.
+  /// by setting the [WeekSchedule]'s foreign key `progressId` to `null`.
   ///
   /// This removes the association between the two models without deleting
   /// the related record.
   Future<void> weeks(
     _i1.Session session,
-    List<_i2.WeekSchedule> weekSchedule, {
+    List<_i3.WeekSchedule> weekSchedule, {
     _i1.Transaction? transaction,
   }) async {
     if (weekSchedule.any((e) => e.id == null)) {
@@ -660,16 +731,11 @@ class ProgressDetachRepository {
     }
 
     var $weekSchedule = weekSchedule
-        .map(
-          (e) => _i2.WeekScheduleImplicit(
-            e,
-            $_progressWeeksProgressId: null,
-          ),
-        )
+        .map((e) => e.copyWith(progressId: null))
         .toList();
-    await session.db.update<_i2.WeekSchedule>(
+    await session.db.update<_i3.WeekSchedule>(
       $weekSchedule,
-      columns: [_i2.WeekSchedule.t.$_progressWeeksProgressId],
+      columns: [_i3.WeekSchedule.t.progressId],
       transaction: transaction,
     );
   }
@@ -679,26 +745,23 @@ class ProgressDetachRowRepository {
   const ProgressDetachRowRepository._();
 
   /// Detaches the relation between this [Progress] and the given [WeekSchedule]
-  /// by setting the [WeekSchedule]'s foreign key `_progressWeeksProgressId` to `null`.
+  /// by setting the [WeekSchedule]'s foreign key `progressId` to `null`.
   ///
   /// This removes the association between the two models without deleting
   /// the related record.
   Future<void> weeks(
     _i1.Session session,
-    _i2.WeekSchedule weekSchedule, {
+    _i3.WeekSchedule weekSchedule, {
     _i1.Transaction? transaction,
   }) async {
     if (weekSchedule.id == null) {
       throw ArgumentError.notNull('weekSchedule.id');
     }
 
-    var $weekSchedule = _i2.WeekScheduleImplicit(
-      weekSchedule,
-      $_progressWeeksProgressId: null,
-    );
-    await session.db.updateRow<_i2.WeekSchedule>(
+    var $weekSchedule = weekSchedule.copyWith(progressId: null);
+    await session.db.updateRow<_i3.WeekSchedule>(
       $weekSchedule,
-      columns: [_i2.WeekSchedule.t.$_progressWeeksProgressId],
+      columns: [_i3.WeekSchedule.t.progressId],
       transaction: transaction,
     );
   }
