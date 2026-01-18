@@ -53,7 +53,7 @@ GoRouter routes(Ref ref) {
               return _adaptivePageBuilder(
                 state,
                 const ProfileView(),
-            );
+              );
             },
           ),
         ],
@@ -61,13 +61,14 @@ GoRouter routes(Ref ref) {
     ],
     refreshListenable: ref.read(clientProvider).auth.authInfoListenable,
     redirect: (context, state) {
-      if (ref.read(firstRelaunchProvider)) {
+      final firstRelaunch = ref.read(firstRelaunchProvider);
+      debugPrint('First relaunch: $firstRelaunch');
+      if (firstRelaunch) {
         return null;
       }
 
       final isAuthed = ref.read(clientProvider).auth.isAuthenticated;
-      // final isOnSignIn = state.matchedLocation == '/sign_in';
-      final isOnSignIn = state.name == AppRoutes.signIn;
+      final isOnSignIn = state.matchedLocation == '/sign_in';
 
       if (!isAuthed && !isOnSignIn) {
         return state.namedLocation(AppRoutes.signIn);
