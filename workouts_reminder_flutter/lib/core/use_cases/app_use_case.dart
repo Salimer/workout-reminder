@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/experimental/mutation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
+import 'package:workouts_reminder_client/workouts_reminder_client.dart'
+    as server;
 
 import '../../features/home/use_cases/bottom_navigation_use_case.dart';
 import '../../features/profile/data/models/profile_model.dart';
@@ -9,7 +11,7 @@ import '../../features/progress/data/models/progress_model.dart';
 import '../../features/schedule/data/models/week_schedule_model.dart';
 import '../../features/progress/presentation/state/progress_state.dart';
 import '../../features/schedule/use_cases/notifications_use_case.dart';
-import '../../features/workout/use_cases/workout_use_case.dart';
+
 import '../constants/enums.dart';
 import '../providers/client.dart';
 
@@ -81,17 +83,23 @@ class AppUseCase {
   }
 
   Future<void> skipTodayWorkout() async {
-    ref.read(workoutUseCaseProvider).skipTodayWorkout();
+    await _updateTodayStatus(
+      DayWorkoutStatusEnum.skipped,
+    );
     await ref.read(notificationsUseCaseProvider).clearTodayNotifications();
   }
 
   Future<void> performTodayWorkout() async {
-    ref.read(workoutUseCaseProvider).performTodayWorkout();
+    await _updateTodayStatus(
+      DayWorkoutStatusEnum.performed,
+    );
     await ref.read(notificationsUseCaseProvider).clearTodayNotifications();
   }
 
   Future<void> resetTodayWorkout() async {
-    ref.read(workoutUseCaseProvider).resetTodayWorkout();
+    await _updateTodayStatus(
+      DayWorkoutStatusEnum.pending,
+    );
     await ref.read(notificationsUseCaseProvider).enableTodayNotifications();
   }
 
@@ -112,6 +120,26 @@ class AppUseCase {
     ref
         .read(profileStateProvider.notifier)
         .set(ProfileModel.fromServerProfile(updatedProfile));
+  }
+
+  Future<void> _updateTodayStatus(
+    DayWorkoutStatusEnum status,
+  ) async {
+    final updatedProgress = await ref
+        .read(clientProvider)
+        .daySchedule
+        .updateTodayStatus(
+          server.DayWorkoutStatusEnum.fromJson(status.name),
+          DateTime.now(),
+        );
+
+    if (updatedProgress == null) {
+      throw Exception('Failed to update today status on server.');
+    }
+
+    ref
+        .read(progressStateProvider.notifier)
+        .set(ProgressModel.fromServerProgress(updatedProgress));
   }
 }
 

@@ -140,12 +140,16 @@ class WeekScheduleModel {
   factory WeekScheduleModel.fromServerWeekSchedule(
     WeekSchedule weekSchedule,
   ) {
+    final days = weekSchedule.days!
+        .map((day) => DayScheduleModel.fromServerDaySchedule(day))
+        .toList()
+      ..sort(
+        (a, b) => a.day.index.compareTo(b.day.index),
+      );
     return WeekScheduleModel(
       id: weekSchedule.id,
-      days: weekSchedule.days!
-          .map((day) => DayScheduleModel.fromServerDaySchedule(day))
-          .toList(),
-      createdAt: DateTime.now(), // Server does not send createdAt
+      days: days,
+      createdAt: weekSchedule.createdAt,
       deadline: weekSchedule.deadline,
       note: weekSchedule.note,
     );

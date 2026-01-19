@@ -6,9 +6,11 @@ class StartWorkoutSlider extends ConsumerStatefulWidget {
   const StartWorkoutSlider({
     super.key,
     required this.onTriggered,
+    this.isLoading = false,
   });
 
   final Future<void> Function(WidgetRef ref) onTriggered;
+  final bool isLoading;
 
   @override
   ConsumerState<StartWorkoutSlider> createState() =>
@@ -22,6 +24,12 @@ class _StartWorkoutSliderState extends ConsumerState<StartWorkoutSlider> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final isBusy = widget.isLoading || _isRunning;
+    final label = widget.isLoading
+        ? 'Updating...'
+        : _isRunning
+        ? 'Starting...'
+        : 'Slide to start workout';
 
     return Stack(
       alignment: Alignment.center,
@@ -39,7 +47,7 @@ class _StartWorkoutSliderState extends ConsumerState<StartWorkoutSlider> {
         IgnorePointer(
           ignoring: true,
           child: Text(
-            _isRunning ? 'Starting...' : 'Slide to start workout',
+            label,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               color: scheme.primary,
               fontWeight: FontWeight.w700,
@@ -57,14 +65,14 @@ class _StartWorkoutSliderState extends ConsumerState<StartWorkoutSlider> {
           ),
           child: Slider(
             value: _value,
-            onChanged: _isRunning
+            onChanged: isBusy
                 ? null
                 : (next) {
                     setState(() {
                       _value = next;
                     });
                   },
-            onChangeEnd: _isRunning
+            onChangeEnd: isBusy
                 ? null
                 : (next) async {
                     if (next < 0.95) {

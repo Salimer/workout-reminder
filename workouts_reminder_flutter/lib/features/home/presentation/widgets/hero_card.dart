@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/experimental/mutation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/widgets/app_card.dart';
+import '../../../../core/use_cases/app_use_case.dart';
 import '../../../progress/presentation/state/progress_state.dart';
 import '../../data/models/hero_content_model.dart';
 
@@ -26,6 +28,17 @@ class HeroCard extends StatelessWidget {
       ),
       child: Consumer(
         builder: (context, ref, _) {
+          ref.listen(changeDayWorkoutStatusMutation, (_, state) {
+            if (state.hasError && context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Error updating today\'s status: ${(state as MutationError).error}',
+                  ),
+                ),
+              );
+            }
+          });
           DayWorkoutStatusEnum dayStatus;
           final activeWeek = ref.watch(
             progressStateProvider.select(
@@ -41,6 +54,13 @@ class HeroCard extends StatelessWidget {
           } else {
             dayStatus = DayWorkoutStatusEnum.notScheduled;
           }
+
+          final mutationState = ref.watch(changeDayWorkoutStatusMutation);
+          final isCtaMutation = dayStatus == DayWorkoutStatusEnum.pending ||
+              dayStatus == DayWorkoutStatusEnum.skipped;
+          final isSecondaryMutation =
+              dayStatus == DayWorkoutStatusEnum.pending ||
+                  dayStatus == DayWorkoutStatusEnum.performed;
 
           final hero = HeroContentModel.fromStatus(dayStatus, scheme);
           return Row(
@@ -103,9 +123,26 @@ class HeroCard extends StatelessWidget {
                     if (hero.showCta) ...[
                       const SizedBox(height: 12),
                       ElevatedButton.icon(
-                        onPressed: () {
-                          hero.onPressed?.call(ref);
-                        },
+                        onPressed: isCtaMutation && mutationState.isPending
+                            ? null
+                            : () async {
+                                if (!isCtaMutation) {
+                                  hero.onPressed?.call(ref);
+                                  return;
+                                }
+                                final mutation = changeDayWorkoutStatusMutation;
+                                await mutation.run(ref, (tsx) async {
+                                  if (dayStatus == DayWorkoutStatusEnum.pending) {
+                                    await ref
+                                        .read(appUseCaseProvider)
+                                        .performTodayWorkout();
+                                  } else {
+                                    await ref
+                                        .read(appUseCaseProvider)
+                                        .resetTodayWorkout();
+                                  }
+                                });
+                              },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: hero.accent,
                           foregroundColor: scheme.onPrimary,
@@ -120,16 +157,27 @@ class HeroCard extends StatelessWidget {
                           elevation: 6,
                         ),
                         icon: Icon(hero.ctaIcon, size: 18),
-                        label: Text(
-                          hero.ctaLabel,
-                          style: const TextStyle(fontWeight: FontWeight.w700),
-                        ),
+                        label: mutationState.isPending && isCtaMutation
+                            ? const SizedBox(
+                                height: 18,
+                                width: 18,
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : Text(
+                                hero.ctaLabel,
+                                style:
+                                    const TextStyle(fontWeight: FontWeight.w700),
+                              ),
                       ),
                     ],
                     if (hero.secondaryAction != null) ...[
                       const SizedBox(height: 8),
                       TextButton(
-                        onPressed: () => hero.secondaryAction!(ref, context),
+                        onPressed:
+                            isSecondaryMutation && mutationState.isPending
+                                ? null
+                                : () => hero.secondaryAction!(ref, context),
                         style: TextButton.styleFrom(
                           foregroundColor: scheme.error,
                         ),

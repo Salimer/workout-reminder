@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/config/routes.dart';
 import '../../../../core/constants/enums.dart';
@@ -65,15 +66,34 @@ class HeroContentModel {
                 ),
                 actions: [
                   TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () => context.pop(),
                     child: const Text('Cancel'),
                   ),
-                  FilledButton(
-                    onPressed: () {
-                      ref.read(routesProvider).pop();
-                      ref.read(appUseCaseProvider).resetTodayWorkout();
+                  Consumer(
+                    builder: (context, ref, _) {
+                      final state = ref.watch(changeDayWorkoutStatusMutation);
+                      return FilledButton(
+                        onPressed: state.isPending
+                            ? null
+                            : () async {
+                                context.pop();
+                                final mutation = changeDayWorkoutStatusMutation;
+                                await mutation.run(ref, (tsx) async {
+                                  await ref
+                                      .read(appUseCaseProvider)
+                                      .resetTodayWorkout();
+                                });
+                              },
+                        child: state.isPending
+                            ? const SizedBox(
+                                height: 18,
+                                width: 18,
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : const Text('Reset'),
+                      );
                     },
-                    child: const Text('Reset'),
                   ),
                 ],
               ),
@@ -121,12 +141,31 @@ class HeroContentModel {
                     onPressed: () => Navigator.of(context).pop(),
                     child: const Text('Back'),
                   ),
-                  FilledButton(
-                    onPressed: () {
-                      ref.read(routesProvider).pop();
-                      ref.read(appUseCaseProvider).skipTodayWorkout();
+                  Consumer(
+                    builder: (context, ref, _) {
+                      final state = ref.watch(changeDayWorkoutStatusMutation);
+                      return FilledButton(
+                        onPressed: state.isPending
+                            ? null
+                            : () async {
+                                ref.read(routesProvider).pop();
+                                final mutation = changeDayWorkoutStatusMutation;
+                                await mutation.run(ref, (tsx) async {
+                                  await ref
+                                      .read(appUseCaseProvider)
+                                      .skipTodayWorkout();
+                                });
+                              },
+                        child: state.isPending
+                            ? const SizedBox(
+                                height: 18,
+                                width: 18,
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : const Text('Skip today'),
+                      );
                     },
-                    child: const Text('Skip today'),
                   ),
                 ],
               ),

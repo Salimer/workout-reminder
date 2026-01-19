@@ -1,3 +1,5 @@
+daySchedule:
+  - updateTodayStatus:
 profile:
   - getProfile:
   - deleteUser:

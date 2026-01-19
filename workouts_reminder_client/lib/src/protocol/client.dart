@@ -12,18 +12,40 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'dart:async' as _i2;
-import 'package:workouts_reminder_client/src/protocol/app/features/profile/profile.dart'
-    as _i3;
 import 'package:workouts_reminder_client/src/protocol/app/features/progress/progress.dart'
+    as _i3;
+import 'package:workouts_reminder_client/src/protocol/app/core/enums/day_workout_status_enum.dart'
     as _i4;
-import 'package:workouts_reminder_client/src/protocol/app/features/week_schedules/week_schedule.dart'
+import 'package:workouts_reminder_client/src/protocol/app/features/profile/profile.dart'
     as _i5;
-import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
+import 'package:workouts_reminder_client/src/protocol/app/features/week_schedules/week_schedule.dart'
     as _i6;
-import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
+import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
     as _i7;
-import 'package:workouts_reminder_client/src/protocol/greeting.dart' as _i8;
-import 'protocol.dart' as _i9;
+import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
+    as _i8;
+import 'package:workouts_reminder_client/src/protocol/greeting.dart' as _i9;
+import 'protocol.dart' as _i10;
+
+/// {@category Endpoint}
+class EndpointDaySchedule extends _i1.EndpointRef {
+  EndpointDaySchedule(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'daySchedule';
+
+  _i2.Future<_i3.Progress?> updateTodayStatus(
+    _i4.DayWorkoutStatusEnum status,
+    DateTime localDateTime,
+  ) => caller.callServerEndpoint<_i3.Progress?>(
+    'daySchedule',
+    'updateTodayStatus',
+    {
+      'status': status,
+      'localDateTime': localDateTime,
+    },
+  );
+}
 
 /// {@category Endpoint}
 class EndpointProfile extends _i1.EndpointRef {
@@ -32,8 +54,8 @@ class EndpointProfile extends _i1.EndpointRef {
   @override
   String get name => 'profile';
 
-  _i2.Future<_i3.Profile?> getProfile() =>
-      caller.callServerEndpoint<_i3.Profile?>(
+  _i2.Future<_i5.Profile?> getProfile() =>
+      caller.callServerEndpoint<_i5.Profile?>(
         'profile',
         'getProfile',
         {},
@@ -45,8 +67,8 @@ class EndpointProfile extends _i1.EndpointRef {
     {},
   );
 
-  _i2.Future<_i3.Profile> updateProfile(_i3.Profile profile) =>
-      caller.callServerEndpoint<_i3.Profile>(
+  _i2.Future<_i5.Profile> updateProfile(_i5.Profile profile) =>
+      caller.callServerEndpoint<_i5.Profile>(
         'profile',
         'updateProfile',
         {'profile': profile},
@@ -60,8 +82,8 @@ class EndpointProgress extends _i1.EndpointRef {
   @override
   String get name => 'progress';
 
-  _i2.Future<_i4.Progress?> getProgress() =>
-      caller.callServerEndpoint<_i4.Progress?>(
+  _i2.Future<_i3.Progress?> getProgress() =>
+      caller.callServerEndpoint<_i3.Progress?>(
         'progress',
         'getProgress',
         {},
@@ -75,16 +97,16 @@ class EndpointWeekSchedule extends _i1.EndpointRef {
   @override
   String get name => 'weekSchedule';
 
-  _i2.Future<_i5.WeekSchedule?> createWeekSchedule(
-    _i5.WeekSchedule weekSchedule,
-  ) => caller.callServerEndpoint<_i5.WeekSchedule?>(
+  _i2.Future<_i6.WeekSchedule?> createWeekSchedule(
+    _i6.WeekSchedule weekSchedule,
+  ) => caller.callServerEndpoint<_i6.WeekSchedule?>(
     'weekSchedule',
     'createWeekSchedule',
     {'weekSchedule': weekSchedule},
   );
 
-  _i2.Future<_i4.Progress?> deleteWeekSchedule(DateTime localDateTime) =>
-      caller.callServerEndpoint<_i4.Progress?>(
+  _i2.Future<_i3.Progress?> deleteWeekSchedule(DateTime localDateTime) =>
+      caller.callServerEndpoint<_i3.Progress?>(
         'weekSchedule',
         'deleteWeekSchedule',
         {'localDateTime': localDateTime},
@@ -92,7 +114,7 @@ class EndpointWeekSchedule extends _i1.EndpointRef {
 }
 
 /// {@category Endpoint}
-class EndpointEmailIdp extends _i6.EndpointEmailIdpBase {
+class EndpointEmailIdp extends _i7.EndpointEmailIdpBase {
   EndpointEmailIdp(_i1.EndpointCaller caller) : super(caller);
 
   @override
@@ -108,10 +130,10 @@ class EndpointEmailIdp extends _i6.EndpointEmailIdpBase {
   ///
   /// Throws an [AuthUserBlockedException] if the auth user is blocked.
   @override
-  _i2.Future<_i7.AuthSuccess> login({
+  _i2.Future<_i8.AuthSuccess> login({
     required String email,
     required String password,
-  }) => caller.callServerEndpoint<_i7.AuthSuccess>(
+  }) => caller.callServerEndpoint<_i8.AuthSuccess>(
     'emailIdp',
     'login',
     {
@@ -176,10 +198,10 @@ class EndpointEmailIdp extends _i6.EndpointEmailIdpBase {
   ///
   /// Returns a session for the newly created user.
   @override
-  _i2.Future<_i7.AuthSuccess> finishRegistration({
+  _i2.Future<_i8.AuthSuccess> finishRegistration({
     required String registrationToken,
     required String password,
-  }) => caller.callServerEndpoint<_i7.AuthSuccess>(
+  }) => caller.callServerEndpoint<_i8.AuthSuccess>(
     'emailIdp',
     'finishRegistration',
     {
@@ -265,7 +287,7 @@ class EndpointEmailIdp extends _i6.EndpointEmailIdpBase {
 }
 
 /// {@category Endpoint}
-class EndpointJwtRefresh extends _i7.EndpointRefreshJwtTokens {
+class EndpointJwtRefresh extends _i8.EndpointRefreshJwtTokens {
   EndpointJwtRefresh(_i1.EndpointCaller caller) : super(caller);
 
   @override
@@ -290,9 +312,9 @@ class EndpointJwtRefresh extends _i7.EndpointRefreshJwtTokens {
   /// This endpoint is unauthenticated, meaning the client won't include any
   /// authentication information with the call.
   @override
-  _i2.Future<_i7.AuthSuccess> refreshAccessToken({
+  _i2.Future<_i8.AuthSuccess> refreshAccessToken({
     required String refreshToken,
-  }) => caller.callServerEndpoint<_i7.AuthSuccess>(
+  }) => caller.callServerEndpoint<_i8.AuthSuccess>(
     'jwtRefresh',
     'refreshAccessToken',
     {'refreshToken': refreshToken},
@@ -310,8 +332,8 @@ class EndpointGreeting extends _i1.EndpointRef {
   String get name => 'greeting';
 
   /// Returns a personalized greeting message: "Hello {name}".
-  _i2.Future<_i8.Greeting> hello(String name) =>
-      caller.callServerEndpoint<_i8.Greeting>(
+  _i2.Future<_i9.Greeting> hello(String name) =>
+      caller.callServerEndpoint<_i9.Greeting>(
         'greeting',
         'hello',
         {'name': name},
@@ -320,13 +342,13 @@ class EndpointGreeting extends _i1.EndpointRef {
 
 class Modules {
   Modules(Client client) {
-    serverpod_auth_idp = _i6.Caller(client);
-    serverpod_auth_core = _i7.Caller(client);
+    serverpod_auth_idp = _i7.Caller(client);
+    serverpod_auth_core = _i8.Caller(client);
   }
 
-  late final _i6.Caller serverpod_auth_idp;
+  late final _i7.Caller serverpod_auth_idp;
 
-  late final _i7.Caller serverpod_auth_core;
+  late final _i8.Caller serverpod_auth_core;
 }
 
 class Client extends _i1.ServerpodClientShared {
@@ -349,7 +371,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i9.Protocol(),
+         _i10.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -358,6 +380,7 @@ class Client extends _i1.ServerpodClientShared {
          disconnectStreamsOnLostInternetConnection:
              disconnectStreamsOnLostInternetConnection,
        ) {
+    daySchedule = EndpointDaySchedule(this);
     profile = EndpointProfile(this);
     progress = EndpointProgress(this);
     weekSchedule = EndpointWeekSchedule(this);
@@ -366,6 +389,8 @@ class Client extends _i1.ServerpodClientShared {
     greeting = EndpointGreeting(this);
     modules = Modules(this);
   }
+
+  late final EndpointDaySchedule daySchedule;
 
   late final EndpointProfile profile;
 
@@ -383,6 +408,7 @@ class Client extends _i1.ServerpodClientShared {
 
   @override
   Map<String, _i1.EndpointRef> get endpointRefLookup => {
+    'daySchedule': daySchedule,
     'profile': profile,
     'progress': progress,
     'weekSchedule': weekSchedule,
