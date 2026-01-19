@@ -111,6 +111,18 @@ class EndpointWeekSchedule extends _i1.EndpointRef {
         'deleteWeekSchedule',
         {'localDateTime': localDateTime},
       );
+
+  _i2.Future<_i3.Progress?> finishWeek(
+    String note,
+    DateTime localDateTime,
+  ) => caller.callServerEndpoint<_i3.Progress?>(
+    'weekSchedule',
+    'finishWeek',
+    {
+      'note': note,
+      'localDateTime': localDateTime,
+    },
+  );
 }
 
 /// {@category Endpoint}

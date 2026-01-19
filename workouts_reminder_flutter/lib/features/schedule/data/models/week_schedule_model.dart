@@ -99,7 +99,7 @@ class WeekScheduleModel {
       days: WeekdayEnum.values
           .map((day) => DayScheduleModel.init(day))
           .toList(),
-      note: 'week 1',
+      note: null,
       createdAt: DateTime.now(),
       deadline: DateTime.now().add(const Duration(days: 7)),
     );
@@ -109,7 +109,7 @@ class WeekScheduleModel {
     required Set<WeekdayEnum> workoutDays,
     DateTime? createdAt,
     Duration duration = const Duration(days: 7),
-    String note = 'week 1',
+    String? note,
   }) {
     final created = createdAt ?? DateTime.now();
     final deadline = created.add(duration);

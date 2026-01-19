@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/experimental/mutation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/config/routes.dart';
+import '../../../../core/constants/enums.dart';
+import '../../../../core/use_cases/app_use_case.dart';
 import '../../../../core/widgets/animated_section.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../../../progress/presentation/state/progress_state.dart';
 import '../../use_cases/bottom_navigation_use_case.dart';
 import '../widgets/daily_coach_card.dart';
+import '../widgets/finish_week_button.dart';
 import '../widgets/hero_card.dart';
 import '../widgets/home_header.dart';
 import '../widgets/motivation_card.dart';
@@ -28,6 +32,29 @@ class MainView extends StatelessWidget {
             (value) => value.requireValue.activeWeek,
           ),
         );
+        ref.listen(finishWeekMutation, (_, state) {
+          if (state.isSuccess && context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Week finished. Ready to plan the next one?'),
+              ),
+            );
+          } else if (state.hasError && context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Error finishing week: ${(state as MutationError).error}',
+                ),
+              ),
+            );
+          }
+        });
+
+        bool isSameDate(DateTime first, DateTime second) {
+          return first.year == second.year &&
+              first.month == second.month &&
+              first.day == second.day;
+        }
 
         // PLAN YOUR WEEK STATE
         if (activeWeek == null) {
@@ -92,6 +119,11 @@ class MainView extends StatelessWidget {
         }
 
         // DASHBOARD STATE
+        final todayStatus = activeWeek.getTodayStatusEnum();
+        final showFinishWeek =
+            activeWeek.note == null &&
+            isSameDate(DateTime.now(), activeWeek.deadline) &&
+            todayStatus != DayWorkoutStatusEnum.pending;
         return SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -111,6 +143,13 @@ class MainView extends StatelessWidget {
                     child: HeroCard(scheme: scheme),
                   ),
                 ),
+                if (showFinishWeek)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: const Center(child: FinishWeekButton()),
+                    ),
+                  ),
                 const SliverToBoxAdapter(child: SizedBox(height: 16)),
                 SliverToBoxAdapter(
                   child: AppAnimatedSection(

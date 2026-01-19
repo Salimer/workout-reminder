@@ -165,7 +165,7 @@ class CreateWeekScheduleService {
     final row = WeekSchedule(
       progressId: progressId,
       deadline: weekSchedule.deadline,
-      note: weekSchedule.note,
+      note: null,
       updatedAt: DateTime.now(),
     );
 

@@ -122,6 +122,21 @@ class AppUseCase {
         .set(ProfileModel.fromServerProfile(updatedProfile));
   }
 
+  Future<void> finishWeek(String note) async {
+    final updatedProgress = await ref
+        .read(clientProvider)
+        .weekSchedule
+        .finishWeek(note, DateTime.now());
+
+    if (updatedProgress == null) {
+      throw Exception('Failed to finish week on server.');
+    }
+
+    ref
+        .read(progressStateProvider.notifier)
+        .set(ProgressModel.fromServerProgress(updatedProgress));
+  }
+
   Future<void> _updateTodayStatus(
     DayWorkoutStatusEnum status,
   ) async {
@@ -157,4 +172,8 @@ final changeDayWorkoutStatusMutation = Mutation<void>(
 
 final updateProfileMutation = Mutation<void>(
   label: 'update_profile',
+);
+
+final finishWeekMutation = Mutation<void>(
+  label: 'finish_week',
 );

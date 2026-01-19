@@ -15,7 +15,10 @@ class ProgressModel {
     if (weeks.isEmpty) return null;
     final now = DateTime.now();
     final currentWeeks = weeks.where(
-      (week) => !now.isBefore(week.createdAt) && !now.isAfter(week.deadline),
+      (week) =>
+          week.note == null &&
+          !now.isBefore(week.createdAt) &&
+          !now.isAfter(week.deadline),
     );
     if (currentWeeks.isEmpty) return null;
     return currentWeeks.reduce(

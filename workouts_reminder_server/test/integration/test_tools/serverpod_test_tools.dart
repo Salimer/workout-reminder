@@ -443,6 +443,41 @@ class _WeekScheduleEndpoint {
       }
     });
   }
+
+  _i3.Future<_i4.Progress?> finishWeek(
+    _i1.TestSessionBuilder sessionBuilder,
+    String note,
+    DateTime localDateTime,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'weekSchedule',
+            method: 'finishWeek',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'weekSchedule',
+          methodName: 'finishWeek',
+          parameters: _i1.testObjectToJson({
+            'note': note,
+            'localDateTime': localDateTime,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<_i4.Progress?>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
 }
 
 class _EmailIdpEndpoint {

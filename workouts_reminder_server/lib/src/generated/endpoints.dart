@@ -210,6 +210,31 @@ class Endpoints extends _i1.EndpointDispatch {
                     params['localDateTime'],
                   ),
         ),
+        'finishWeek': _i1.MethodConnector(
+          name: 'finishWeek',
+          params: {
+            'note': _i1.ParameterDescription(
+              name: 'note',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'localDateTime': _i1.ParameterDescription(
+              name: 'localDateTime',
+              type: _i1.getType<DateTime>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['weekSchedule'] as _i5.WeekScheduleEndpoint)
+                  .finishWeek(
+                    session,
+                    params['note'],
+                    params['localDateTime'],
+                  ),
+        ),
       },
     );
     connectors['emailIdp'] = _i1.EndpointConnector(
