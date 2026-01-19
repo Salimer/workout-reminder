@@ -7,13 +7,10 @@ import 'delete_week_schedule_service.dart';
 import 'get_week_schedule_service.dart';
 
 class WeekScheduleEndpoint extends Endpoint {
-  final CreateWeekScheduleService _weekScheduleService =
-      const CreateWeekScheduleService();
-  final DeleteWeekScheduleService _deleteWeekScheduleService =
-      const DeleteWeekScheduleService();
-  final GetProgressService _getProgressService = const GetProgressService();
-  final GetWeekScheduleService _getWeekScheduleService =
-      const GetWeekScheduleService();
+  final _weekScheduleService = const CreateWeekScheduleService();
+  final _deleteWeekScheduleService = const DeleteWeekScheduleService();
+  final _getProgressService = const GetProgressService();
+  final _getWeekScheduleService = const GetWeekScheduleService();
 
   @override
   bool get requireLogin => true;
@@ -31,9 +28,9 @@ class WeekScheduleEndpoint extends Endpoint {
 
   Future<Progress?> deleteWeekSchedule(
     Session session,
-    int weekScheduleId,
+    DateTime localDateTime,
   ) async {
-    await _deleteWeekScheduleService.call(session, weekScheduleId);
+    await _deleteWeekScheduleService.call(session, localDateTime);
     return _getProgressService.call(session);
   }
 }

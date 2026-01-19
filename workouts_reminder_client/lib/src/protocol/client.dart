@@ -83,11 +83,11 @@ class EndpointWeekSchedule extends _i1.EndpointRef {
     {'weekSchedule': weekSchedule},
   );
 
-  _i2.Future<_i4.Progress?> deleteWeekSchedule(int weekScheduleId) =>
+  _i2.Future<_i4.Progress?> deleteWeekSchedule(DateTime localDateTime) =>
       caller.callServerEndpoint<_i4.Progress?>(
         'weekSchedule',
         'deleteWeekSchedule',
-        {'weekScheduleId': weekScheduleId},
+        {'localDateTime': localDateTime},
       );
 }
 

@@ -154,9 +154,9 @@ class Endpoints extends _i1.EndpointDispatch {
         'deleteWeekSchedule': _i1.MethodConnector(
           name: 'deleteWeekSchedule',
           params: {
-            'weekScheduleId': _i1.ParameterDescription(
-              name: 'weekScheduleId',
-              type: _i1.getType<int>(),
+            'localDateTime': _i1.ParameterDescription(
+              name: 'localDateTime',
+              type: _i1.getType<DateTime>(),
               nullable: false,
             ),
           },
@@ -167,7 +167,7 @@ class Endpoints extends _i1.EndpointDispatch {
               ) async => (endpoints['weekSchedule'] as _i4.WeekScheduleEndpoint)
                   .deleteWeekSchedule(
                     session,
-                    params['weekScheduleId'],
+                    params['localDateTime'],
                   ),
         ),
       },

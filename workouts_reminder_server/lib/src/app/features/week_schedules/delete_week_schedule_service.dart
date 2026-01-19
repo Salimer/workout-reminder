@@ -1,11 +1,15 @@
 import 'package:serverpod/serverpod.dart';
 
 import '../../../generated/protocol.dart';
+import 'get_active_week_schedule_service.dart';
 
 class DeleteWeekScheduleService {
   const DeleteWeekScheduleService();
 
-  Future<void> call(Session session, int weekScheduleId) async {
+  static const GetActiveWeekScheduleService _getActiveWeekScheduleService =
+      GetActiveWeekScheduleService();
+
+  Future<void> call(Session session, DateTime localDateTime) async {
     final userId = UuidValue.withValidation(
       session.authenticated!.userIdentifier,
     );
@@ -24,10 +28,24 @@ class DeleteWeekScheduleService {
         );
       }
 
+      final activeWeek = await _getActiveWeekScheduleService.call(
+        session: session,
+        progressId: progress.id!,
+        localDateTime: localDateTime,
+        transaction: transaction,
+      );
+
+      if (activeWeek?.id == null) {
+        throw ServerpodException(
+          message: 'WeekSchedule not found for the provided date.',
+          errorCode: 404,
+        );
+      }
+
       final deletedRows = await WeekSchedule.db.deleteWhere(
         session,
         where: (t) =>
-            t.id.equals(weekScheduleId) & t.progressId.equals(progress.id!),
+            t.id.equals(activeWeek!.id) & t.progressId.equals(progress.id!),
         transaction: transaction,
       );
 

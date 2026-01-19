@@ -361,7 +361,7 @@ class _WeekScheduleEndpoint {
 
   _i3.Future<_i5.Progress?> deleteWeekSchedule(
     _i1.TestSessionBuilder sessionBuilder,
-    int weekScheduleId,
+    DateTime localDateTime,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -374,7 +374,7 @@ class _WeekScheduleEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'weekSchedule',
           methodName: 'deleteWeekSchedule',
-          parameters: _i1.testObjectToJson({'weekScheduleId': weekScheduleId}),
+          parameters: _i1.testObjectToJson({'localDateTime': localDateTime}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =

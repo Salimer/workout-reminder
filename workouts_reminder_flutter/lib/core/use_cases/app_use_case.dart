@@ -58,19 +58,10 @@ class AppUseCase {
   }
 
   Future<void> clearWeekPlan() async {
-    final weekScheduleId = ref
-        .read(progressStateProvider)
-        .requireValue
-        .activeWeek
-        ?.id;
-
-    if (weekScheduleId == null) {
-      throw Exception('No active week schedule to delete.');
-    }
     final updatedProgress = await ref
         .read(clientProvider)
         .weekSchedule
-        .deleteWeekSchedule(weekScheduleId);
+        .deleteWeekSchedule(DateTime.now());
 
     if (updatedProgress == null) {
       throw Exception(

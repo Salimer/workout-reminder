@@ -14,7 +14,11 @@ Client client(Ref ref) {
 
   final sessionManager = FlutterAuthSessionManager();
 
-  return Client(serverUrl)
+  return Client(
+    serverUrl,
+    connectionTimeout: const Duration(seconds: 90),
+    streamingConnectionTimeout: const Duration(seconds: 90),
+  )
     ..connectivityMonitor = FlutterConnectivityMonitor()
     ..authSessionManager = sessionManager;
   // ..authKeyProvider = sessionManager;

@@ -1,16 +1,24 @@
 import 'package:serverpod/serverpod.dart';
 
 import '../../../generated/protocol.dart';
+import '../notifications/ai_notification_service.dart';
 
 class CreateWeekScheduleService {
   const CreateWeekScheduleService();
+
+  static const AiNotificationService _aiNotificationService =
+      AiNotificationService();
 
   Future<int> call(
     Session session,
     WeekSchedule weekSchedule,
   ) async {
     final userId = _requireUserId(session);
-    return session.db.transaction<int>((transaction) async {
+    final plannedCopies = await _aiNotificationService.generatePlannedCopies(
+      session,
+      weekSchedule,
+    );
+    final weekScheduleId = await session.db.transaction<int>((transaction) async {
       await _requireMotivation(
         session,
         userId,
@@ -41,6 +49,7 @@ class CreateWeekScheduleService {
         session,
         insertedWeek,
         weekSchedule.days,
+        plannedCopies,
         transaction,
       );
 
@@ -53,6 +62,8 @@ class CreateWeekScheduleService {
 
       return insertedWeek.id!;
     });
+
+    return weekScheduleId;
   }
 
   Future<int> createWeekSchedule(
@@ -169,6 +180,7 @@ class CreateWeekScheduleService {
     Session session,
     WeekSchedule weekSchedule,
     List<DaySchedule>? days,
+    List<NotificationCopy> plannedCopies,
     Transaction transaction,
   ) async {
     if (days == null || days.isEmpty) {
@@ -183,6 +195,7 @@ class CreateWeekScheduleService {
       );
     }
 
+    var copyIndex = 0;
     for (final day in days) {
       final insertedDay = await _insertDaySchedule(
         session,
@@ -191,10 +204,12 @@ class CreateWeekScheduleService {
         transaction,
       );
 
-      await _insertNotifications(
+      copyIndex = await _insertNotifications(
         session,
         insertedDay.id,
         day.notifications,
+        plannedCopies,
+        copyIndex,
         transaction,
       );
     }
@@ -220,14 +235,16 @@ class CreateWeekScheduleService {
     );
   }
 
-  Future<void> _insertNotifications(
+  Future<int> _insertNotifications(
     Session session,
     int? dayScheduleId,
     List<Notification>? notifications,
+    List<NotificationCopy> plannedCopies,
+    int copyIndex,
     Transaction transaction,
   ) async {
     if (notifications == null || notifications.isEmpty) {
-      return;
+      return copyIndex;
     }
 
     if (dayScheduleId == null) {
@@ -237,23 +254,35 @@ class CreateWeekScheduleService {
       );
     }
 
-    final rows = notifications
-        .map(
-          (notification) => Notification(
-            dayScheduleId: dayScheduleId,
-            title: notification.title,
-            body: notification.body,
-            scheduledDate: notification.scheduledDate,
-            payload: notification.payload,
-            updatedAt: DateTime.now(),
-          ),
-        )
-        .toList();
+    final rows = <Notification>[];
+    for (final notification in notifications) {
+      if (copyIndex >= plannedCopies.length) {
+        throw ServerpodException(
+          message: 'AI notification count mismatch.',
+          errorCode: 500,
+        );
+      }
+
+      final copy = plannedCopies[copyIndex];
+      rows.add(
+        Notification(
+          dayScheduleId: dayScheduleId,
+          title: copy.title,
+          body: copy.body,
+          scheduledDate: notification.scheduledDate,
+          payload: notification.payload,
+          updatedAt: DateTime.now(),
+        ),
+      );
+      copyIndex++;
+    }
 
     await Notification.db.insert(
       session,
       rows,
       transaction: transaction,
     );
+
+    return copyIndex;
   }
 }
