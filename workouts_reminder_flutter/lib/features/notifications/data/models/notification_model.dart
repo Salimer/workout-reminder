@@ -19,7 +19,7 @@ class NotificationModel {
     final scheduledDate = DateTime.now().add(const Duration(seconds: 5));
     return NotificationModel(
       id: DateTime.now().millisecondsSinceEpoch % 100000,
-      title: 'Workout Reminder',
+      title: 'Nudge Fit',
       body: 'Time for your scheduled workout!',
       scheduledDate: scheduledDate,
       payload: 'workout_reminder_payload',

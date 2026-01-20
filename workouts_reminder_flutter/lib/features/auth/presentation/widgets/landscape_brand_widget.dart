@@ -33,7 +33,7 @@ class LandscapeBrandWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Workout Reminder',
+                'Nudge Fit',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.2,

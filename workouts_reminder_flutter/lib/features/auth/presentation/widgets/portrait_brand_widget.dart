@@ -22,7 +22,7 @@ class PortraitBrandWidget extends StatelessWidget {
         LogoBadgeWidget(accent: accent, accentSoft: accentSoft),
         const SizedBox(height: 24),
         Text(
-          'Workout Reminder',
+          'Nudge Fit',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.w700,
             letterSpacing: 0.2,

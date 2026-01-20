@@ -105,21 +105,21 @@ class DayScheduleModel {
     return [
       NotificationModel.forWorkoutDay(
         id: _notificationId(morning, 0),
-        title: 'Workout Reminder (Morning)',
+        title: 'Nudge Fit (Morning)',
         body: '${day.day}: time for your morning workout.',
         scheduledDate: morning,
         payload: 'workout:${day.day}:morning',
       ),
       NotificationModel.forWorkoutDay(
         id: _notificationId(afternoon, 1),
-        title: 'Workout Reminder (Afternoon)',
+        title: 'Nudge Fit (Afternoon)',
         body: '${day.day}: time for your afternoon workout.',
         scheduledDate: afternoon,
         payload: 'workout:${day.day}:afternoon',
       ),
       NotificationModel.forWorkoutDay(
         id: _notificationId(evening, 2),
-        title: 'Workout Reminder (Evening)',
+        title: 'Nudge Fit (Evening)',
         body: '${day.day}: time for your evening workout.',
         scheduledDate: evening,
         payload: 'workout:${day.day}:evening',
