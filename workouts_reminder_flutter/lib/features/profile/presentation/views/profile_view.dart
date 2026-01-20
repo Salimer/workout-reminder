@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/experimental/mutation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:workouts_reminder_flutter/core/config/routes.dart';
 
 import '../../../../core/widgets/animated_section.dart';
 import '../../../../core/widgets/app_card.dart';
@@ -395,7 +397,7 @@ class _ProfileViewState extends State<ProfileView> {
                                                   updatedProfile,
                                                 );
                                           })
-                                          .then((_) {
+                                          .then((_) async {
                                             if (context.mounted) {
                                               ScaffoldMessenger.of(
                                                 context,
@@ -411,6 +413,15 @@ class _ProfileViewState extends State<ProfileView> {
                                                   ),
                                                 ),
                                               );
+
+                                              await Future.delayed(
+                                                const Duration(
+                                                  milliseconds: 500,
+                                                ),
+                                              );
+                                              if (mounted) {
+                                                context.pop();
+                                              }
                                             }
                                           })
                                           .catchError((_) {});

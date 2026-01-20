@@ -14,22 +14,13 @@ class CreateWeekScheduleService {
     WeekSchedule weekSchedule,
   ) async {
     final userId = _requireUserId(session);
+    await _requireMotivation(session, userId);
+    final progress = await _requireProgress(session, userId);
     final plannedCopies = await _aiNotificationService.generatePlannedCopies(
       session,
       weekSchedule,
     );
     final weekScheduleId = await session.db.transaction<int>((transaction) async {
-      await _requireMotivation(
-        session,
-        userId,
-        transaction,
-      );
-      final progress = await _requireProgress(
-        session,
-        userId,
-        transaction,
-      );
-
       final progressId = progress.id;
       if (progressId == null) {
         throw ServerpodException(
@@ -37,6 +28,11 @@ class CreateWeekScheduleService {
           errorCode: 500,
         );
       }
+      await _touchProgress(
+        session,
+        progress,
+        transaction,
+      );
 
       final insertedWeek = await _insertWeekSchedule(
         session,
@@ -86,7 +82,7 @@ class CreateWeekScheduleService {
   Future<Progress?> _findProgress(
     Session session,
     UuidValue userId,
-    Transaction transaction,
+    [Transaction? transaction]
   ) {
     return Progress.db.findFirstRow(
       session,
@@ -98,7 +94,7 @@ class CreateWeekScheduleService {
   Future<Progress> _requireProgress(
     Session session,
     UuidValue userId,
-    Transaction transaction,
+    [Transaction? transaction]
   ) async {
     final existingProgress = await _findProgress(
       session,
@@ -111,6 +107,10 @@ class CreateWeekScheduleService {
         message: 'Progress row is missing for user.',
         errorCode: 404,
       );
+    }
+
+    if (transaction == null) {
+      return existingProgress;
     }
 
     return _touchProgress(
@@ -139,7 +139,7 @@ class CreateWeekScheduleService {
   Future<void> _requireMotivation(
     Session session,
     UuidValue userId,
-    Transaction transaction,
+    [Transaction? transaction]
   ) async {
     final profile = await Profile.db.findFirstRow(
       session,

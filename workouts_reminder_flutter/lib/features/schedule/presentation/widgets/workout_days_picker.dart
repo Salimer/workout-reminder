@@ -117,18 +117,51 @@ class _WorkoutDaysPickerState extends State<WorkoutDaysPicker> {
                             }
                           : null,
                       child: state.isPending
-                          ? const SizedBox(
-                              height: 18,
-                              width: 18,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                              ),
+                          ? const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(
+                                  height: 18,
+                                  width: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                                SizedBox(width: 12),
+                                Text('Creating schedule...'),
+                              ],
                             )
                           : const Text('Create schedule'),
                     );
                   },
                 ),
               ),
+            ),
+            Consumer(
+              builder: (context, ref, _) {
+                final state = ref.watch(scheduleWeekPlanMutation);
+                if (!state.isPending) {
+                  return const SizedBox.shrink();
+                }
+                return Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const LinearProgressIndicator(minHeight: 3),
+                      const SizedBox(height: 8),
+                      Text(
+                        'This can take up to a minute. Keep the app open while we schedule your reminders.',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.7,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
             if (_selectedDays.isEmpty) ...[
               const SizedBox(height: 8),
