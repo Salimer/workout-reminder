@@ -20,6 +20,7 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
+  late TextEditingController _nameController;
   late TextEditingController _motivationController;
   late TextEditingController _goalController;
   bool _isInit = true;
@@ -36,12 +37,14 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   void initState() {
     super.initState();
+    _nameController = TextEditingController();
     _motivationController = TextEditingController();
     _goalController = TextEditingController();
   }
 
   @override
   void dispose() {
+    _nameController.dispose();
     _motivationController.dispose();
     _goalController.dispose();
     super.dispose();
@@ -61,6 +64,7 @@ class _ProfileViewState extends State<ProfileView> {
 
               // Initialize controller text once when data is first loaded
               if (_isInit && profileAsync.hasValue) {
+                _nameController.text = profileAsync.value?.characterName ?? '';
                 _motivationController.text =
                     profileAsync.value?.motivation ?? '';
                 _isInit = false;
@@ -136,6 +140,50 @@ class _ProfileViewState extends State<ProfileView> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
+                              'Name',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'What should we call your coach persona?',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: scheme.onSurface.withValues(alpha: 0.6),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            TextField(
+                              controller: _nameController,
+                              textInputAction: TextInputAction.next,
+                              decoration: InputDecoration(
+                                hintText: 'e.g., "Nova"',
+                                filled: true,
+                                fillColor: scheme.surfaceContainerHighest
+                                    .withValues(alpha: 0.3),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide.none,
+                                ),
+                                prefixIcon: const Icon(Icons.badge_outlined),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            const SizedBox.shrink(),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    AppAnimatedSection(
+                      index: 2,
+                      child: AppCard(
+                        padding: const EdgeInsets.all(16),
+                        borderRadius: BorderRadius.circular(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
                               'My Motivation',
                               style: theme.textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
@@ -178,7 +226,7 @@ class _ProfileViewState extends State<ProfileView> {
                     ),
                     const SizedBox(height: 16),
                     AppAnimatedSection(
-                      index: 2,
+                      index: 3,
                       child: AppCard(
                         padding: const EdgeInsets.all(16),
                         borderRadius: BorderRadius.circular(16),
@@ -218,7 +266,7 @@ class _ProfileViewState extends State<ProfileView> {
                     ),
                     const SizedBox(height: 16),
                     AppAnimatedSection(
-                      index: 3,
+                      index: 4,
                       child: AppCard(
                         padding: const EdgeInsets.all(16),
                         borderRadius: BorderRadius.circular(16),
@@ -266,7 +314,7 @@ class _ProfileViewState extends State<ProfileView> {
                     ),
                     const SizedBox(height: 16),
                     AppAnimatedSection(
-                      index: 4,
+                      index: 5,
                       child: AppCard(
                         padding: const EdgeInsets.all(16),
                         borderRadius: BorderRadius.circular(16),
@@ -360,7 +408,7 @@ class _ProfileViewState extends State<ProfileView> {
                     ),
                     const SizedBox(height: 16),
                     AppAnimatedSection(
-                      index: 5,
+                      index: 6,
                       child: SizedBox(
                         width: double.infinity,
                         child: Consumer(
@@ -383,6 +431,8 @@ class _ProfileViewState extends State<ProfileView> {
                                   ? null
                                   : () async {
                                       final updatedProfile = profile.copyWith(
+                                        characterName: _nameController.text
+                                            .trim(),
                                         motivation: _motivationController.text
                                             .trim(),
                                       );
