@@ -7,7 +7,6 @@ import 'package:workouts_reminder_client/workouts_reminder_client.dart'
 import '../../../../core/constants/enums.dart';
 import '../../../../core/widgets/animated_section.dart';
 import '../../../../core/use_cases/app_use_case.dart';
-import '../../../home/use_cases/bottom_navigation_use_case.dart';
 
 class WorkoutDaysPicker extends StatefulWidget {
   final Set<WeekdayEnum> initialSelectedDays;

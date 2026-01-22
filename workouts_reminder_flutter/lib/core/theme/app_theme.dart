@@ -6,7 +6,7 @@ class AppTheme {
   static const Color _green700 = Color(0xFF0F3526);
   static const Color _green500 = Color(0xFF1DBA74);
   static const Color _green300 = Color(0xFF6EE7B7);
-  static const Color _green100 = Color(0xFFA7F3D0);
+  // static const Color _green100 = Color(0xFFA7F3D0);
 
   static ColorScheme _darkScheme() {
     final base = ColorScheme.fromSeed(
