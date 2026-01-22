@@ -1,15 +1,31 @@
 # workouts_reminder_server
 
-This is the starting point for your Serverpod server.
+Serverpod backend for Nudge Fit.
 
-To run your server, you first need to start Postgres. Redis is optional unless you use Serverpod features that rely on it. It's easiest to do with Docker.
+## Prerequisites
+- Docker (for Postgres)
+- Dart SDK
 
-    docker compose up --build --detach
+## Run the server
+Start Postgres (Redis is optional unless you use Serverpod features that rely on it):
 
-Then you can start the Serverpod server.
+```bash
+docker compose up --build --detach
+```
 
-    dart bin/main.dart
+Then run the Serverpod server:
 
-When you are finished, you can shut down Serverpod with `Ctrl-C`, then stop the services.
+```bash
+dart bin/main.dart
+```
 
-    docker compose stop
+## Configuration
+- Passwords live in `config/passwords.yaml` and are loaded via `session.passwords`.
+- AI notifications use `shared.geminiKey`. If it’s missing, AI copy generation is skipped.
+
+## Stop services
+Shut down Serverpod with `Ctrl-C`, then:
+
+```bash
+docker compose stop
+```

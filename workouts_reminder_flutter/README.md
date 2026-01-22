@@ -1,15 +1,20 @@
 # workouts_reminder_flutter
 
-A new Flutter project with Serverpod.
+Flutter client for Nudge Fit.
 
-## Getting Started
+## Prerequisites
+- Flutter SDK (stable)
+- Dart SDK (bundled with Flutter)
+- The Serverpod backend running locally
 
-This project is a starting point for a Flutter application that is using
-Serverpod.
+## Run the app
+From this directory:
 
-A great starting point for learning Serverpod is our documentation site at:
-[https://docs.serverpod.dev](https://docs.serverpod.dev).
+```bash
+flutter pub get
+flutter run
+```
 
-To run the project, first make sure that the server is running, then do:
-
-    flutter run
+## Notes
+- The app expects the Serverpod server to be running. See `../workouts_reminder_server/README.md`.
+- Local notifications are scheduled on-device using `flutter_local_notifications`.

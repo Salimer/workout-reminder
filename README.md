@@ -22,11 +22,16 @@ A Flutter + Serverpod app that keeps you consistent by sending personalized, AI-
 - `workouts_reminder_client/` Generated client package
 - `PROJECT_STORY.md` Hackathon project story
 
-## Getting started
-### Backend
-Follow the Serverpod setup steps in `workouts_reminder_server/README.md`.
+## Run the project locally
+### 1) Start the backend (Serverpod)
+From `workouts_reminder_server/`:
 
-### Flutter app
+```bash
+docker compose up --build --detach
+dart bin/main.dart
+```
+
+### 2) Run the Flutter app
 From `workouts_reminder_flutter/`:
 
 ```bash
@@ -34,8 +39,13 @@ flutter pub get
 flutter run
 ```
 
-## AI configuration
-The backend uses a Gemini API key (`geminiKey`) from Serverpod passwords/config. See `workouts_reminder_server/config/` for environment setup.
+### 3) (Optional) Configure AI notifications
+Add a Gemini API key under `shared.geminiKey` in `workouts_reminder_server/config/passwords.yaml`.
+If it’s missing, the backend skips AI copy generation and uses default notification text.
+
+## Notes
+- Stop the backend with `Ctrl-C`, then `docker compose stop` in `workouts_reminder_server/`.
+- See `workouts_reminder_server/README.md` and `workouts_reminder_flutter/README.md` for module-specific details.
 
 ## Project story
 See `PROJECT_STORY.md` for the full hackathon story, challenges, and learnings.
