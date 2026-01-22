@@ -9,6 +9,7 @@ class DayScheduleEndpoint extends Endpoint {
       const UpdateDayScheduleStatusService();
   final _getProgressService = const GetProgressService();
 
+  // This endpoint requires authentication
   @override
   bool get requireLogin => true;
 
