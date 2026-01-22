@@ -1,0 +1,32 @@
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import '../data/models/goal_model.dart';
+import '../presentation/state/profile_state.dart';
+
+part 'profile_use_case.g.dart';
+
+@Riverpod(keepAlive: true)
+class ProfileUseCase extends _$ProfileUseCase {
+  @override
+  void build() {}
+
+  void updateGoals(List<GoalModel> goals) {
+    ref.read(profileStateProvider.notifier).updateGoals(goals);
+  }
+
+  void updateMotivation(String motivation) {
+    ref.read(profileStateProvider.notifier).updateMotivation(motivation);
+  }
+
+  void updateCharacterName(String name) {
+    ref.read(profileStateProvider.notifier).updateCharacterName(name);
+  }
+
+  void updateFitnessLevel(String level) {
+    ref.read(profileStateProvider.notifier).updateFitnessLevel(level);
+  }
+
+  void updateNotificationTone(String tone) {
+    ref.read(profileStateProvider.notifier).updateNotificationTone(tone);
+  }
+}

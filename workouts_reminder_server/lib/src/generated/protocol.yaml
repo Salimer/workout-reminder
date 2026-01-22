@@ -1,0 +1,24 @@
+daySchedule:
+  - updateTodayStatus:
+profile:
+  - getProfile:
+  - deleteUser:
+  - updateProfile:
+progress:
+  - getProgress:
+weekSchedule:
+  - createWeekSchedule:
+  - deleteWeekSchedule:
+  - finishWeek:
+emailIdp:
+  - login:
+  - startRegistration:
+  - verifyRegistrationCode:
+  - finishRegistration:
+  - startPasswordReset:
+  - verifyPasswordResetCode:
+  - finishPasswordReset:
+jwtRefresh:
+  - refreshAccessToken:
+greeting:
+  - hello:

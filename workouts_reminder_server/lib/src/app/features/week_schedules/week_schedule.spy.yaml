@@ -1,0 +1,9 @@
+class: WeekSchedule
+table: week_schedule
+fields:
+  progress: Progress?, relation(name=progress_weeks, optional, onDelete=Cascade)
+  days: List<DaySchedule>?, relation(name=week_schedule_days)
+  deadline: DateTime
+  note: String?
+  createdAt: DateTime, default=now
+  updatedAt: DateTime, default=now

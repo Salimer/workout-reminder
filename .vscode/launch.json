@@ -1,0 +1,40 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "workouts_reminder_client",
+      "cwd": "workouts_reminder_client",
+      "request": "launch",
+      "type": "dart"
+    },
+    {
+      "name": "workouts_reminder_flutter",
+      "cwd": "workouts_reminder_flutter",
+      "request": "launch",
+      "type": "dart"
+    },
+    {
+      "name": "workouts_reminder_flutter (profile mode)",
+      "cwd": "workouts_reminder_flutter",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile"
+    },
+    {
+      "name": "workouts_reminder_flutter (release mode)",
+      "cwd": "workouts_reminder_flutter",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release"
+    },
+    {
+      "name": "workouts_reminder_server",
+      "cwd": "workouts_reminder_server",
+      "request": "launch",
+      "type": "dart"
+    }
+  ]
+}

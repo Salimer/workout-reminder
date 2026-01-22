@@ -1,0 +1,16 @@
+{
+  "cmake.ignoreCMakeListsMissing": true,
+  "sqltools.connections": [
+    {
+      "ssh": "Disabled",
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 8090,
+      "driver": "PostgreSQL",
+      "name": "workouts_reminder",
+      "database": "workouts_reminder",
+      "username": "postgres",
+      "password": "mwwtE40ezs0E2FJkKkmN5RSgY_Y7pfr1"
+    }
+  ]
+}
