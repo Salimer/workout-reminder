@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_idp_server/core.dart';
 import 'package:serverpod_auth_idp_server/providers/email.dart';
+import 'package:mailer/mailer.dart' as mail;
+import 'package:mailer/smtp_server.dart';
 
 import 'src/generated/endpoints.dart';
 import 'src/generated/protocol.dart';
@@ -74,10 +76,14 @@ void _sendRegistrationCode(
   required UuidValue accountRequestId,
   required String verificationCode,
   required Transaction? transaction,
-}) {
-  // NOTE: Here you call your mail service to send the verification code to
-  // the user. For testing, we will just log the verification code.
+}) async {
   session.log('[EmailIdp] Registration code ($email): $verificationCode');
+  await _sendEmail(
+    session,
+    email,
+    'Verify your email',
+    'Your verification code is: $verificationCode',
+  );
 }
 
 void _sendPasswordResetCode(
@@ -86,8 +92,47 @@ void _sendPasswordResetCode(
   required UuidValue passwordResetRequestId,
   required String verificationCode,
   required Transaction? transaction,
-}) {
-  // NOTE: Here you call your mail service to send the verification code to
-  // the user. For testing, we will just log the verification code.
+}) async {
   session.log('[EmailIdp] Password reset code ($email): $verificationCode');
+  await _sendEmail(
+    session,
+    email,
+    'Reset your password',
+    'Your password reset code is: $verificationCode',
+  );
+}
+
+Future<void> _sendEmail(
+  Session session,
+  String recipient,
+  String subject,
+  String text,
+) async {
+  final gmailEmail = session.passwords['gmailEmail'];
+  final gmailPassword = session.passwords['gmailPassword'];
+
+  if (gmailEmail == null || gmailPassword == null) {
+    session.log(
+      'Gmail credentials not found in passwords.yaml',
+      level: LogLevel.error,
+    );
+    return;
+  }
+
+  final smtpServer = gmail(gmailEmail, gmailPassword);
+  final message = mail.Message()
+    ..from = mail.Address(gmailEmail, 'Nudge Fit')
+    ..recipients.add(recipient)
+    ..subject = subject
+    ..text = text;
+
+  try {
+    final sendReport = await mail.send(message, smtpServer);
+    session.log('Message sent: $sendReport');
+  } on mail.MailerException catch (e) {
+    session.log('Message not sent. \n${e.toString()}', level: LogLevel.error);
+    for (var p in e.problems) {
+      session.log('Problem: ${p.code}: ${p.msg}', level: LogLevel.error);
+    }
+  }
 }
