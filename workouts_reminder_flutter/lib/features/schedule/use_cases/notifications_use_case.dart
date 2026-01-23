@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart' show debugPrint;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/constants/enums.dart';
@@ -33,7 +33,6 @@ class NotificationsUseCase {
   ) async {
     for (final notification in notifications) {
       // Ensure the notification time is not passed yet
-      debugPrint("Scheduled notification details: ${notification.toJson()}");
       final now = ref.read(localTimeDateProvider);
       if (notification.scheduledDate.isBefore(now)) continue;
       await scheduleNotification(notification);
@@ -73,6 +72,10 @@ class NotificationsUseCase {
     final weekday = ref.read(localTimeDateProvider).weekday;
     final todayEnum = WeekdayEnum.fromDateTimeWeekday(weekday);
     await _enableDayNotifications(todayEnum);
+  }
+
+  Future<List<PendingNotificationRequest>> getPendingNotifications() async {
+    return ref.read(notificationsSvcProvider).getPendingNotificationRequests();
   }
 
   Future<void> _clearDayNotifications(WeekdayEnum day) async {

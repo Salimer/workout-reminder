@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:workouts_reminder_flutter/features/schedule/use_cases/notifications_use_case.dart';
 
 import '../../../../core/providers/theme.dart' show themeProvider;
 import '../../../../core/use_cases/app_use_case.dart';
@@ -132,6 +133,20 @@ class SettingsView extends StatelessWidget {
                   final effectiveDark =
                       MediaQuery.of(context).platformBrightness ==
                       Brightness.dark;
+
+                  WidgetsBinding.instance.addPostFrameCallback((_) async {
+                    debugPrint("I am here");
+                    final notifications = await ref
+                        .read(notificationsUseCaseProvider)
+                        .getPendingNotifications();
+
+                    debugPrint("not length ${notifications.length}");
+
+                    for (final not in notifications) {
+                      debugPrint("notificatoin title: ${not.title!}");
+                      debugPrint("notification time: ${not.payload}");
+                    }
+                  });
 
                   return AppCard(
                     padding: const EdgeInsets.all(12),

@@ -31,7 +31,7 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
 }
 
 class NotificationsService {
-  final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final _notificationsPlugin = FlutterLocalNotificationsPlugin();
 
   /// Current time in the configured local timezone.
   tz.TZDateTime get localNow => tz.TZDateTime.now(tz.local);
@@ -54,7 +54,7 @@ class NotificationsService {
           iOS: initializationSettingsDarwin,
           macOS: initializationSettingsDarwin,
         );
-    await flutterLocalNotificationsPlugin.initialize(
+    await _notificationsPlugin.initialize(
       initializationSettings,
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
       onDidReceiveNotificationResponse: notificationTapBackground,
@@ -77,7 +77,7 @@ class NotificationsService {
       notification.scheduledDate,
       tz.local,
     );
-    await flutterLocalNotificationsPlugin.zonedSchedule(
+    await _notificationsPlugin.zonedSchedule(
       notification.id,
       notification.title,
       notification.body,
@@ -97,14 +97,14 @@ class NotificationsService {
 
   Future<bool> askForPermission() async {
     if (Platform.isAndroid) {
-      final androidImplementation = flutterLocalNotificationsPlugin
+      final androidImplementation = _notificationsPlugin
           .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin
           >();
       return await androidImplementation?.requestExactAlarmsPermission() ??
           false;
     } else if (Platform.isIOS || Platform.isMacOS) {
-      final iosImplementation = flutterLocalNotificationsPlugin
+      final iosImplementation = _notificationsPlugin
           .resolvePlatformSpecificImplementation<
             IOSFlutterLocalNotificationsPlugin
           >();
@@ -120,15 +120,16 @@ class NotificationsService {
   }
 
   Future<void> cancelAllNotifications() async {
-    await flutterLocalNotificationsPlugin.cancelAll();
+    await _notificationsPlugin.cancelAll();
   }
 
   Future<void> cancelNotification(int id) async {
-    await flutterLocalNotificationsPlugin.cancel(id);
+    await _notificationsPlugin.cancel(id);
   }
 
   Future<List<PendingNotificationRequest>>
   getPendingNotificationRequests() async {
-    return flutterLocalNotificationsPlugin.pendingNotificationRequests();
+    debugPrint("I am inside the not svc");
+    return _notificationsPlugin.pendingNotificationRequests();
   }
 }

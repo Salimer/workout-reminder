@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:workouts_reminder_flutter/core/use_cases/app_use_case.dart';
 
 import '../../../progress/presentation/views/progress_view.dart';
 import '../../../schedule/presentation/views/schedule_view.dart';
@@ -38,6 +39,13 @@ class _HomeViewState extends ConsumerState<HomeView> {
     _pageController = PageController(
       initialPage: ref.read(bottomNavigationProvider).currentIndex,
     );
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final mutation = syncNotificationsMutation;
+      mutation.run(ref, (tsx) async {
+        debugPrint("starting sync");
+        await tsx.get(appUseCaseProvider).syncNotifications();
+      });
+    });
   }
 
   @override

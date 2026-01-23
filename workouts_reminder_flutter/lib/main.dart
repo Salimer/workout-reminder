@@ -10,7 +10,7 @@ Future<void> main() async {
 
   final container = ProviderContainer(
     observers: [
-      ProviderLoggerObserver(),
+      // ProviderLoggerObserver(),
     ],
   );
   await container.read(themeProvider.future);
