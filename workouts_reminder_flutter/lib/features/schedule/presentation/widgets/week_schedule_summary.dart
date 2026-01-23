@@ -357,7 +357,7 @@ class _DayCard extends StatelessWidget {
         final n = notifications[index];
         return _Slot(
           label: labels[index],
-          time: format.format(n.scheduledDate),
+          time: format.format(n.scheduledDate.toLocal()),
           icon: icons[index],
         );
       }
