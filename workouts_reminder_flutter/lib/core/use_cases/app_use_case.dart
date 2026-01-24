@@ -194,6 +194,7 @@ class AppUseCase {
     final expectedNotifications = <NotificationModel>[];
 
     for (final day in activeWeek.days) {
+      if (day.status != DayWorkoutStatusEnum.pending) continue;
       if (day.notifications == null) continue;
       for (final notification in day.notifications!) {
         // We only care about notifications that should happen in the future.

@@ -41,6 +41,7 @@ class NotificationsUseCase {
 
   Future<void> scheduleDayNotifications(DayScheduleModel daySchedule) async {
     if (!daySchedule.hasWorkout) return;
+    if (daySchedule.status != DayWorkoutStatusEnum.pending) return;
     if (daySchedule.notifications == null) return;
     await scheduleMultipleNotifications(daySchedule.notifications!);
   }

@@ -98,6 +98,8 @@ class _DayDot extends StatelessWidget {
   Widget build(BuildContext context) {
     final status = day.status;
     final dayLabel = day.day.name.substring(0, 1).toUpperCase();
+    final isToday =
+        day.day == WeekdayEnum.fromDateTimeWeekday(DateTime.now().weekday);
 
     // Determine styles based on status
     Color color;
@@ -140,10 +142,24 @@ class _DayDot extends StatelessWidget {
         Text(
           dayLabel,
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: scheme.onSurface.withValues(alpha: 0.5),
+            color: isToday
+                ? scheme.primary
+                : scheme.onSurface.withValues(alpha: 0.5),
             fontSize: 10,
+            fontWeight: isToday ? FontWeight.w700 : FontWeight.w500,
           ),
         ),
+        if (isToday) ...[
+          const SizedBox(height: 4),
+          Container(
+            width: 4,
+            height: 4,
+            decoration: BoxDecoration(
+              color: scheme.primary,
+              shape: BoxShape.circle,
+            ),
+          ),
+        ],
       ],
     );
   }

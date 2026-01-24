@@ -23,7 +23,7 @@ class DayDot extends StatelessWidget {
     final bool isCompleted = status == DayWorkoutStatusEnum.performed;
     final bool isSkipped = status == DayWorkoutStatusEnum.skipped;
     final bool showAccentFill = isCompleted || isSkipped;
-    final ringColor = isToday ? const Color(0xFF7C3AED) : Colors.transparent;
+    final ringColor = isToday ? scheme.primary : Colors.transparent;
     return Padding(
       padding: const EdgeInsets.only(left: 4),
       child: Column(
@@ -33,8 +33,10 @@ class DayDot extends StatelessWidget {
             day.day.day.substring(0, 1).toUpperCase(),
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
               fontSize: 9,
-              fontWeight: FontWeight.w600,
-              color: scheme.onSurface.withValues(alpha: 0.6),
+              fontWeight: isToday ? FontWeight.w700 : FontWeight.w600,
+              color: isToday
+                  ? scheme.primary
+                  : scheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
           const SizedBox(height: 4),
@@ -67,6 +69,17 @@ class DayDot extends StatelessWidget {
                   )
                 : null,
           ),
+          if (isToday) ...[
+            const SizedBox(height: 3),
+            Container(
+              width: 4,
+              height: 4,
+              decoration: BoxDecoration(
+                color: scheme.primary,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ],
         ],
       ),
     );
