@@ -79,6 +79,10 @@ class NotificationsUseCase {
     return ref.read(notificationsSvcProvider).getPendingNotificationRequests();
   }
 
+  Future<void> cancelAllNotifications() async {
+    await ref.read(notificationsSvcProvider).cancelAllNotifications();
+  }
+
   Future<void> _clearDayNotifications(WeekdayEnum day) async {
     final List<int> ids = ref
         .read(progressStateProvider)

@@ -106,6 +106,7 @@ class AppUseCase {
   }
 
   Future<void> signOut() async {
+    await ref.read(notificationsUseCaseProvider).cancelAllNotifications();
     await ref.read(clientProvider).auth.signOutDevice();
   }
 
