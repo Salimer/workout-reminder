@@ -38,7 +38,7 @@ class NotificationsService {
 
   Future<void> initialize() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/launcher_icon');
 
     // Avoid prompting on iOS/macOS at app launch; request later explicitly.
     final DarwinInitializationSettings initializationSettingsDarwin =
@@ -88,6 +88,7 @@ class NotificationsService {
           'your channel id',
           'your channel name',
           channelDescription: 'your channel description',
+          icon: '@mipmap/launcher_icon',
         ),
       ),
       payload: notification.payload,
