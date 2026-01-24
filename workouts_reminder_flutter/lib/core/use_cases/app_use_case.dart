@@ -45,7 +45,6 @@ class AppUseCase {
     }
 
     ref.read(bottomNavigationUseCaseProvider).goToMainView();
-    await Future.delayed(const Duration(milliseconds: 100));
 
     final returnedSchedual = WeekScheduleModel.fromServerWeekSchedule(
       scheduleWithWeekId,

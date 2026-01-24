@@ -7,7 +7,6 @@ class FirstRelaunch extends _$FirstRelaunch {
   @override
   bool build() {
     // Simulate some initialization delay if needed.
-    // await Future.delayed(const Duration(seconds: 1));
     return true;
   }
 

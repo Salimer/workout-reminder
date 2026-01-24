@@ -12,8 +12,6 @@ class TodayWorkoutStatus extends _$TodayWorkoutStatus {
   FutureOr<TodayWorkoutStatusModel> build() async {
     final now = ref.read(localTimeDateProvider);
 
-    // Simulate some asynchronous operation to determine today's workout status
-    await Future.delayed(const Duration(seconds: 1));
     // For demonstration, let's assume the user should work out today
     return TodayWorkoutStatusModel(
       dateTime: tz.TZDateTime.from(now, tz.local),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../home/presentation/views/home_view.dart';
+import '../../../../core/widgets/loading_widget.dart';
 import '../state/progress_state.dart';
 
 class ProgressLoaderView extends StatelessWidget {
@@ -22,7 +23,7 @@ class ProgressLoaderView extends StatelessWidget {
               error: (e, _) {
                 return Scaffold(
                   body: Center(
-                  child: Padding(
+                    child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -43,7 +44,9 @@ class ProgressLoaderView extends StatelessWidget {
                             e.toString(),
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                               fontSize: 12,
                             ),
                           ),
@@ -61,19 +64,9 @@ class ProgressLoaderView extends StatelessWidget {
                 );
               },
               loading: () {
-                return Scaffold(
-                  body: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const CircularProgressIndicator(),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Loading your progress...',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ],
-                    ),
+                return const Scaffold(
+                  body: LoadingWidget(
+                    message: 'Loading your progress...',
                   ),
                 );
               },
