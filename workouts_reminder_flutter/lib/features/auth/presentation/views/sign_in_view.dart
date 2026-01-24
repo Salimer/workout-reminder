@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 import 'package:workouts_reminder_client/workouts_reminder_client.dart';
 
 import '../../../../core/providers/client.dart';
 
 class SignInView extends ConsumerStatefulWidget {
+  final bool startInRegistration;
+
   const SignInView({
     super.key,
+    required this.startInRegistration,
   });
 
   @override
@@ -24,6 +28,9 @@ class _SignInViewState extends ConsumerState<SignInView> {
     client = ref.read(clientProvider);
     _emailAuthController = EmailAuthController(
       client: client,
+      startScreen: widget.startInRegistration
+          ? EmailFlowScreen.startRegistration
+          : EmailFlowScreen.login,
       onAuthenticated: () {},
       onError: _handleEmailAuthError,
     );
@@ -53,18 +60,18 @@ class _SignInViewState extends ConsumerState<SignInView> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final primaryAccent = Theme.of(context).colorScheme.primary;
+
     return Scaffold(
       body: DecoratedBox(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              colorScheme.primaryContainer.withValues(alpha: 0.18),
-              colorScheme.surface,
+              primaryAccent.withOpacity(0.1),
+              Theme.of(context).scaffoldBackgroundColor,
             ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
         ),
         child: SafeArea(
@@ -82,53 +89,70 @@ class _SignInViewState extends ConsumerState<SignInView> {
                   child: Center(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 420),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          // horizontal: 24,
-                          vertical: 20,
-                        ),
-                        decoration: BoxDecoration(
-                          color: colorScheme.surface,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: colorScheme.outlineVariant.withValues(
-                              alpha: 0.35,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Icon Container matching Onboarding style
+                          Container(
+                            padding: const EdgeInsets.all(32),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: primaryAccent.withOpacity(0.2),
+                            ),
+                            child: Icon(
+                              Icons.fitness_center_rounded,
+                              size: 60,
+                              color: primaryAccent,
                             ),
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.08),
-                              blurRadius: 22,
-                              offset: const Offset(0, 10),
+                          const SizedBox(height: 32),
+                          Text(
+                            widget.startInRegistration
+                                ? 'Create Account'
+                                : 'Welcome back',
+                            style: GoogleFonts.outfit(
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(
+                                context,
+                              ).textTheme.bodyLarge?.color,
                             ),
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.fitness_center_outlined,
-                              color: colorScheme.primary,
-                              size: 36,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            widget.startInRegistration
+                                ? 'Sign up to start your journey'
+                                : 'Sign in to continue your plan',
+                            style: GoogleFonts.inter(
+                              fontSize: 18,
+                              color:
+                                  Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium?.color?.withValues(
+                                    alpha: 0.7,
+                                  ),
                             ),
-                            const SizedBox(height: 12),
-                            Text(
-                              'Welcome back',
-                              style: theme.textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.w700,
-                              ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 40),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 20,
+                              horizontal: 16,
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Sign in to continue your plan',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.onSurface.withValues(
-                                  alpha: 0.65,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).cardColor,
+                              borderRadius: BorderRadius.circular(24),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.05),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 10),
                                 ),
-                              ),
+                              ],
                             ),
-                            const SizedBox(height: 20),
-                            SignInWidget(
+                            child: SignInWidget(
                               client: client,
                               onError: _showAuthError,
                               emailSignInWidget: EmailSignInWidget(
@@ -138,8 +162,8 @@ class _SignInViewState extends ConsumerState<SignInView> {
                                 debugPrint("user authenticated");
                               },
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

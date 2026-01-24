@@ -17,7 +17,6 @@ part 'progress_state.g.dart';
 class ProgressState extends _$ProgressState {
   @override
   FutureOr<ProgressModel> build() async {
-    // await Future.delayed(const Duration(milliseconds: 500));
     final storageFuture = ref.watch(localStorageProvider.future);
     persist(
       storageFuture,
@@ -31,7 +30,7 @@ class ProgressState extends _$ProgressState {
     );
     debugPrint("ProgressState: build() called, fetching progress...");
     ref.onDispose(() {
-      // clean the local storage when the provider is disposed
+    // clean the local storage when the provider is disposed
       debugPrint("ProgressState: Disposed.");
       storageFuture.then((storage) async {
         await storage.delete('progress_state');
