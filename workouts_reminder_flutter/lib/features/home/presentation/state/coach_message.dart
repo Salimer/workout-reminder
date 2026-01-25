@@ -1,15 +1,47 @@
 import 'dart:math';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../core/constants/enums.dart';
+import '../../../../core/providers/local_time_date.dart';
 import '../../../profile/presentation/state/profile_state.dart';
+import '../../../progress/presentation/state/progress_state.dart';
 
 part 'coach_message.g.dart';
 
 @Riverpod(keepAlive: true)
-String coachMessage(Ref ref) {
+List<String> coachMessage(Ref ref) {
+  final now = ref.watch(localTimeDateProvider);
+  final progress = ref.watch(progressStateProvider).value;
+
+  if (progress != null && progress.activeWeek != null) {
+    final today = WeekdayEnum.fromDateTimeWeekday(now.weekday);
+    final daySchedule = progress.activeWeek!.days[today.index];
+
+    if (daySchedule.hasWorkout &&
+        daySchedule.notifications != null &&
+        daySchedule.notifications!.isNotEmpty) {
+      final notifications = daySchedule.notifications!;
+
+      // Filter notifications that have already passed (sent)
+      // We use a small buffer or exact comparison.
+      // Assuming scheduledDate is in the same timezone context as 'now'.
+      final passedNotifications = notifications
+          .where((n) => n.scheduledDate.isBefore(now))
+          .toList();
+
+      if (passedNotifications.isNotEmpty) {
+        return passedNotifications.map((n) => n.body).toList();
+      }
+
+      // If no notifications have passed yet (early morning), show the first upcoming one
+      // so the widget isn't empty/irrelevant.
+      return [notifications.first.body];
+    }
+  }
+
   final profile = ref.watch(profileStateProvider).value;
-  if (profile == null) return "Let's get moving!";
+  if (profile == null) return ["Let's get moving!"];
 
   final tone = profile.notificationTone;
   final random = Random();
@@ -47,5 +79,5 @@ String coachMessage(Ref ref) {
       messages = friendlyMessages;
   }
 
-  return messages[random.nextInt(messages.length)];
+  return [messages[random.nextInt(messages.length)]];
 }

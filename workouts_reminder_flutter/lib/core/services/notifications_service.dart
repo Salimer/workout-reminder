@@ -130,7 +130,6 @@ class NotificationsService {
 
   Future<List<PendingNotificationRequest>>
   getPendingNotificationRequests() async {
-    debugPrint("I am inside the not svc");
     return _notificationsPlugin.pendingNotificationRequests();
   }
 }

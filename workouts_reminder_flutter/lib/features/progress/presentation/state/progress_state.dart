@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart' show debugPrint;
 import 'package:flutter_riverpod/experimental/persist.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -28,17 +27,14 @@ class ProgressState extends _$ProgressState {
       encode: (state) => jsonEncode(state.toJson()),
       decode: (data) => ProgressModel.fromJson(jsonDecode(data)),
     );
-    debugPrint("ProgressState: build() called, fetching progress...");
     ref.onDispose(() {
-    // clean the local storage when the provider is disposed
-      debugPrint("ProgressState: Disposed.");
+      // clean the local storage when the provider is disposed
       storageFuture.then((storage) async {
         await storage.delete('progress_state');
       });
     });
     ProgressModel progress;
     try {
-      debugPrint("Attempting to fetch progress from server...");
       progress = await _fetchedProgress();
     } catch (_) {
       progress = state.value ?? ProgressModel.init();
@@ -48,7 +44,6 @@ class ProgressState extends _$ProgressState {
   }
 
   Future<ProgressModel> _fetchedProgress() async {
-    debugPrint("Starting to fetch progress from server...");
     final schedule = await ref.read(clientProvider).progress.getProgress();
 
     if (schedule == null) {
@@ -82,12 +77,10 @@ class ProgressState extends _$ProgressState {
   }
 
   void setTodayStatus(DayWorkoutStatusEnum status) {
-    debugPrint('Setting today status to: $status');
     final currentState = state.requireValue;
     final updatedState = currentState.setTodayStatusOfActiveWeek(
       status,
     );
-    debugPrint("Updated state after setting day status: $updatedState");
     if (updatedState != null) {
       set(updatedState);
     }
