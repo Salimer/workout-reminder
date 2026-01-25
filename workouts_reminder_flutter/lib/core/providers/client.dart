@@ -7,10 +7,10 @@ part 'client.g.dart';
 
 @Riverpod(keepAlive: true)
 Client client(Ref ref) {
-  const serverUrlFromEnv = String.fromEnvironment('SERVER_URL');
-  final serverUrl = serverUrlFromEnv.isEmpty
-      ? 'http://$localhost:8080/'
-      : serverUrlFromEnv;
+  // const serverUrlFromEnv = String.fromEnvironment('SERVER_URL');
+  // final serverUrl = serverUrlFromEnv.isEmpty
+  //     ? 'http://$localhost:8080/'
+  //     : serverUrlFromEnv;
 
   final sessionManager = FlutterAuthSessionManager();
 

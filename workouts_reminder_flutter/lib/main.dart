@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'core/observers/provider_logger_observer.dart';
+// import 'core/observers/provider_logger_observer.dart';
 import 'core/providers/theme.dart';
 import 'my_app.dart';
 
