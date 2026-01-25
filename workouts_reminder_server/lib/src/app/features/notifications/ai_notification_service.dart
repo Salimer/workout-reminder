@@ -7,7 +7,7 @@ import '../../../generated/protocol.dart';
 
 class AiNotificationService {
   static const int _maxTitleLength = 40;
-  static const int _maxBodyLength = 120;
+  static const int _maxBodyLength = 300;
   static const String _model = 'gemini-2.5-flash';
 
   const AiNotificationService();
@@ -33,8 +33,14 @@ class AiNotificationService {
       session.log('Profile missing; skipping AI notification copy.');
       return;
     }
+
+    // Calculate user tenure (current week count)
+    // We count the number of weeks in the Progress model to estimate how long they've been using the app.
+    final progress = await _loadProgress(session, userId);
+    final weekCount = (progress?.weeks?.length ?? 0) + 1;
+
     session.log(
-      'AI notifications: loaded profileId=${profile.id}, goals=${profile.goals?.length ?? 0}.',
+      'AI notifications: loaded profileId=${profile.id}, goals=${profile.goals?.length ?? 0}, tenure=Week $weekCount.',
     );
 
     final weekSchedule = await _loadWeekSchedule(session, weekScheduleId);
@@ -60,6 +66,7 @@ class AiNotificationService {
       goals: goals,
       weekSchedule: weekSchedule,
       notificationContext: updateContext.map((entry) => entry.prompt).toList(),
+      weekCount: weekCount,
     );
     session.log(
       'AI notifications: prompt built (${prompt.length} chars), calling Gemini.',
@@ -141,6 +148,10 @@ class AiNotificationService {
       );
     }
 
+    // Estimate tenure for planned copies too
+    final progress = await _loadProgress(session, userId);
+    final weekCount = (progress?.weeks?.length ?? 0) + 1;
+
     final promptContext = _buildPlannedPromptContext(
       weekSchedule.days ?? <DaySchedule>[],
     );
@@ -154,6 +165,7 @@ class AiNotificationService {
       goals: _extractGoals(profile),
       weekSchedule: weekSchedule,
       notificationContext: promptContext,
+      weekCount: weekCount,
     );
     session.log(
       'AI notifications: planned prompt built (${prompt.length} chars), calling Gemini.',
@@ -208,6 +220,19 @@ class AiNotificationService {
     );
   }
 
+  Future<Progress?> _loadProgress(
+    Session session,
+    UuidValue userId,
+  ) {
+    return Progress.db.findFirstRow(
+      session,
+      where: (t) => t.authUserId.equals(userId),
+      include: Progress.include(
+        weeks: WeekSchedule.includeList(),
+      ),
+    );
+  }
+
   Future<WeekSchedule?> _loadWeekSchedule(
     Session session,
     int weekScheduleId,
@@ -237,6 +262,7 @@ class AiNotificationService {
     required List<String> goals,
     required WeekSchedule weekSchedule,
     required List<_PromptNotificationContext> notificationContext,
+    required int weekCount,
   }) {
     final goalText = goals.isEmpty
         ? 'No specific goals listed.'
@@ -245,6 +271,7 @@ class AiNotificationService {
     final character = profile.characterName.trim();
     final motivation = profile.motivation.trim();
     final fitnessLevel = profile.fitnessLevel.trim();
+
     final buffer = StringBuffer()
       ..writeln('You write short, motivating workout notifications.')
       ..writeln('Constraints:')
@@ -257,10 +284,19 @@ class AiNotificationService {
       ..writeln('- Do not use code fences or markdown.')
       ..writeln('- Tone: $tone (supportive but slightly pushy).')
       ..writeln(
-        '- Make each message feel personal and anchored to the user profile.',
+        '- Make each message feel personal/anchored to the user profile.',
       )
       ..writeln(
-        '- Reference motivation, goals, fitness level, and tone directly.',
+        '- User Tenure: Week $weekCount. Use this to adapt your strategy:',
+      )
+      ..writeln(
+        '  - Weeks 1-4: Focus on habit formation, starting small, and encouragement.',
+      )
+      ..writeln(
+        '  - Weeks 5+: Focus on consistency, discipline, not breaking the streak, and pushing limits.',
+      )
+      ..writeln(
+        '- DO NOT simply repeat the user\'s goals. Use them as subtle context only.',
       )
       ..writeln('- Avoid generic slogans; be specific to the user.')
       ..writeln('- Keep wording consistent and not random.')

@@ -4,11 +4,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../state/coach_message.dart';
 
-class DailyCoachCard extends ConsumerWidget {
+class DailyCoachCard extends ConsumerStatefulWidget {
   const DailyCoachCard({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DailyCoachCard> createState() => _DailyCoachCardState();
+}
+
+class _DailyCoachCardState extends ConsumerState<DailyCoachCard> {
+  int _activeIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
     final messages = ref.watch(coachMessageProvider);
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
@@ -52,6 +59,11 @@ class DailyCoachCard extends ConsumerWidget {
                     height: 100,
                     child: PageView.builder(
                       itemCount: messages.length,
+                      onPageChanged: (index) {
+                        setState(() {
+                          _activeIndex = index;
+                        });
+                      },
                       itemBuilder: (context, index) {
                         return Align(
                           alignment: Alignment.centerLeft,
@@ -74,15 +86,21 @@ class DailyCoachCard extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(
                         messages.length,
-                        (index) => Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 2),
-                          width: 4,
-                          height: 4,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: scheme.primary.withOpacity(0.5),
-                          ),
-                        ),
+                        (index) {
+                          final isActive = index == _activeIndex;
+                          return AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            margin: const EdgeInsets.symmetric(horizontal: 2),
+                            width: isActive ? 16 : 6,
+                            height: 6,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(3),
+                              color: isActive
+                                  ? scheme.primary
+                                  : scheme.primary.withValues(alpha: 0.2),
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ],

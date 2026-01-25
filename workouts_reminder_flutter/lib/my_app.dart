@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
           title: 'Serverpod Demo',
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
-          themeMode: ref.read(themeProvider).requireValue,
+          themeMode: ref.watch(themeProvider).requireValue,
           routerConfig: ref.read(routesProvider),
           builder: (context, child) {
             return NetworkStatusWidget(child: child ?? const SizedBox.shrink());
