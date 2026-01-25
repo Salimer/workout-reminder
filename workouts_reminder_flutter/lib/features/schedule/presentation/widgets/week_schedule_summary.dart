@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/widgets/animated_section.dart';
 import '../../../../core/use_cases/app_use_case.dart';
+import '../../../../core/utils/helper_methods.dart';
 import '../../data/models/week_schedule_model.dart';
 import '../../../notifications/data/models/notification_model.dart';
 
@@ -197,7 +198,10 @@ class WeekScheduleSummary extends StatelessWidget {
                 alignment: WrapAlignment.center,
                 runAlignment: WrapAlignment.center,
                 children: [
-                  for (final entry in schedule.days.asMap().entries)
+                  for (final entry in reorderDaysFromWeekStart(
+                    schedule.days,
+                    schedule.createdAt,
+                  ).asMap().entries)
                     SizedBox(
                       width: cardWidth,
                       child: AppAnimatedSection(

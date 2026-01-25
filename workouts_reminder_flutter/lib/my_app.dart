@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         return MaterialApp.router(
-          title: 'Serverpod Demo',
+          title: 'Nudge Fit',
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           themeMode: ref.watch(themeProvider).requireValue,

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../core/constants/enums.dart';
+import '../../../../core/utils/helper_methods.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../state/home_view_state.dart';
 import '../../../schedule/data/models/day_schedule_model.dart';
@@ -88,43 +89,14 @@ class _WeekGlanceRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Reorder days starting from the week's creation day
-    final days = _reorderDaysFromWeekStart(weekDays);
+    final days = weekStartDate != null
+        ? reorderDaysFromWeekStart(weekDays, weekStartDate!)
+        : weekDays;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: days.map((day) => _DayDot(day: day, scheme: scheme)).toList(),
     );
-  }
-
-  /// Reorder days to start from the week's creation date
-  /// For example, if week started on Sunday, order will be: Sun, Mon, Tue, Wed, Thu, Fri, Sat
-  List<DayScheduleModel> _reorderDaysFromWeekStart(
-    List<DayScheduleModel> days,
-  ) {
-    if (days.isEmpty) return days;
-
-    // First, sort by day index to ensure consistent ordering (Mon=0, ..., Sun=6)
-    final sortedDays = List<DayScheduleModel>.from(days)
-      ..sort((a, b) => a.day.index.compareTo(b.day.index));
-
-    // If we have the week start date, use it to determine the start day
-    if (weekStartDate != null) {
-      // Get the weekday when the week was created (1 = Mon, ..., 7 = Sun)
-      final startWeekday = weekStartDate!.weekday;
-      // Convert to 0-based index matching WeekdayEnum (0 = Mon, ..., 6 = Sun)
-      final startIndex = startWeekday - 1;
-
-      // Reorder: days from startIndex to end, then days from 0 to startIndex
-      final reordered = [
-        ...sortedDays.sublist(startIndex),
-        ...sortedDays.sublist(0, startIndex),
-      ];
-
-      return reordered;
-    }
-
-    // Fallback: if no start date, return days as-is (Mon-Sun)
-    return sortedDays;
   }
 }
 
