@@ -55,6 +55,7 @@ class AiNotificationService {
     final goals = _extractGoals(profile);
     final updateContext = _buildNotificationUpdateContext(
       weekSchedule.days ?? <DaySchedule>[],
+      weekSchedule,
     );
     if (updateContext.isEmpty) {
       session.log('AI notifications: no notifications found to update.');
@@ -312,7 +313,9 @@ class AiNotificationService {
     for (final entry in notificationContext) {
       buffer
         ..writeln('- id: ${entry.id}')
-        ..writeln('  day: ${entry.dayLabel}')
+        ..writeln(
+          '  day: ${entry.dayLabel} (day ${entry.dayPosition}/7 of user\'s week)',
+        )
         ..writeln('  scheduled: ${entry.scheduledDate}');
     }
 
@@ -548,13 +551,28 @@ class AiNotificationService {
 
 List<_NotificationUpdateContext> _buildNotificationUpdateContext(
   List<DaySchedule> days,
+  WeekSchedule weekSchedule,
 ) {
   final result = <_NotificationUpdateContext>[];
+
+  // Calculate day position within the user's week
+  final weekStartDay = weekSchedule.createdAt.weekday; // 1 = Mon, ..., 7 = Sun
+
   for (final day in days) {
     for (final notification in day.notifications ?? <Notification>[]) {
       final notificationId = notification.id;
       if (notificationId == null) {
         continue;
+      }
+
+      // Calculate this day's position in the user's week (1-7)
+      final dayIndex = day.day.index; // 0 = Mon, ..., 6 = Sun
+      final calendarDay = dayIndex + 1; // Convert to 1-7 (1 = Mon, 7 = Sun)
+
+      // Calculate offset from week start
+      int dayPosition = calendarDay - weekStartDay + 1;
+      if (dayPosition <= 0) {
+        dayPosition += 7; // Wrap around if negative
       }
 
       result.add(
@@ -564,6 +582,7 @@ List<_NotificationUpdateContext> _buildNotificationUpdateContext(
             id: notificationId,
             dayLabel: day.day.name,
             scheduledDate: notification.scheduledDate.toIso8601String(),
+            dayPosition: dayPosition,
           ),
         ),
       );
@@ -585,6 +604,7 @@ List<_PromptNotificationContext> _buildPlannedPromptContext(
           id: index,
           dayLabel: day.day.name,
           scheduledDate: notification.scheduledDate.toIso8601String(),
+          dayPosition: 1, // Placeholder for planned notifications
         ),
       );
       index++;
@@ -608,11 +628,13 @@ class _PromptNotificationContext {
   final int id;
   final String dayLabel;
   final String scheduledDate;
+  final int dayPosition; // Day position within the user's week (1-7)
 
   const _PromptNotificationContext({
     required this.id,
     required this.dayLabel,
     required this.scheduledDate,
+    required this.dayPosition,
   });
 }
 

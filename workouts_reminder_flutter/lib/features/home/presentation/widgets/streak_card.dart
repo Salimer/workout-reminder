@@ -56,7 +56,11 @@ class StreakCard extends ConsumerWidget {
           const SizedBox(height: 16),
           // Week Glance Dots
           if (weekDays.isNotEmpty)
-            _WeekGlanceRow(weekDays: weekDays, scheme: scheme)
+            _WeekGlanceRow(
+              weekDays: weekDays,
+              scheme: scheme,
+              weekStartDate: state.weekStartDate,
+            )
           else
             Text(
               "Plan your week to track progress",
@@ -71,21 +75,56 @@ class StreakCard extends ConsumerWidget {
 }
 
 class _WeekGlanceRow extends StatelessWidget {
-  const _WeekGlanceRow({required this.weekDays, required this.scheme});
+  const _WeekGlanceRow({
+    required this.weekDays,
+    required this.scheme,
+    this.weekStartDate,
+  });
 
   final List<DayScheduleModel> weekDays;
   final ColorScheme scheme;
+  final DateTime? weekStartDate;
 
   @override
   Widget build(BuildContext context) {
-    // Ensure we sort days if not sorted
-    final days = List.from(weekDays)
-      ..sort((a, b) => a.day.index.compareTo(b.day.index));
+    // Reorder days starting from the week's creation day
+    final days = _reorderDaysFromWeekStart(weekDays);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: days.map((day) => _DayDot(day: day, scheme: scheme)).toList(),
     );
+  }
+
+  /// Reorder days to start from the week's creation date
+  /// For example, if week started on Sunday, order will be: Sun, Mon, Tue, Wed, Thu, Fri, Sat
+  List<DayScheduleModel> _reorderDaysFromWeekStart(
+    List<DayScheduleModel> days,
+  ) {
+    if (days.isEmpty) return days;
+
+    // First, sort by day index to ensure consistent ordering (Mon=0, ..., Sun=6)
+    final sortedDays = List<DayScheduleModel>.from(days)
+      ..sort((a, b) => a.day.index.compareTo(b.day.index));
+
+    // If we have the week start date, use it to determine the start day
+    if (weekStartDate != null) {
+      // Get the weekday when the week was created (1 = Mon, ..., 7 = Sun)
+      final startWeekday = weekStartDate!.weekday;
+      // Convert to 0-based index matching WeekdayEnum (0 = Mon, ..., 6 = Sun)
+      final startIndex = startWeekday - 1;
+
+      // Reorder: days from startIndex to end, then days from 0 to startIndex
+      final reordered = [
+        ...sortedDays.sublist(startIndex),
+        ...sortedDays.sublist(0, startIndex),
+      ];
+
+      return reordered;
+    }
+
+    // Fallback: if no start date, return days as-is (Mon-Sun)
+    return sortedDays;
   }
 }
 

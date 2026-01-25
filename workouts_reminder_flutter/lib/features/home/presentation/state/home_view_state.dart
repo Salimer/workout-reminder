@@ -58,6 +58,7 @@ class HomeViewState extends _$HomeViewState {
       nextWorkoutDay: nextWorkout,
       currentWeekDays: currentWeekDays,
       goals: goals,
+      weekStartDate: progress?.activeWeek?.createdAt,
     );
   }
 

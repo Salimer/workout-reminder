@@ -9,6 +9,7 @@ class HomeViewModel {
   final bool isNotificationsEnabled;
   final List<DayScheduleModel> currentWeekDays;
   final List<String> goals;
+  final DateTime? weekStartDate;
 
   const HomeViewModel({
     required this.greeting,
@@ -18,5 +19,6 @@ class HomeViewModel {
     this.isNotificationsEnabled = true,
     required this.currentWeekDays,
     required this.goals,
+    this.weekStartDate,
   });
 }

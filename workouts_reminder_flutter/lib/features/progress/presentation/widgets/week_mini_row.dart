@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/enums.dart';
+import '../../../schedule/data/models/day_schedule_model.dart';
 import '../../../schedule/data/models/week_schedule_model.dart';
 import 'day_dot.dart';
 
@@ -67,7 +68,7 @@ class WeekMiniRow extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Row(
-              children: week.days
+              children: _reorderDays(week.days, week.createdAt)
                   .map(
                     (day) => DayDot(
                       day: day,
@@ -105,4 +106,28 @@ String _formatDate(DateTime date) {
   ];
   final month = months[date.month - 1];
   return '$month ${date.day}';
+}
+
+List<DayScheduleModel> _reorderDays(
+  List<DayScheduleModel> days,
+  DateTime weekStartDate,
+) {
+  if (days.isEmpty) return days;
+
+  //Sort by day index (Mon=0, ..., Sun=6)
+  final sortedDays = List<DayScheduleModel>.from(days)
+    ..sort((a, b) => a.day.index.compareTo(b.day.index));
+
+  // Get the weekday when the week was created (1 = Mon, ..., 7 = Sun)
+  final startWeekday = weekStartDate.weekday;
+  // Convert to 0-based index matching WeekdayEnum (0 = Mon, ..., 6 = Sun)
+  final startIndex = startWeekday - 1;
+
+  // Reorder: days from startIndex to end, then days from 0 to startIndex
+  final reordered = [
+    ...sortedDays.sublist(startIndex),
+    ...sortedDays.sublist(0, startIndex),
+  ];
+
+  return reordered;
 }
