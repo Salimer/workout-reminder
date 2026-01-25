@@ -16,11 +16,17 @@ class CreateWeekScheduleService {
     final userId = _requireUserId(session);
     await _requireMotivation(session, userId);
     final progress = await _requireProgress(session, userId);
+
+    // Check if there's an active week schedule
+    await _requireNoActiveWeek(session, progress);
+
     final plannedCopies = await _aiNotificationService.generatePlannedCopies(
       session,
       weekSchedule,
     );
-    final weekScheduleId = await session.db.transaction<int>((transaction) async {
+    final weekScheduleId = await session.db.transaction<int>((
+      transaction,
+    ) async {
       final progressId = progress.id;
       if (progressId == null) {
         throw ServerpodException(
@@ -81,9 +87,9 @@ class CreateWeekScheduleService {
 
   Future<Progress?> _findProgress(
     Session session,
-    UuidValue userId,
-    [Transaction? transaction]
-  ) {
+    UuidValue userId, [
+    Transaction? transaction,
+  ]) {
     return Progress.db.findFirstRow(
       session,
       where: (t) => t.authUserId.equals(userId),
@@ -93,9 +99,9 @@ class CreateWeekScheduleService {
 
   Future<Progress> _requireProgress(
     Session session,
-    UuidValue userId,
-    [Transaction? transaction]
-  ) async {
+    UuidValue userId, [
+    Transaction? transaction,
+  ]) async {
     final existingProgress = await _findProgress(
       session,
       userId,
@@ -125,8 +131,9 @@ class CreateWeekScheduleService {
     Progress existingProgress,
     Transaction transaction,
   ) {
-    final updatedProgress =
-        existingProgress.copyWith(updatedAt: DateTime.now());
+    final updatedProgress = existingProgress.copyWith(
+      updatedAt: DateTime.now(),
+    );
 
     return Progress.db.updateRow(
       session,
@@ -138,9 +145,9 @@ class CreateWeekScheduleService {
 
   Future<void> _requireMotivation(
     Session session,
-    UuidValue userId,
-    [Transaction? transaction]
-  ) async {
+    UuidValue userId, [
+    Transaction? transaction,
+  ]) async {
     final profile = await Profile.db.findFirstRow(
       session,
       where: (t) => t.authUserId.equals(userId),
@@ -154,6 +161,61 @@ class CreateWeekScheduleService {
         errorCode: 422,
       );
     }
+  }
+
+  Future<void> _requireNoActiveWeek(
+    Session session,
+    Progress progress,
+  ) async {
+    // Load the progress with weeks to check for active schedules
+    final progressWithWeeks = await Progress.db.findById(
+      session,
+      progress.id!,
+      include: Progress.include(
+        weeks: WeekSchedule.includeList(),
+      ),
+    );
+
+    if (progressWithWeeks?.weeks == null || progressWithWeeks!.weeks!.isEmpty) {
+      // No weeks exist, so it's safe to create a new one
+      return;
+    }
+
+    final now = DateTime.now();
+
+    // Check if any week is unfinished (note is null) and hasn't passed its deadline
+    for (final week in progressWithWeeks.weeks!) {
+      // A week is considered "active" if:
+      // 1. It hasn't been finished (note is null)
+      // 2. Current date is on or before the deadline
+      if (week.note == null && !now.isAfter(week.deadline)) {
+        // Found an active, unfinished week
+        final deadlineStr = _formatDate(week.deadline);
+        throw ServerpodException(
+          message:
+              'You already have an active week schedule until $deadlineStr. Please finish your current week before creating a new one.',
+          errorCode: 409, // Conflict
+        );
+      }
+    }
+  }
+
+  String _formatDate(DateTime date) {
+    final months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }
 
   Future<WeekSchedule> _insertWeekSchedule(
