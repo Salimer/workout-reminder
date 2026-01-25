@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../core/widgets/animated_section.dart';
 import '../../../../core/widgets/app_card.dart';
@@ -70,9 +71,10 @@ class ScheduleView extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: Icon(
-                        Icons.calendar_today_outlined,
+                      child: HugeIcon(
+                        icon: HugeIcons.strokeRoundedCalendar01,
                         color: scheme.primary,
+                        size: 28,
                       ),
                     ),
                   ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../state/home_view_state.dart';
 
@@ -48,7 +49,10 @@ class HomeHeader extends ConsumerWidget {
               color: scheme.primaryContainer,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.person), // Fallback
+            child: const HugeIcon(
+              icon: HugeIcons.strokeRoundedUserCircle,
+              size: 28,
+            ),
           ),
         ),
       ],

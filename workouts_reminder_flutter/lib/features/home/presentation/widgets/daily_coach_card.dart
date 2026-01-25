@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../core/widgets/app_card.dart';
 import '../state/coach_message.dart';
@@ -34,8 +35,8 @@ class _DailyCoachCardState extends ConsumerState<DailyCoachCard> {
                   color: scheme.primaryContainer.withValues(alpha: 0.5),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  Icons.format_quote_rounded,
+                child: HugeIcon(
+                  icon: HugeIcons.strokeRoundedQuoteUp,
                   color: scheme.primary,
                   size: 20,
                 ),

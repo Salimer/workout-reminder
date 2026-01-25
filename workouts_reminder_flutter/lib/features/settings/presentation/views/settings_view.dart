@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:workouts_reminder_flutter/features/schedule/use_cases/notifications_use_case.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../core/providers/theme.dart' show themeProvider;
 import '../../../../core/use_cases/app_use_case.dart';
@@ -74,9 +75,10 @@ class SettingsView extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: Icon(
-                        Icons.tune,
+                      child: HugeIcon(
+                        icon: HugeIcons.strokeRoundedSettings02,
                         color: scheme.primary,
+                        size: 32,
                       ),
                     ),
                   ],
@@ -103,11 +105,18 @@ class SettingsView extends StatelessWidget {
                       color: scheme.primary.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(Icons.person, color: scheme.primary),
+                    child: HugeIcon(
+                      icon: HugeIcons.strokeRoundedUser,
+                      color: scheme.primary,
+                      size: 20,
+                    ),
                   ),
                   title: const Text('My Profile'),
                   subtitle: const Text('Goals & Motivation'),
-                  trailing: const Icon(Icons.chevron_right),
+                  trailing: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedArrowRight01,
+                    size: 18,
+                  ),
                   onTap: () {
                     context.goNamed(AppRoutes.profile);
                   },
@@ -158,17 +167,23 @@ class SettingsView extends StatelessWidget {
                           segments: const [
                             ButtonSegment(
                               value: ThemeMode.system,
-                              icon: Icon(Icons.phone_iphone),
+                              icon: HugeIcon(
+                                icon: HugeIcons.strokeRoundedSmartPhone01,
+                              ),
                               label: Text('System'),
                             ),
                             ButtonSegment(
                               value: ThemeMode.light,
-                              icon: Icon(Icons.wb_sunny_outlined),
+                              icon: HugeIcon(
+                                icon: HugeIcons.strokeRoundedSun01,
+                              ),
                               label: Text('Light'),
                             ),
                             ButtonSegment(
                               value: ThemeMode.dark,
-                              icon: Icon(Icons.nights_stay_outlined),
+                              icon: HugeIcon(
+                                icon: HugeIcons.strokeRoundedMoon02,
+                              ),
                               label: Text('Dark'),
                             ),
                           ],
@@ -226,7 +241,11 @@ class SettingsView extends StatelessWidget {
                           color: scheme.error.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(Icons.logout, color: scheme.error),
+                        child: HugeIcon(
+                          icon: HugeIcons.strokeRoundedLogout03,
+                          color: scheme.error,
+                          size: 20,
+                        ),
                       ),
                       title: const Text('Sign out'),
                       subtitle: const Text('End this session on this device'),
@@ -288,9 +307,10 @@ class SettingsView extends StatelessWidget {
                           color: scheme.error.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
-                          Icons.delete_forever,
+                        child: HugeIcon(
+                          icon: HugeIcons.strokeRoundedDelete02,
                           color: scheme.error,
+                          size: 20,
                         ),
                       ),
                       title: const Text('Delete account'),

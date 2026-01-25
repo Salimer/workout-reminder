@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../core/use_cases/app_use_case.dart';
 
@@ -72,7 +73,7 @@ class FinishWeekButton extends ConsumerWidget {
               width: 18,
               child: CircularProgressIndicator(strokeWidth: 2),
             )
-          : const Icon(Icons.check_circle_outline),
+          : const HugeIcon(icon: HugeIcons.strokeRoundedTick02),
       label: const Text('Finish week'),
     );
   }

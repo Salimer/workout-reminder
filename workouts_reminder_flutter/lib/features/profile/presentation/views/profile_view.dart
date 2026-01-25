@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/experimental/mutation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../core/widgets/animated_section.dart';
 import '../../../../core/widgets/app_card.dart';
@@ -127,9 +128,10 @@ class _ProfileViewState extends State<ProfileView> {
                                     ),
                                   ],
                                 ),
-                                child: Icon(
-                                  Icons.person,
+                                child: HugeIcon(
+                                  icon: HugeIcons.strokeRoundedUser,
                                   color: scheme.primary,
+                                  size: 32,
                                 ),
                               ),
                             ],
@@ -173,7 +175,10 @@ class _ProfileViewState extends State<ProfileView> {
                                     borderRadius: BorderRadius.circular(12),
                                     borderSide: BorderSide.none,
                                   ),
-                                  prefixIcon: const Icon(Icons.badge_outlined),
+                                  prefixIcon: const HugeIcon(
+                                    icon: HugeIcons.strokeRoundedUserCircle,
+                                    size: 20,
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 12),
@@ -224,8 +229,9 @@ class _ProfileViewState extends State<ProfileView> {
                                   alignLabelWithHint: true,
                                   prefixIcon: Padding(
                                     padding: const EdgeInsets.only(bottom: 48),
-                                    child: const Icon(
-                                      Icons.psychology_outlined,
+                                    child: const HugeIcon(
+                                      icon: HugeIcons.strokeRoundedBrain02,
+                                      size: 20,
                                     ),
                                   ),
                                 ),
@@ -375,7 +381,9 @@ class _ProfileViewState extends State<ProfileView> {
                                   IconButton.filled(
                                     onPressed: () =>
                                         _addCustomGoal(profile.goals, ref),
-                                    icon: const Icon(Icons.add),
+                                    icon: const HugeIcon(
+                                      icon: HugeIcons.strokeRoundedAdd01,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -502,7 +510,9 @@ class _ProfileViewState extends State<ProfileView> {
                                           strokeWidth: 2,
                                         ),
                                       )
-                                    : const Icon(Icons.save_outlined),
+                                    : const HugeIcon(
+                                        icon: HugeIcons.strokeRoundedFloppyDisk,
+                                      ),
                                 label: const Text('Save'),
                               );
                             },

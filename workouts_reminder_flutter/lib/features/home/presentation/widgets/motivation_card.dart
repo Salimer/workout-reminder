@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../core/config/routes.dart';
 import '../../../../core/widgets/app_card.dart';
@@ -39,7 +40,7 @@ class MotivationCard extends ConsumerWidget {
                 onPressed: () {
                   context.goNamed(AppRoutes.profile);
                 },
-                icon: const Icon(Icons.edit_outlined),
+                icon: const HugeIcon(icon: HugeIcons.strokeRoundedEdit02),
                 tooltip: 'Edit goals',
               ),
             ],

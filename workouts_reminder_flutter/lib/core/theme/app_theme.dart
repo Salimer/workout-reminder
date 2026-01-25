@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   // Core greens for brand consistency.
@@ -59,9 +60,11 @@ class AppTheme {
         foregroundColor: scheme.onSurface,
         centerTitle: false,
       ),
-      textTheme: const TextTheme(
-        titleLarge: TextStyle(fontWeight: FontWeight.w700),
-        bodyMedium: TextStyle(fontWeight: FontWeight.w500),
+      textTheme: GoogleFonts.outfitTextTheme(
+        const TextTheme(
+          titleLarge: TextStyle(fontWeight: FontWeight.w700),
+          bodyMedium: TextStyle(fontWeight: FontWeight.w500),
+        ),
       ).apply(bodyColor: scheme.onSurface, displayColor: scheme.onSurface),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: scheme.surface,

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:workouts_reminder_flutter/core/use_cases/app_use_case.dart';
+import 'package:hugeicons/hugeicons.dart';
 
+import '../../../../core/use_cases/app_use_case.dart';
+import '../../../profile/presentation/state/profile_state.dart';
 import '../../../progress/presentation/views/progress_view.dart';
 import '../../../schedule/presentation/views/schedule_view.dart';
 import '../../../settings/presentation/views/settings_view.dart';
 import '../state/bottom_navigation.dart';
 import 'main_view.dart';
 
-// ***************
 class HomeView extends ConsumerStatefulWidget {
   const HomeView({super.key});
 
@@ -20,10 +21,22 @@ class _HomeViewState extends ConsumerState<HomeView> {
   late final PageController _pageController;
 
   static const _items = [
-    BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-    BottomNavigationBarItem(icon: Icon(Icons.show_chart), label: 'Progress'),
-    BottomNavigationBarItem(icon: Icon(Icons.schedule), label: 'Schedule'),
-    BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
+    BottomNavigationBarItem(
+      icon: HugeIcon(icon: HugeIcons.strokeRoundedHome01),
+      label: 'Home',
+    ),
+    BottomNavigationBarItem(
+      icon: HugeIcon(icon: HugeIcons.strokeRoundedAnalytics02),
+      label: 'Progress',
+    ),
+    BottomNavigationBarItem(
+      icon: HugeIcon(icon: HugeIcons.strokeRoundedCalendar03),
+      label: 'Schedule',
+    ),
+    BottomNavigationBarItem(
+      icon: HugeIcon(icon: HugeIcons.strokeRoundedSettings02),
+      label: 'Settings',
+    ),
   ];
 
   static const _pages = [
@@ -57,6 +70,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
   @override
   Widget build(BuildContext context) {
     _bottomNavListener(ref);
+    ref.listen(profileStateProvider, (_, _) {});
 
     return Scaffold(
       body: SafeArea(

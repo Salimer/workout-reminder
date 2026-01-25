@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/widgets/app_card.dart';
@@ -25,8 +26,8 @@ class StreakCard extends ConsumerWidget {
         children: [
           Row(
             children: [
-              const Icon(
-                Icons.local_fire_department,
+              const HugeIcon(
+                icon: HugeIcons.strokeRoundedFire,
                 color: Colors.orange,
                 size: 28,
               ),
@@ -109,11 +110,19 @@ class _DayDot extends StatelessWidget {
     switch (status) {
       case DayWorkoutStatusEnum.performed:
         color = Colors.green;
-        icon = const Icon(Icons.check, size: 12, color: Colors.white);
+        icon = const HugeIcon(
+          icon: HugeIcons.strokeRoundedTick02,
+          size: 12,
+          color: Colors.white,
+        );
         break;
       case DayWorkoutStatusEnum.skipped:
         color = Colors.orange.withValues(alpha: 0.2);
-        icon = const Icon(Icons.close, size: 12, color: Colors.orange);
+        icon = const HugeIcon(
+          icon: HugeIcons.strokeRoundedCancel01,
+          size: 12,
+          color: Colors.orange,
+        );
         break;
       case DayWorkoutStatusEnum.pending:
         // Check if today or future?

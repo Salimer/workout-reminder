@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/experimental/mutation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../core/config/routes.dart';
 import '../../../../core/constants/enums.dart';
@@ -105,7 +106,10 @@ class MainView extends StatelessWidget {
                                   .read(bottomNavigationUseCaseProvider)
                                   .goToScheduleView();
                             },
-                            icon: const Icon(Icons.calendar_today_outlined),
+                            icon: HugeIcon(
+                              icon: HugeIcons.strokeRoundedCalendar03,
+                              color: Colors.white,
+                            ),
                             label: const Text('Plan my week'),
                           ),
                         ],
