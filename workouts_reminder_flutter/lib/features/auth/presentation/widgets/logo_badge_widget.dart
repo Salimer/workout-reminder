@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class LogoBadgeWidget extends StatelessWidget {
   final Color accent;
@@ -37,8 +38,8 @@ class LogoBadgeWidget extends StatelessWidget {
           ),
         ],
       ),
-      child: Icon(
-        Icons.fitness_center_rounded,
+      child: HugeIcon(
+        icon: HugeIcons.strokeRoundedDumbbell01,
         size: iconSize,
         color: Colors.white,
       ),

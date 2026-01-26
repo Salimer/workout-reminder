@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../state/onboarding_completion.dart';
@@ -26,20 +27,20 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
         title: 'Track Workouts',
         description:
             'Log your exercises and monitor your progress effortlessly.',
-        icon: Icons.fitness_center_rounded,
+        icon: HugeIcons.strokeRoundedDumbbell03,
         color: primaryColor,
       ),
       OnboardingPageData(
         title: 'Stay Consistent',
         description:
             'Visualize your streaks and build healthy habits that last.',
-        icon: Icons.graphic_eq_rounded,
+        icon: HugeIcons.strokeRoundedAnalytics02,
         color: primaryColor,
       ),
       OnboardingPageData(
         title: 'Get Reminders',
         description: 'Never miss a workout again with smart notifications.',
-        icon: Icons.notifications_active_rounded,
+        icon: HugeIcons.strokeRoundedNotification03,
         color: primaryColor,
       ),
     ];
@@ -157,8 +158,8 @@ class OnboardingPage extends StatelessWidget {
               shape: BoxShape.circle,
               color: data.color.withOpacity(0.2),
             ),
-            child: Icon(
-              data.icon,
+            child: HugeIcon(
+              icon: data.icon,
               size: 80,
               color: data.color,
             ),
@@ -193,7 +194,7 @@ class OnboardingPage extends StatelessWidget {
 class OnboardingPageData {
   final String title;
   final String description;
-  final IconData icon;
+  final List<List<dynamic>> icon;
   final Color color;
 
   OnboardingPageData({

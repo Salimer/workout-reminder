@@ -1,6 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../providers/connectivity_service.dart';
 
@@ -44,7 +45,10 @@ class _NetworkStatusWidgetState extends ConsumerState<NetworkStatusWidget> {
       SnackBar(
         content: Row(
           children: const [
-            Icon(Icons.wifi_off, color: Colors.white),
+            HugeIcon(
+              icon: HugeIcons.strokeRoundedWifiOff01,
+              color: Colors.white,
+            ),
             SizedBox(width: 12),
             Text('No Internet Connection'),
           ],

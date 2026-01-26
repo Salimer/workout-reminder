@@ -8,7 +8,7 @@ import 'finish_week_schedule_service.dart';
 import 'get_week_schedule_service.dart';
 
 class WeekScheduleEndpoint extends Endpoint {
-  final _weekScheduleService = const CreateWeekScheduleService();
+  final _createWeekScheduleService = const CreateWeekScheduleService();
   final _deleteWeekScheduleService = const DeleteWeekScheduleService();
   final _finishWeekScheduleService = const FinishWeekScheduleService();
   final _getProgressService = const GetProgressService();
@@ -21,7 +21,7 @@ class WeekScheduleEndpoint extends Endpoint {
     Session session,
     WeekSchedule weekSchedule,
   ) async {
-    final weekScheduleId = await _weekScheduleService.call(
+    final weekScheduleId = await _createWeekScheduleService.call(
       session,
       weekSchedule,
     );

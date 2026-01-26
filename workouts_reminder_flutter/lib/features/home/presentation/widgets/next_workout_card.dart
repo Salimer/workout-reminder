@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../core/widgets/app_card.dart';
 import '../state/home_view_state.dart';
@@ -22,8 +23,8 @@ class NextWorkoutCard extends ConsumerWidget {
         borderRadius: BorderRadius.circular(16),
         child: Row(
           children: [
-            Icon(
-              Icons.calendar_today_outlined,
+            HugeIcon(
+              icon: HugeIcons.strokeRoundedCalendar03,
               color: scheme.onSurface.withValues(alpha: 0.5),
             ),
             const SizedBox(width: 12),
@@ -59,8 +60,8 @@ class NextWorkoutCard extends ConsumerWidget {
                 style: theme.textTheme.titleMedium,
               ),
               if (isScheduled)
-                Icon(
-                  Icons.notifications_active,
+                HugeIcon(
+                  icon: HugeIcons.strokeRoundedNotification03,
                   size: 16,
                   color: scheme.primary,
                 ),

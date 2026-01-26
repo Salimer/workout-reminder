@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../../../home/presentation/views/home_view.dart';
 import '../../../../core/widgets/loading_widget.dart';
@@ -28,8 +29,8 @@ class ProgressLoaderView extends StatelessWidget {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
-                            Icons.cloud_off_outlined,
+                          HugeIcon(
+                            icon: HugeIcons.strokeRoundedCloud,
                             size: 48,
                             color: Theme.of(context).colorScheme.error,
                           ),
