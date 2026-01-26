@@ -7,7 +7,7 @@ part 'bottom_navigation.g.dart';
 // 2 - Progress
 // 3 - Settings
 
-@Riverpod(keepAlive: true)
+@Riverpod(keepAlive: false)
 class BottomNavigation extends _$BottomNavigation {
   @override
   BottomNavigationState build() {
