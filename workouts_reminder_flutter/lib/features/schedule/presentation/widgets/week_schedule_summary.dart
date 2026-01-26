@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/experimental/mutation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/widgets/animated_section.dart';
@@ -158,7 +159,10 @@ class WeekScheduleSummary extends StatelessWidget {
                         duration: const Duration(milliseconds: 250),
                         child: state.isPending
                             ? const SizedBox.shrink()
-                            : const Icon(Icons.delete_outline),
+                            : const HugeIcon(
+                                icon: HugeIcons.strokeRoundedDelete02,
+                                size: 20,
+                              ),
                       );
                     },
                   ),
@@ -289,8 +293,8 @@ class _DayCard extends StatelessWidget {
           if (!hasWorkout)
             Row(
               children: [
-                Icon(
-                  Icons.self_improvement_outlined,
+                HugeIcon(
+                  icon: HugeIcons.strokeRoundedYoga03,
                   size: 16,
                   color: scheme.onSurface.withValues(alpha: 0.6),
                 ),
@@ -323,8 +327,8 @@ class _DayCard extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        Icon(
-                          slot.icon,
+                        HugeIcon(
+                          icon: slot.icon,
                           size: 14,
                           color: scheme.primary,
                         ),
@@ -350,9 +354,9 @@ class _DayCard extends StatelessWidget {
   List<_Slot> _slotsWithFallback() {
     final labels = ['Morning', 'Afternoon', 'Evening'];
     final icons = [
-      Icons.wb_sunny_outlined,
-      Icons.light_mode_outlined,
-      Icons.nights_stay_outlined,
+      HugeIcons.strokeRoundedSun03,
+      HugeIcons.strokeRoundedSun01,
+      HugeIcons.strokeRoundedMoon02,
     ];
     final format = DateFormat.jm();
 
@@ -373,7 +377,7 @@ class _DayCard extends StatelessWidget {
 class _Slot {
   final String label;
   final String? time;
-  final IconData icon;
+  final List<List<dynamic>> icon;
 
   _Slot({required this.label, this.time, required this.icon});
 }

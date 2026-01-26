@@ -49,9 +49,10 @@ class HomeHeader extends ConsumerWidget {
               color: scheme.primaryContainer,
               shape: BoxShape.circle,
             ),
-            child: const HugeIcon(
+            child: HugeIcon(
               icon: HugeIcons.strokeRoundedUserCircle,
               size: 28,
+              color: scheme.onSurface,
             ),
           ),
         ),

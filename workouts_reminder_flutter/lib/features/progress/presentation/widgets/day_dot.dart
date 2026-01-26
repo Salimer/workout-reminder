@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../schedule/data/models/day_schedule_model.dart';
@@ -56,14 +57,14 @@ class DayDot extends StatelessWidget {
               ),
             ),
             child: isCompleted
-                ? const Icon(
-                    Icons.check,
+                ? HugeIcon(
+                    icon: HugeIcons.strokeRoundedTick02,
                     size: 10,
                     color: Colors.white,
                   )
                 : isSkipped
-                ? const Icon(
-                    Icons.close,
+                ? HugeIcon(
+                    icon: HugeIcons.strokeRoundedCancel01,
                     size: 10,
                     color: Colors.white,
                   )

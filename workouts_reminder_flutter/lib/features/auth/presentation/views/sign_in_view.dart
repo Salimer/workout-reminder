@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 import 'package:workouts_reminder_client/workouts_reminder_client.dart';
 
@@ -67,7 +68,7 @@ class _SignInViewState extends ConsumerState<SignInView> {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              primaryAccent.withOpacity(0.1),
+              primaryAccent.withValues(alpha: 0.1),
               Theme.of(context).scaffoldBackgroundColor,
             ],
             begin: Alignment.topCenter,
@@ -97,10 +98,10 @@ class _SignInViewState extends ConsumerState<SignInView> {
                             padding: const EdgeInsets.all(32),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: primaryAccent.withOpacity(0.2),
+                              color: primaryAccent.withValues(alpha: 0.2),
                             ),
-                            child: Icon(
-                              Icons.fitness_center_rounded,
+                            child: HugeIcon(
+                              icon: HugeIcons.strokeRoundedDumbbell02,
                               size: 60,
                               color: primaryAccent,
                             ),

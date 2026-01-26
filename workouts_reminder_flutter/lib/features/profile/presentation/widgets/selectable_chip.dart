@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class SelectableChip extends StatelessWidget {
   final String label;
@@ -51,8 +52,8 @@ class SelectableChip extends StatelessWidget {
                   // Prevent chip toggle when clicking X.
                   onRemove!();
                 },
-                child: Icon(
-                  Icons.close,
+                child: HugeIcon(
+                  icon: HugeIcons.strokeRoundedCancelCircle,
                   size: 16,
                   color: isSelected
                       ? scheme.primary

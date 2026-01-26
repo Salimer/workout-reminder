@@ -184,7 +184,7 @@ class _ProfileViewState extends State<ProfileView> {
                                     borderRadius: BorderRadius.circular(12),
                                     borderSide: BorderSide.none,
                                   ),
-                                  prefixIcon: const HugeIcon(
+                                  prefixIcon: HugeIcon(
                                     icon: HugeIcons.strokeRoundedUserCircle,
                                     size: 20,
                                   ),
