@@ -111,6 +111,7 @@ class AppUseCase {
   }
 
   Future<void> deleteAccount() async {
+    await ref.read(notificationsUseCaseProvider).cancelAllNotifications();
     await ref.read(clientProvider).profile.deleteUser();
     await signOut();
   }

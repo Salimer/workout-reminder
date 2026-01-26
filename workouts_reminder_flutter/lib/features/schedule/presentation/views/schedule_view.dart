@@ -5,6 +5,8 @@ import 'package:hugeicons/hugeicons.dart';
 import '../../../../core/widgets/animated_section.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../../../progress/presentation/state/progress_state.dart';
+import '../../../profile/presentation/state/profile_state.dart';
+import '../widgets/profile_incomplete_message.dart';
 import '../widgets/week_schedule_summary.dart';
 import '../widgets/workout_days_picker.dart';
 
@@ -93,10 +95,16 @@ class ScheduleView extends StatelessWidget {
                     ),
                   );
 
+                  final profile = ref.watch(profileStateProvider).value;
+                  final isProfileComplete =
+                      profile?.motivation.trim().isNotEmpty ?? false;
+
                   return AnimatedSwitcher(
                     duration: const Duration(milliseconds: 300),
                     child: week == null
-                        ? const WorkoutDaysPicker()
+                        ? (isProfileComplete
+                              ? const WorkoutDaysPicker()
+                              : const ProfileIncompleteMessage())
                         : WeekScheduleSummary(schedule: week),
                   );
                 },

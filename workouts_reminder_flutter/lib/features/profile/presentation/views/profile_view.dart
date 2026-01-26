@@ -227,7 +227,8 @@ class _ProfileViewState extends State<ProfileView> {
                                 minLines: 3,
                                 keyboardType: TextInputType.multiline,
                                 decoration: InputDecoration(
-                                  hintText: 'e.g., "To keep up with my kids"',
+                                  hintText:
+                                      'e.g., "Because I deserve to invest in myself"',
                                   filled: true,
                                   fillColor: scheme.surfaceContainerHighest
                                       .withValues(alpha: 0.3),
