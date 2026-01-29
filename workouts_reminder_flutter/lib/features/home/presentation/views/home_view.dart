@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:workouts_reminder_flutter/features/home/presentation/state/coach_message.dart';
 
 import '../../../../core/use_cases/app_use_case.dart';
 import '../../../profile/presentation/state/profile_state.dart';
@@ -70,7 +71,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
   @override
   Widget build(BuildContext context) {
     _bottomNavListener(ref);
-    ref.listen(profileStateProvider, (_, _) {});
+    _cachedProviders(ref);
 
     return Scaffold(
       body: SafeArea(
@@ -109,14 +110,21 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
   void _bottomNavListener(WidgetRef ref) {
     ref.listen(bottomNavigationProvider, (previous, next) {
-      if (next.shouldAnimate && previous != next) {
+      if (next.shouldAnimate && previous?.currentIndex != next.currentIndex) {
         debugPrint("Animating to page: ${next.currentIndex}");
-        _pageController.animateToPage(
-          next.currentIndex,
-          duration: const Duration(milliseconds: 250),
-          curve: Curves.easeInOut,
-        );
+        // _pageController.animateToPage(
+        //   next.currentIndex,
+        //   duration: const Duration(milliseconds: 250),
+        //   curve: Curves.easeInOut,
+        // );
+
+        _pageController.jumpToPage(next.currentIndex);
       }
     });
+  }
+
+  void _cachedProviders(WidgetRef ref) {
+    ref.listen(profileStateProvider, (_, _) {});
+    ref.listen(coachMessageProvider, (_, _) {});
   }
 }

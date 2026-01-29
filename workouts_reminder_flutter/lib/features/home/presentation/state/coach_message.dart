@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/constants/enums.dart';
@@ -9,9 +8,9 @@ import '../../../progress/presentation/state/progress_state.dart';
 
 part 'coach_message.g.dart';
 
-@Riverpod(keepAlive: true)
+@riverpod
 List<String> coachMessage(Ref ref) {
-  final now = ref.watch(localTimeDateProvider);
+  final now = ref.read(localTimeDateProvider);
   final progress = ref.watch(progressStateProvider).value;
 
   if (progress != null && progress.activeWeek != null) {

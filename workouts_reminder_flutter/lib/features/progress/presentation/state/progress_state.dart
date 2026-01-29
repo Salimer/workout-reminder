@@ -17,7 +17,7 @@ class ProgressState extends _$ProgressState {
   @override
   FutureOr<ProgressModel> build() async {
     final storageFuture = ref.watch(localStorageProvider.future);
-    persist(
+    await persist(
       storageFuture,
       key: 'progress_state',
       options: const StorageOptions(
@@ -26,14 +26,21 @@ class ProgressState extends _$ProgressState {
       ),
       encode: (state) => jsonEncode(state.toJson()),
       decode: (data) => ProgressModel.fromJson(jsonDecode(data)),
-    );
+    ).future;
+    
     ref.onDispose(() {
       // clean the local storage when the provider is disposed
       storageFuture.then((storage) async {
         await storage.delete('progress_state');
       });
     });
+
     ProgressModel progress;
+    if (state.value != null) {
+      progress = state.value!;
+      state = AsyncData(progress);
+    }
+
     try {
       progress = await _fetchedProgress();
     } catch (_) {
