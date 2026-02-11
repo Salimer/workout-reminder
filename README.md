@@ -2,6 +2,9 @@
 
 A Flutter + Serverpod app that keeps you consistent by sending personalized, AI-generated workout nudges based on your own motivations and goals.
 
+## Demo Video
+- [YouTube](https://www.youtube.com/watch?v=V_bueacOuiQ)
+
 ## Features
 - Weekly workout scheduling with day-by-day status (pending/performed/skipped)
 - Personalized AI notification copy tied to user profile data
